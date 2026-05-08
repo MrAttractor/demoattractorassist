@@ -178,7 +178,7 @@ body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-fami
 .chat-hdr{
   flex-shrink:0;
   width:100%;
-  padding:44px 20px 14px;
+  padding:36px 20px 14px;
   display:flex;align-items:center;gap:12px;
   border-bottom:1px solid var(--txt4);
   box-sizing:border-box;
@@ -1002,8 +1002,13 @@ function choisirOffre(name){
 }
 
 async function submitForm(){
+  const btnReserver=document.getElementById('btnReserver');
   const phone=document.getElementById('fb-phone').value.trim();
   if(!phone){showToast('⚠️ Numéro WhatsApp requis');return;}
+  
+  btnReserver.disabled=true;
+  btnReserver.textContent='⏳ Envoi en cours...';
+  
   const besoin=document.getElementById('fb-besoin').value||'Non précisé';
   const now=new Date().toLocaleString('fr-FR');
   const act=actLabels[uAct]||uAct;
@@ -1013,7 +1018,9 @@ async function submitForm(){
   try{
     await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({date:now,prenom:uName,phone,activite:act,marche,besoin:besoinFull,source:window.location.href})});
-  }catch(e){}
+  }catch(e){
+    console.error('Erreur envoi:',e);
+  }
 
   formDone=true;
   document.getElementById('formBlock').style.display='none';
