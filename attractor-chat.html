@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#06060E">
+<title>Attractor Assists — Découverte</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:#06060E;color:#F2EEE6;
+  font-family:'Outfit',sans-serif;
+  display:flex;flex-direction:column;
+}
+.hdr{
+  flex-shrink:0;
+  padding:52px 20px 14px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid rgba(242,238,230,0.07);
+  background:#06060E;
+}
+.hdr-logo{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-weight:700;font-size:13px;color:#06060E;
+  flex-shrink:0;box-shadow:0 4px 16px rgba(201,168,76,0.3);
+}
+.hdr-info{flex:1;min-width:0;}
+.hdr-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#F2EEE6;}
+.hdr-status{display:flex;align-items:center;gap:5px;font-size:12px;color:#3DC98A;margin-top:2px;}
+.hdr-dot{width:6px;height:6px;border-radius:50%;background:#3DC98A;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+.msgs{
+  flex:1;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:16px;
+  display:flex;flex-direction:column;gap:14px;
+  scrollbar-width:none;
+}
+.msgs::-webkit-scrollbar{display:none;}
+
+.msg{display:flex;gap:10px;align-items:flex-end;}
+.msg.user{flex-direction:row-reverse;}
+.av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.av.ai{background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#06060E;font-family:'Cormorant Garamond',serif;font-weight:700;}
+.av.me{background:#1A1A32;border:1px solid rgba(255,255,255,0.08);}
+.msg-body{flex:1;min-width:0;display:flex;flex-direction:column;}
+.msg.user .msg-body{align-items:flex-end;}
+.bubble{
+  display:inline-block;max-width:82%;
+  padding:12px 15px;border-radius:18px;
+  font-size:14px;line-height:1.65;
+  word-break:break-word;overflow-wrap:anywhere;
+}
+.bubble.ai{background:#141428;border:1px solid rgba(255,255,255,0.06);border-bottom-left-radius:4px;color:#F2EEE6;}
+.bubble.me{background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#06060E;font-weight:600;border-bottom-right-radius:4px;}
+.t{font-size:10px;color:rgba(242,238,230,0.28);margin-top:4px;padding:0 2px;}
+
+.typing-wrap{display:flex;gap:10px;align-items:flex-end;}
+.typing{display:flex;gap:5px;align-items:center;padding:13px 16px;background:#141428;border:1px solid rgba(255,255,255,0.06);border-radius:18px;border-bottom-left-radius:4px;width:fit-content;}
+.typing span{width:6px;height:6px;border-radius:50%;background:#C9A84C;animation:dot 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}
+.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.35;}40%{transform:translateY(-5px);opacity:1;}}
+
+.qr{
+  flex-shrink:0;padding:8px 16px;
+  display:flex;gap:8px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.qr::-webkit-scrollbar{display:none;}
+.qr-btn{
+  flex-shrink:0;padding:9px 16px;border-radius:100px;
+  border:1.5px solid rgba(201,168,76,0.3);
+  background:rgba(201,168,76,0.1);color:#C9A84C;
+  font-size:13px;font-weight:600;cursor:pointer;
+  white-space:nowrap;font-family:'Outfit',sans-serif;
+  /* PAS de onclick inline — géré par JS */
+}
+.qr-btn:active{transform:scale(0.96);}
+.qr-btn.gold{
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;border-color:transparent;
+  box-shadow:0 4px 16px rgba(201,168,76,0.3);
+}
+
+.mini-form{
+  flex-shrink:0;margin:8px 16px;
+  background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));
+  border:1.5px solid rgba(201,168,76,0.25);border-radius:18px;
+  padding:20px;display:none;
+}
+.mini-form.show{display:block;}
+.mf-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#F2EEE6;margin-bottom:4px;}
+.mf-sub{font-size:13px;color:rgba(242,238,230,0.6);margin-bottom:16px;line-height:1.5;}
+.mf-input{
+  width:100%;background:#1A1A32;border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:12px;padding:13px 16px;color:#F2EEE6;
+  font-family:'Outfit',sans-serif;font-size:15px;outline:none;
+  margin-bottom:10px;transition:border-color .2s;
+}
+.mf-input:focus{border-color:rgba(201,168,76,0.4);}
+.mf-input::placeholder{color:rgba(242,238,230,0.28);}
+.mf-select{
+  width:100%;background:#1A1A32;border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:12px;padding:13px 16px;color:#F2EEE6;
+  font-family:'Outfit',sans-serif;font-size:15px;
+  outline:none;appearance:none;cursor:pointer;margin-bottom:14px;
+}
+.mf-select option{background:#0B0B18;}
+.btn-gold{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;box-shadow:0 6px 24px rgba(201,168,76,0.3);
+}
+.btn-gold:active{transform:scale(0.97);}
+.mf-note{font-size:11px;color:rgba(242,238,230,0.28);text-align:center;margin-top:10px;line-height:1.6;}
+
+.success{
+  flex-shrink:0;margin:8px 16px;background:#141428;
+  border:1px solid rgba(61,201,138,0.2);border-radius:18px;
+  padding:24px;text-align:center;display:none;
+}
+.success.show{display:block;}
+.sc-ico{font-size:48px;margin-bottom:12px;}
+.sc-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:#F2EEE6;margin-bottom:8px;}
+.sc-sub{font-size:13px;color:rgba(242,238,230,0.6);line-height:1.7;margin-bottom:18px;}
+.btn-cadeau{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#3DC98A,#2aad72);color:white;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:10px;}
+.btn-wa{width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#25D366,#128C7E);color:white;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+.input-area{
+  flex-shrink:0;padding:10px 16px 28px;
+  background:linear-gradient(to top,#06060E 80%,transparent);
+}
+.input-row{
+  display:flex;align-items:center;gap:8px;
+  background:#141428;border:1px solid rgba(255,255,255,0.08);
+  border-radius:100px;padding:8px 8px 8px 18px;
+}
+.input-row input{
+  flex:1;min-width:0;background:none;border:none;outline:none;
+  color:#F2EEE6;font-family:'Outfit',sans-serif;font-size:15px;
+}
+.input-row input::placeholder{color:rgba(242,238,230,0.28);}
+.btn-send{
+  width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;font-size:17px;
+  box-shadow:0 4px 16px rgba(201,168,76,0.3);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:#141428;border:1px solid rgba(201,168,76,0.2);
+  border-radius:12px;padding:10px 18px;font-size:13px;color:#F2EEE6;
+  z-index:999;white-space:nowrap;
+  animation:fadeIn .2s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.msg{animation:slideUp .2s ease both;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">AA</div>
+  <div class="hdr-info">
+    <div class="hdr-name">Attractor Assists</div>
+    <div class="hdr-status"><div class="hdr-dot"></div>En ligne · répond en 2 sec</div>
+  </div>
+</div>
+
+<div class="msgs" id="msgs"></div>
+<div class="qr" id="qr"></div>
+
+<div class="mini-form" id="miniForm">
+  <div class="mf-title">On va plus loin 🚀</div>
+  <div class="mf-sub">Juste deux informations et Mac Arthur s'occupe du reste.</div>
+  <input class="mf-input" id="mf-phone" type="tel" placeholder="Ton numéro WhatsApp *">
+  <select class="mf-select" id="mf-besoin">
+    <option value="">— Ce qui t'intéresse le plus —</option>
+    <option>Gérer mes clients & relances</option>
+    <option>Automatiser mes messages WhatsApp</option>
+    <option>Avoir un point de gestion au quotidien</option>
+    <option>Créer un assistant pour mon équipe</option>
+  </select>
+  <button class="btn-gold" id="btnSubmit">📲 Envoyer ma demande</button>
+  <div class="mf-note">Aucune carte bancaire. Appel découverte offert (valeur 80€).</div>
+</div>
+
+<div class="success" id="success">
+  <div class="sc-ico">✅</div>
+  <div class="sc-title" id="scTitle">C'est noté !</div>
+  <div class="sc-sub">Mac Arthur va te contacter sous 24h sur WhatsApp pour configurer ton assistant personnel.</div>
+  <button class="btn-cadeau" id="btnCadeau">🎁 Accéder à mon guide gratuit</button>
+  <button class="btn-wa" id="btnWa">💬 Écrire à Mac Arthur sur WhatsApp</button>
+</div>
+
+<div class="input-area" id="inputArea">
+  <div class="input-row">
+    <input type="text" id="chatInput" placeholder="Réponds ici…">
+    <button class="btn-send" id="btnSend">➤</button>
+  </div>
+</div>
+
+<script>
+/* ─── DONNÉES DEPUIS URL (fiable sur tous navigateurs) ─── */
+const params  = new URLSearchParams(window.location.search);
+const uName   = decodeURIComponent(params.get('n') || 'toi');
+const uAct    = decodeURIComponent(params.get('a') || 'commerce');
+const uMarche = decodeURIComponent(params.get('m') || 'af');
+const uDoul   = decodeURIComponent(params.get('d') || 'tout gérer seul(e)');
+
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbxnsvcXaQERlcRKnwXzs0fMW34n68aMOB8IVmhtZZ256tNJMVRWcCjT3uJ82DjixlbJow/exec";
+const WA_NUMBER = "33753902323";
+
+const actLabels={
+  commerce:"Boutique / Commerce",services:"Prestataire de services",
+  beaute:"Institut de beauté / Salon",restauration:"Restauration / Food",tpe:"TPE / Agence"
+};
+const marcheLabels={af:"🌍 Afrique francophone",fr:"🇫🇷 France & Europe",both:"🌍🇫🇷 Les deux marchés"};
+const actLabel   = actLabels[uAct]  || uAct;
+const marcheLabel= marcheLabels[uMarche] || uMarche;
+
+let messages=[], chatPhase=0, formShown=false, selectedOffre='';
+
+/* ─── DOM ─── */
+const msgsEl     = document.getElementById('msgs');
+const qrEl       = document.getElementById('qr');
+const inputArea  = document.getElementById('inputArea');
+const chatInput  = document.getElementById('chatInput');
+const miniForm   = document.getElementById('miniForm');
+const successEl  = document.getElementById('success');
+
+/* ─── MESSAGES ─── */
+function addMsg(role, text){
+  const isAI = role === 'assistant';
+  const clean = text.replace('[SHOW_OFFRES]','').trim()
+    .replace(/\n/g,'<br>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  const now = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = 'msg' + (isAI ? '' : ' user');
+  div.innerHTML = `
+    <div class="av ${isAI?'ai':'me'}">${isAI?'AA':'👤'}</div>
+    <div class="msg-body">
+      <div class="bubble ${isAI?'ai':'me'}">${clean}</div>
+      <div class="t">${now}</div>
+    </div>`;
+  msgsEl.appendChild(div);
+  setTimeout(()=>{ msgsEl.scrollTop = msgsEl.scrollHeight; }, 50);
+}
+
+function showTyping(){
+  const d = document.createElement('div');
+  d.className='msg'; d.id='typing';
+  d.innerHTML=`<div class="av ai">AA</div><div class="msg-body"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgsEl.appendChild(d);
+  setTimeout(()=>{ msgsEl.scrollTop = msgsEl.scrollHeight; }, 50);
+}
+function removeTyping(){ const el=document.getElementById('typing'); if(el) el.remove(); }
+
+/* ─── QUICK REPLIES — event listeners, pas de onclick inline ─── */
+function setQR(list){
+  qrEl.innerHTML = '';
+  if(!list || !list.length) return;
+  list.forEach((text, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'qr-btn' + (i===0 && list.length===1 ? ' gold' : '');
+    btn.textContent = text;
+    btn.addEventListener('click', () => {
+      setQR([]);
+      processMsg(text);
+    });
+    qrEl.appendChild(btn);
+  });
+}
+
+/* ─── SYSTEM PROMPT ─── */
+function buildSys(){
+  return `Tu es Attractor Assists, l'assistant personnel de ${uName}.
+Activité : ${actLabel}. Marché : ${marcheLabel}. Douleur déclarée : ${uDoul}.
+
+FLOW STRICT — 3 échanges :
+
+ÉCHANGE 1 (déjà envoyé) : reformulation + "Ai-je bien compris ?"
+
+ÉCHANGE 2 :
+- Réponse positive → Dis que tu es là pour ça. Pose : "En ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?"
+- Réponse négative/correction → Bienveillance 😊, jamais critique. Dis que l'écrit aide à mieux cerner. Pose la même question.
+- Réponse invalide/bruit/charabia → "😊 Ta réponse me semble difficile à interpréter. Nous faisons un travail de précision — peux-tu me dire en quelques mots ce que tu vis vraiment ?"
+
+ÉCHANGE 3 :
+- Reçois la tâche confiée. Montre 3-4 exemples concrets liés à sa situation.
+- Termine EXACTEMENT par cette phrase : "Pour aller plus loin, je vous propose deux choses : je vous présente rapidement nos différentes offres, et ensuite je vous envoie le lien pour télécharger votre bonus."
+- Puis écris : [SHOW_OFFRES]
+
+POSTURE : jamais paternaliste, jamais critique. Tu veux vraiment aider. Appelle toujours ${uName} par son prénom. Tu es Attractor Assists, pas Claude.`;
+}
+
+/* ─── FALLBACK ─── */
+function fallback(text, phase){
+  const isInvalid = text.length < 2 || !/[a-zA-ZÀ-ÿ]/.test(text);
+  const isOui = /oui|exactement|correct|ok|yes|parfait|tout à fait/i.test(text);
+
+  if(isInvalid){
+    return `😊 Ta réponse me semble difficile à interpréter, ${uName}. Nous faisons un travail de précision ici.\n\nPeux-tu me dire en quelques mots ce que tu vis vraiment ?`;
+  }
+  if(phase <= 1){
+    if(isOui){
+      return `Parfait ${uName} 😊 Je suis là exactement pour ça.\n\nEn ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?`;
+    }
+    return `😊 Je comprends mieux maintenant — l'écrit aide toujours à mieux cerner les choses.\n\nDis-moi ${uName}, en ce moment : si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?`;
+  }
+  return `Merci ${uName} — c'est exactement ce dont j'avais besoin.\n\nVoici un aperçu de ce que je pourrais faire pour toi dès demain :\n\n✅ Organiser tes priorités chaque matin\n✅ Gérer tes relances clients automatiquement\n✅ Résumer tes messages et t'alerter sur l'essentiel\n✅ Enregistrer les besoins de tes clients à la volée\n\nTu as mentionné **${uDoul}** — c'est précisément là où je suis le plus utile.\n\nPour aller plus loin, je vous propose deux choses : je vous présente rapidement nos différentes offres, et ensuite je vous envoie le lien pour télécharger votre bonus. [SHOW_OFFRES]`;
+}
+
+/* ─── TRAITEMENT RÉPONSE ─── */
+function handleReply(reply){
+  addMsg('assistant', reply);
+  messages.push({role:'assistant', content: reply});
+
+  if(reply.includes('[SHOW_OFFRES]') && !formShown){
+    formShown = true;
+    inputArea.style.display = 'none';
+    setQR([]);
+    // Bouton doré vers offres
+    setTimeout(()=>{
+      const btn = document.createElement('button');
+      btn.className = 'qr-btn gold';
+      btn.textContent = '✅ Oui, on y va !';
+      btn.style.cssText = 'margin:8px 16px;width:calc(100% - 32px);padding:14px;border-radius:14px;';
+      btn.addEventListener('click', ()=>{
+        // Retour vers index.html sur la page offres
+        const p = new URLSearchParams({n:uName,a:uAct,m:uMarche,d:uDoul});
+        window.location.href = 'index.html?offres=1&' + p.toString();
+      });
+      qrEl.appendChild(btn);
+    }, 800);
+    return;
+  }
+
+  if(chatPhase === 1){
+    setQR(['✅ Oui, exactement', '🔄 Pas tout à fait']);
+  }
+}
+
+/* ─── ENVOI ─── */
+async function processMsg(text){
+  setQR([]);
+  addMsg('user', text);
+  messages.push({role:'user', content: text});
+  chatPhase++;
+  showTyping();
+
+  try{
+    const res = await fetch("https://api.anthropic.com/v1/messages",{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        system: buildSys(),
+        messages
+      })
+    });
+    const data = await res.json();
+    removeTyping();
+    handleReply(data.content?.[0]?.text || fallback(text, chatPhase));
+  }catch(e){
+    removeTyping();
+    handleReply(fallback(text, chatPhase));
+  }
+}
+
+/* ─── INPUT ─── */
+document.getElementById('btnSend').addEventListener('click', ()=>{
+  const text = chatInput.value.trim();
+  if(!text) return;
+  chatInput.value = '';
+  processMsg(text);
+});
+
+chatInput.addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    const text = chatInput.value.trim();
+    if(!text) return;
+    chatInput.value = '';
+    processMsg(text);
+  }
+});
+
+/* ─── FORMULAIRE ─── */
+document.getElementById('btnSubmit').addEventListener('click', async ()=>{
+  const phone = document.getElementById('mf-phone').value.trim();
+  if(!phone){ showToast('⚠️ Numéro WhatsApp requis'); return; }
+  const besoin = document.getElementById('mf-besoin').value || 'Non précisé';
+  const now = new Date().toLocaleString('fr-FR');
+  const besoinFull = besoin + (uDoul?' | Douleur : '+uDoul:'') + (selectedOffre?' | Offre : '+selectedOffre:'');
+  try{
+    await fetch(SHEET_URL,{
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({date:now, prenom:uName, phone, activite:actLabel, marche:marcheLabel, besoin:besoinFull, source:window.location.href})
+    });
+  }catch(e){}
+  miniForm.classList.remove('show');
+  document.getElementById('scTitle').textContent = `C'est noté, ${uName} !`;
+  successEl.classList.add('show');
+  setTimeout(()=> successEl.scrollIntoView({behavior:'smooth', block:'start'}), 100);
+});
+
+document.getElementById('btnCadeau').addEventListener('click', ()=>{
+  window.open('https://agenceattractor.com/#ebook','_blank');
+});
+
+document.getElementById('btnWa').addEventListener('click', ()=>{
+  const offreTxt = selectedOffre ? ` Je suis intéressé(e) par l'offre ${selectedOffre}.` : '';
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Bonjour Mac Arthur, j'ai complété ma demande sur Attractor Assists.${offreTxt}`)}`, '_blank');
+});
+
+/* ─── TOAST ─── */
+function showToast(msg){
+  const ex = document.querySelector('.toast'); if(ex) ex.remove();
+  const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 3000);
+}
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded', ()=>{
+  const act = actLabels[uAct] || uAct;
+  const intro = `Bonjour ${uName} 👋\n\nVoilà ce que je comprends de ta situation : tu travailles dans le secteur **${act}**, et ce qui te pèse le plus en ce moment, c'est **${uDoul}**.\n\nAi-je bien compris ?`;
+  setTimeout(()=>{
+    addMsg('assistant', intro);
+    messages.push({role:'assistant', content: intro});
+    setQR(['✅ Oui, exactement', '🔄 Pas tout à fait']);
+  }, 400);
+
+  // Si on revient depuis offres avec sélection
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.get('offre')){
+    selectedOffre = decodeURIComponent(urlParams.get('offre'));
+  }
+});
+</script>
+</body>
+</html>
