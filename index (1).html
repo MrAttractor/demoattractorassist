@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Attractor Assists">
+<meta name="theme-color" content="#06060E">
+<title>Attractor Assists</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --or:#C9A84C;--or2:#E8C96A;
+  --or-dim:rgba(201,168,76,0.12);--or-glow:rgba(201,168,76,0.22);
+  --bg:#06060E;--bg2:#0B0B18;
+  --s1:#141428;--s2:#1A1A32;
+  --txt:#F2EEE6;--txt2:rgba(242,238,230,0.62);--txt3:rgba(242,238,230,0.30);--txt4:rgba(242,238,230,0.07);
+  --green:#3DC98A;--red:#E85858;--amber:#F5A840;--blue:#6B9EFF;
+  --r:18px;--r2:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;overflow:hidden;}
+body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;}
+.atmo{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 50% at 85% 5%,rgba(201,168,76,0.09) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 60% at 5% 90%,rgba(107,158,255,0.05) 0%,transparent 60%);}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px;}
+.app{
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  z-index:2;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.page{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .35s ease,transform .35s ease;transform:translateY(16px);}
+.page.active{opacity:1;pointer-events:all;transform:translateY(0);}
+#p4.active{overflow:hidden;}
+.scr{overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex:1;}
+.scr::-webkit-scrollbar{display:none;}
+
+/* ══ BOUTONS COMMUNS ══ */
+.btn-gold{width:100%;padding:17px;border-radius:17px;border:none;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 10px 40px var(--or-glow);letter-spacing:-.1px;}
+.btn-gold:active{transform:scale(0.97);}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-outline{width:100%;padding:14px;border-radius:14px;border:1.5px solid rgba(201,168,76,0.3);background:var(--or-dim);color:var(--or);font-family:'Outfit',sans-serif;font-weight:600;font-size:14px;cursor:pointer;}
+.btn-outline:active{transform:scale(0.97);}
+
+/* ══ FAQ / ACCORDION ══ */
+.faq-item{background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-radius:var(--r2);margin-bottom:9px;overflow:hidden;}
+.faq-item.open{border-color:rgba(201,168,76,0.22);}
+.faq-q{padding:15px 17px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.faq-q-text{font-size:14px;font-weight:600;line-height:1.4;flex:1;color:var(--txt);}
+.faq-arrow{font-size:12px;color:var(--txt3);flex-shrink:0;transition:transform .2s;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);color:var(--or);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+.faq-item.open .faq-a{max-height:600px;}
+.faq-a-inner{padding:12px 17px 16px;font-size:13px;color:var(--txt2);line-height:1.8;border-top:1px solid var(--txt4);}
+.faq-a-inner strong{color:var(--or);}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--or-dim);border-radius:12px;padding:11px 20px;font-size:13px;color:var(--txt);z-index:999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:revUp .2s ease;}
+@keyframes revUp{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@keyframes floatLogo{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+@keyframes ringP{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.05);opacity:.5;}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:.4;}40%{transform:translateY(-5px);opacity:1;}}
+
+/* ════════════════════════════════
+   PAGE 1 — LANDING
+════════════════════════════════ */
+#p1 .scr{padding-bottom:48px;}
+.land-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:52px 28px 28px;}
+.land-logo{width:68px;height:68px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 0 60px var(--or-glow),0 16px 40px rgba(0,0,0,.5);animation:floatLogo 3.5s ease-in-out infinite;}
+.land-logo-txt{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:24px;color:#06060E;}
+.land-headline{font-family:'Cormorant Garamond',serif;font-size:37px;font-weight:700;line-height:1.1;letter-spacing:-1px;color:var(--txt);margin-bottom:12px;}
+.land-headline em{font-style:italic;color:var(--or);}
+.land-sub{font-size:16px;color:var(--txt2);line-height:1.65;margin-bottom:6px;}
+.land-sub2{font-size:13px;color:var(--or);font-weight:600;margin-bottom:0;}
+
+/* STORY CARDS */
+.story-wrap{padding:24px 0 8px;overflow:hidden;}
+.story-track{display:flex;gap:12px;padding:4px 20px 12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.story-track::-webkit-scrollbar{display:none;}
+.story-card{flex-shrink:0;width:260px;scroll-snap-align:start;background:var(--s1);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:22px 20px;}
+.story-card:first-child{border-color:rgba(201,168,76,0.2);background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.02));}
+.sc-ico{font-size:32px;margin-bottom:12px;}
+.sc-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;color:var(--txt);margin-bottom:8px;line-height:1.2;}
+.sc-sub{font-size:13px;color:var(--txt2);line-height:1.7;}
+.sc-tag{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;color:var(--or);letter-spacing:1px;text-transform:uppercase;}
+.story-dots{display:flex;justify-content:center;gap:6px;padding-bottom:4px;}
+.story-dot{width:5px;height:5px;border-radius:50%;background:var(--txt4);transition:background .2s;}
+.story-dot.active{background:var(--or);}
+
+/* CTA ZONE */
+.cta-zone{padding:16px 20px 0;}
+.land-note{font-size:12px;color:var(--txt3);margin-top:10px;text-align:center;line-height:1.6;}
+
+/* PROOF BAR */
+.proof-bar{display:flex;align-items:center;justify-content:center;gap:18px;padding:18px 20px;border-top:1px solid var(--txt4);border-bottom:1px solid var(--txt4);margin:20px 0;}
+.pb-item{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.pb-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--or);}
+.pb-label{font-size:10px;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase;}
+.pb-sep{width:1px;height:26px;background:var(--txt4);}
+
+/* L'ASSISTANT ACCORDION */
+.assistant-wrap{padding:0 20px;}
+.assistant-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:12px;}
+
+/* CADEAU */
+.cadeau-band{margin:20px 20px 0;background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));border:1.5px dashed rgba(201,168,76,0.3);border-radius:var(--r2);padding:16px 18px;display:flex;align-items:center;gap:12px;}
+.cadeau-ico{font-size:28px;flex-shrink:0;}
+.cadeau-body{flex:1;}
+.cadeau-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.cadeau-sub{font-size:12px;color:var(--txt3);line-height:1.5;}
+
+/* ════════════════════════════════
+   PAGE 2 — PERSONNALISATION
+════════════════════════════════ */
+#p2 .scr{padding:52px 24px 130px;}
+.perso-back{display:flex;align-items:center;gap:8px;margin-bottom:20px;cursor:pointer;}
+.perso-back span{font-size:22px;color:var(--txt3);}
+.perso-back-label{font-size:13px;color:var(--txt3);}
+.perso-step{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--or);font-weight:600;margin-bottom:8px;}
+.perso-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;line-height:1.15;color:var(--txt);margin-bottom:6px;}
+.perso-sub{font-size:14px;color:var(--txt2);margin-bottom:28px;line-height:1.6;}
+.q-block{margin-bottom:24px;}
+.q-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:4px;}
+.req{color:var(--or);}
+.q-input{width:100%;background:var(--s1);border:1.5px solid rgba(255,255,255,0.07);border-radius:14px;padding:15px 18px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:16px;outline:none;transition:border-color .2s,box-shadow .2s;}
+.q-input:focus{border-color:rgba(201,168,76,0.4);box-shadow:0 0 0 3px rgba(201,168,76,0.07);}
+.q-input::placeholder{color:var(--txt3);}
+.q-input.error{border-color:rgba(232,88,88,0.5);box-shadow:0 0 0 3px rgba(232,88,88,0.08);}
+.err-msg{font-size:12px;color:var(--red);margin-top:6px;display:none;}
+.err-msg.show{display:block;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.btn-grid.col1{grid-template-columns:1fr;}
+.choice-btn{padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.07);background:var(--s1);color:var(--txt2);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s;line-height:1.3;}
+.choice-btn:active{transform:scale(0.97);}
+.choice-btn.selected{border-color:var(--or);background:var(--or-dim);color:var(--txt);}
+.choice-btn.autre-btn{border-style:dashed;color:var(--txt3);}
+.autre-wrap{display:none;margin-top:8px;}
+.autre-wrap.show{display:block;}
+.perso-footer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;padding:14px 24px 30px;background:linear-gradient(to top,var(--bg) 75%,transparent);z-index:50;}
+.perso-block-msg{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:var(--or);line-height:1.6;display:none;text-align:center;}
+.perso-block-msg.show{display:block;}
+
+/* ════════════════════════════════
+   PAGE 3 — TRANSITION
+════════════════════════════════ */
+#p3{align-items:center;justify-content:center;background:var(--bg);}
+.trans-inner{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 32px;}
+.trans-ring{width:90px;height:90px;border-radius:50%;border:2px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;position:relative;}
+.trans-ring::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1.5px solid rgba(201,168,76,0.1);animation:ringP 2s ease-in-out infinite;}
+.trans-ring::after{content:'';position:absolute;inset:-12px;border-radius:50%;border:1px solid rgba(201,168,76,0.05);animation:ringP 2s ease-in-out infinite;animation-delay:.4s;}
+.trans-logo-box{width:56px;height:56px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:20px;color:#06060E;box-shadow:0 8px 32px var(--or-glow);}
+.trans-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--txt);margin-bottom:8px;}
+.trans-sub{font-size:14px;color:var(--txt2);line-height:1.6;margin-bottom:28px;}
+.trans-mission{background:linear-gradient(135deg,rgba(61,201,138,0.1),rgba(61,201,138,0.03));border:1px solid rgba(61,201,138,0.2);border-radius:12px;padding:14px 18px;font-size:13px;color:var(--green);font-weight:600;margin-bottom:28px;display:none;}
+.trans-mission.show{display:block;}
+.trans-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:32px;}
+.trans-tag{padding:6px 14px;border-radius:100px;background:var(--s1);border:1px solid rgba(255,255,255,0.06);font-size:13px;color:var(--txt2);opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease;}
+.trans-tag.show{opacity:1;transform:translateY(0);}
+.trans-tag.gold{border-color:rgba(201,168,76,0.3);color:var(--or);background:var(--or-dim);}
+.trans-bar-wrap{width:100%;max-width:240px;height:3px;background:rgba(255,255,255,0.05);border-radius:100px;margin-top:32px;overflow:hidden;}
+.trans-bar{height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:100px;width:0%;transition:width .1s linear;}
+
+/* ════════════════════════════════
+   PAGE 4 — CHAT DÉCOUVERTE
+════════════════════════════════ */
+#p4{
+  background:var(--bg);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.chat-hdr{
+  flex-shrink:0;
+  width:100%;
+  padding:44px 20px 14px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--txt4);
+  box-sizing:border-box;
+}
+.chat-hdr-info{flex:1;min-width:0;}
+.chat-hdr-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--txt);}
+.chat-hdr-status{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--green);margin-top:2px;}
+.chat-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+.msgs{
+  flex:1 1 0%;
+  min-height:0;
+  width:100%;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  scrollbar-width:none;
+  box-sizing:border-box;
+}
+.msgs::-webkit-scrollbar{display:none;}
+
+.qr-wrap{
+  flex-shrink:0;
+  width:100%;
+  padding:6px 16px 8px;
+  display:flex;gap:8px;
+  overflow-x:auto;
+  align-items:center;
+  box-sizing:border-box;
+  scrollbar-width:none;
+}
+.qr-wrap::-webkit-scrollbar{display:none;}
+.qr-btn{
+  padding:8px 15px;border-radius:100px;
+  border:1.5px solid rgba(201,168,76,0.25);
+  background:var(--or-dim);color:var(--or);
+  font-size:13px;font-weight:500;cursor:pointer;
+  white-space:nowrap;font-family:'Outfit',sans-serif;flex-shrink:0;
+}
+.qr-btn:active{transform:scale(0.96);}
+
+.chat-input-area{
+  flex-shrink:0;
+  width:100%;
+  padding:10px 16px 24px;
+  background:linear-gradient(to top,var(--bg) 80%,transparent);
+  box-sizing:border-box;
+}
+.chat-input-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s1);border:1px solid rgba(255,255,255,0.07);
+  border-radius:100px;padding:7px 7px 7px 17px;
+  width:100%;box-sizing:border-box;
+}
+.chat-input-row input{
+  flex:1;min-width:0;background:none;border:none;outline:none;
+  color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;
+}
+.chat-input-row input::placeholder{color:var(--txt3);}
+.btn-send{
+  width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;
+  box-shadow:0 4px 16px var(--or-glow);
+}
+
+.msg{display:flex;gap:9px;align-items:flex-end;width:100%;max-width:100%;animation:revUp .22s ease both;box-sizing:border-box;}
+.msg.user{flex-direction:row-reverse;}
+.msg-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.msg-av.ai{background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-family:'Cormorant Garamond',serif;font-weight:700;}
+.msg-av.me{background:var(--s2);border:1px solid rgba(255,255,255,0.07);}
+.msg-content{flex:1;min-width:0;display:flex;flex-direction:column;}
+.msg.user .msg-content{align-items:flex-end;}
+.bubble{max-width:80%;padding:12px 14px;border-radius:18px;font-size:14px;line-height:1.6;word-break:break-word;overflow-wrap:break-word;box-sizing:border-box;}
+.bubble.ai{background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-bottom-left-radius:5px;color:var(--txt);}
+.bubble.me{background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-weight:500;border-bottom-right-radius:5px;}
+.msg-time{font-size:10px;color:var(--txt3);padding:0 4px;margin-top:4px;}
+.typing-bubble{display:flex;gap:4px;align-items:center;padding:13px 16px;background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-radius:18px;border-bottom-left-radius:5px;width:fit-content;}
+.typing-bubble span{width:6px;height:6px;border-radius:50%;background:var(--or);animation:bounce 1.2s infinite;}
+.typing-bubble span:nth-child(2){animation-delay:.2s;}
+.typing-bubble span:nth-child(3){animation-delay:.4s;}
+
+/* ════════════════════════════════
+   PAGE 5 — OFFRES
+════════════════════════════════ */
+#p5{background:var(--bg);}
+#p5 .scr{padding:52px 0 60px;}
+.offres-hdr{padding:0 20px 20px;border-bottom:1px solid var(--txt4);margin-bottom:20px;}
+.offres-back{display:flex;align-items:center;gap:8px;margin-bottom:16px;cursor:pointer;}
+.offres-back span{font-size:22px;color:var(--txt3);}
+.offres-back-label{font-size:13px;color:var(--txt3);}
+.offres-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--txt);margin-bottom:6px;}
+.offres-sub{font-size:13px;color:var(--txt2);line-height:1.6;}
+
+/* TIMER */
+.timer-band{margin:0 20px 20px;background:linear-gradient(135deg,rgba(232,88,88,0.1),rgba(245,168,64,0.06));border:1px solid rgba(232,88,88,0.22);border-radius:var(--r2);padding:13px 16px;display:flex;align-items:center;gap:12px;}
+.tb-body{flex:1;}
+.tb-title{font-size:13px;font-weight:700;color:var(--txt);}
+.tb-sub{font-size:11px;color:var(--txt3);margin-top:2px;}
+.tb-timer{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--red);letter-spacing:1px;flex-shrink:0;}
+
+/* ZONE TOGGLE */
+.zone-toggle{display:flex;background:var(--s1);border-radius:100px;padding:4px;margin:0 20px 20px;}
+.zt-btn{flex:1;padding:9px;border-radius:100px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--txt3);background:none;}
+.zt-btn.active{background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;}
+
+/* OFFRE CARDS */
+.offre-card{margin:0 20px 12px;border-radius:var(--r);overflow:hidden;}
+.offre-head{padding:18px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-radius:var(--r);transition:border-color .2s;}
+.offre-card.open .offre-head{border-radius:var(--r) var(--r) 0 0;border-bottom:none;border-color:rgba(201,168,76,0.2);}
+.offre-card.featured .offre-head{background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));border-color:rgba(201,168,76,0.25);}
+.oh-left{flex:1;}
+.oh-badge{font-size:10px;font-weight:700;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.oh-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.oh-prices{display:flex;align-items:baseline;gap:8px;}
+.oh-normal{font-size:13px;color:var(--txt3);text-decoration:line-through;}
+.oh-promo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--txt);}
+.oh-cur{font-size:13px;color:var(--txt2);}
+.oh-pct{display:inline-flex;padding:2px 8px;border-radius:100px;background:rgba(232,88,88,0.15);border:1px solid rgba(232,88,88,0.25);font-size:11px;font-weight:700;color:var(--red);margin-left:6px;}
+.oh-arrow{font-size:14px;color:var(--txt3);transition:transform .25s;flex-shrink:0;}
+.offre-card.open .oh-arrow{transform:rotate(180deg);color:var(--or);}
+.oh-rec{font-size:10px;font-weight:700;color:var(--or);letter-spacing:1px;text-transform:uppercase;}
+
+.offre-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+.offre-card.open .offre-body{max-height:900px;}
+.offre-inner{padding:18px 20px 20px;background:var(--s1);border:1px solid rgba(201,168,76,0.15);border-top:none;border-radius:0 0 var(--r) var(--r);}
+.offre-card.featured .offre-inner{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.01));}
+
+.ob-promise{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--or);margin-bottom:14px;line-height:1.4;}
+.ob-items{display:flex;flex-direction:column;gap:9px;margin-bottom:16px;}
+.ob-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--txt2);line-height:1.5;}
+.ob-item-icon{color:var(--green);flex-shrink:0;margin-top:1px;}
+.ob-divider{height:1px;background:var(--txt4);margin:14px 0;}
+.ob-bonus-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:10px;}
+.ob-bonus-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--txt2);margin-bottom:7px;line-height:1.5;}
+.ob-bonus-val{font-size:11px;color:var(--txt3);margin-left:auto;white-space:nowrap;flex-shrink:0;}
+.ob-rare{background:rgba(232,88,88,0.07);border:1px solid rgba(232,88,88,0.15);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:14px;}
+.ob-rare strong{color:var(--red);}
+.ob-mensuel{font-size:12px;color:var(--txt3);margin-bottom:14px;}
+.ob-mensuel span{color:var(--txt2);}
+.btn-offre{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 24px var(--or-glow);}
+.btn-offre:active{transform:scale(0.97);}
+
+/* COUT CHAOS */
+.chaos-block{margin:4px 20px 20px;background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-radius:var(--r);padding:20px;}
+.chaos-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--txt);margin-bottom:14px;}
+.chaos-items{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
+.chaos-item{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--txt2);}
+.chaos-conclusion{font-size:13px;color:var(--or);font-weight:600;font-style:italic;padding-top:12px;border-top:1px solid var(--txt4);}
+
+/* OBJECTIONS */
+.obj-block{margin:0 20px 20px;}
+.obj-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:12px;}
+.obj-item{background:var(--s1);border-radius:var(--r2);padding:14px 16px;margin-bottom:9px;}
+.obj-q{font-size:13px;color:var(--txt3);margin-bottom:5px;}
+.obj-a{font-size:13px;color:var(--txt2);line-height:1.55;}
+.obj-a strong{color:var(--or);}
+
+/* FORM RÉSERVATION */
+.form-block{margin:0 20px 20px;background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));border:1.5px solid rgba(201,168,76,0.25);border-radius:var(--r);padding:22px 20px;}
+.fb-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.fb-sub{font-size:13px;color:var(--txt2);margin-bottom:18px;line-height:1.5;}
+.fb-input{width:100%;background:var(--s2);border:1.5px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px 16px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;outline:none;margin-bottom:10px;transition:border-color .2s;}
+.fb-input:focus{border-color:rgba(201,168,76,0.4);}
+.fb-input::placeholder{color:var(--txt3);}
+.fb-select{width:100%;background:var(--s2);border:1.5px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px 16px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;outline:none;appearance:none;cursor:pointer;margin-bottom:14px;}
+.fb-select option{background:var(--bg2);}
+.fb-note{font-size:11px;color:var(--txt3);text-align:center;margin-top:10px;line-height:1.6;}
+
+/* CADEAU FINAL */
+.cadeau-final{margin:0 20px 20px;background:linear-gradient(135deg,rgba(61,201,138,0.08),rgba(61,201,138,0.02));border:1.5px dashed rgba(61,201,138,0.3);border-radius:var(--r);padding:22px 20px;text-align:center;display:none;}
+.cadeau-final.show{display:block;}
+.cf-ico{font-size:48px;margin-bottom:12px;}
+.cf-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--txt);margin-bottom:8px;}
+.cf-sub{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:18px;}
+.btn-cadeau{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--green),#2aad72);color:white;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:10px;}
+.btn-wa-final{width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#25D366,#128C7E);color:white;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+</style>
+</head>
+<body>
+<div class="atmo"></div>
+<div class="grain"></div>
+<div class="app">
+
+<!-- ════════════════════════════════
+     PAGE 1 — LANDING
+════════════════════════════════ -->
+<div class="page active" id="p1">
+  <div class="scr">
+
+    <div class="land-hero">
+      <div class="land-logo"><div class="land-logo-txt">AA</div></div>
+      <h1 class="land-headline">Fatigué à force de<br>gérer <em>trop de choses</em>&nbsp;?</h1>
+      <p class="land-sub">Laisse-nous te soulager.</p>
+      <p class="land-sub2">Attractor Assists — votre bras droit disponible 24h/24</p>
+    </div>
+
+    <div class="story-wrap">
+      <div class="story-track" id="storyTrack">
+        <div class="story-card">
+          <div class="sc-ico">😮‍💨</div>
+          <div class="sc-title">"Oufff… Enfin un système qui me comprend."</div>
+          <div class="sc-sub">Tu n'auras plus à payer un assistant pas à la hauteur. Pas d'oublis. Pas de contraintes horaires pour contacter ton assistant.</div>
+        </div>
+        <div class="story-card">
+          <div class="sc-ico">🎯</div>
+          <div class="sc-title">"Formé pour TON activité."</div>
+          <div class="sc-sub">Pas un outil générique. Un assistant que tu entraînes toi-même et qui connaît ton métier. Surtout, qui t'aide à être plus efficace.</div>
+        </div>
+        <div class="story-card">
+          <div class="sc-ico">🤝</div>
+          <div class="sc-title">"Tu ne portes plus tout seul."</div>
+          <div class="sc-sub">Quelqu'un gère pendant que tu penses à te développer. Pendant que tu vis. Pendant que tu profites de ta famille.</div>
+        </div>
+        <div class="story-card">
+          <div class="sc-ico">🔄</div>
+          <div class="sc-title">"Ton business continue même quand tu souffles."</div>
+          <div class="sc-sub">Congé. Maladie. Voyage. Ton assistant, lui, ne s'arrête pas — il suffit de lui donner la commande, il exécute.</div>
+        </div>
+        <div class="story-card">
+          <div class="sc-ico">👑</div>
+          <div class="sc-title">"Un vrai bras droit intelligent."</div>
+          <div class="sc-sub">Pas un chatbot. Un système entraîné par toi et pour toi.</div>
+          <div class="sc-tag">Bienvenue dans la révolution Attractor</div>
+        </div>
+      </div>
+      <div class="story-dots" id="storyDots"></div>
+    </div>
+
+    <div class="cta-zone">
+      <button class="btn-gold" onclick="goTo('p2')">Créer mon assistant personnel</button>
+      <p class="land-note">Configuration sur mesure selon votre activité.</p>
+    </div>
+
+    <div class="proof-bar">
+      <div class="pb-item"><div class="pb-val">48h</div><div class="pb-label">Livraison</div></div>
+      <div class="pb-sep"></div>
+      <div class="pb-item"><div class="pb-val">24/7</div><div class="pb-label">Disponible</div></div>
+      <div class="pb-sep"></div>
+      <div class="pb-item"><div class="pb-val">30j</div><div class="pb-label">Garantie</div></div>
+    </div>
+
+    <div class="assistant-wrap">
+      <div class="assistant-label">L'assistant</div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><div class="faq-q-text">C'est quoi exactement Attractor Assists ?</div><div class="faq-arrow">▾</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Un <strong>bras droit qui apprend ta manière de travailler</strong> et qui t'aide à améliorer tes process chaque jour. Il te fait gagner du temps, de l'énergie et de l'argent. Son but : te soulager de toute charge mentale inutile.</div></div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><div class="faq-q-text">L'assistant s'adapte-t-il à mon activité ?</div><div class="faq-arrow">▾</div></div>
+        <div class="faq-a"><div class="faq-a-inner"><strong>Absolument.</strong> Boutique, salon, restaurant, agence, consulting — chaque assistant est configuré avec ton vocabulaire, tes clients-types et tes process. Il ne généralise pas. Il s'adapte à <strong>ta</strong> manière de travailler.</div></div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q"><div class="faq-q-text">Suis-je le seul à pouvoir échanger avec mon assistant ?</div><div class="faq-arrow">▾</div></div>
+        <div class="faq-a"><div class="faq-a-inner"><strong>Oui.</strong> Ton assistant t'appartient. Il est configuré uniquement pour toi, accessible via ton lien personnel. Aucun autre utilisateur n'y a accès. C'est ton espace privé de travail — personne d'autre ne peut interagir avec lui sans ta permission.</div></div>
+      </div>
+    </div>
+
+    <div class="cadeau-band" style="margin-bottom:0">
+      <div class="cadeau-ico">🎁</div>
+      <div class="cadeau-body">
+        <div class="cadeau-title">Un cadeau surprise vous attend…</div>
+        <div class="cadeau-sub">Accessible à la fin de votre parcours.</div>
+      </div>
+    </div>
+
+    <div style="height:32px"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     PAGE 2 — PERSONNALISATION
+════════════════════════════════ -->
+<div class="page" id="p2">
+  <div class="scr">
+    <div class="perso-back" onclick="goTo('p1')">
+      <span>←</span><div class="perso-back-label">Retour</div>
+    </div>
+    <div class="perso-step">Étape 1 sur 2 — Ton univers</div>
+    <div class="perso-title">On prépare<br>ton assistant.</div>
+    <p class="perso-sub">Ton assistant t'attend. Donne-lui son brief.</p>
+
+    <div class="q-block">
+      <label class="q-label">Comment tu veux qu'on t'appelle <span class="req">*</span></label>
+      <input class="q-input" id="ob-prenom" type="text" placeholder="Ton prénom…" maxlength="30">
+      <div class="err-msg" id="err-prenom">✦ Ton assistant a besoin de savoir comment t'appeler.</div>
+    </div>
+
+    <div class="q-block">
+      <label class="q-label">Ton activité <span class="req">*</span></label>
+      <div class="btn-grid" id="activiteGrid">
+        <button class="choice-btn" data-val="commerce" onclick="selectChoice('activiteGrid',this)">🛍️ Boutique / Commerce</button>
+        <button class="choice-btn" data-val="services" onclick="selectChoice('activiteGrid',this)">🤝 Prestataire de services</button>
+        <button class="choice-btn" data-val="beaute" onclick="selectChoice('activiteGrid',this)">💅 Beauté / Salon</button>
+        <button class="choice-btn" data-val="restauration" onclick="selectChoice('activiteGrid',this)">🍽️ Restauration / Food</button>
+        <button class="choice-btn" data-val="tpe" onclick="selectChoice('activiteGrid',this)">🏢 TPE / Agence</button>
+        <button class="choice-btn autre-btn" data-val="autre" onclick="selectChoice('activiteGrid',this);toggleAutre('autreAct')">✏️ Autre…</button>
+      </div>
+      <div class="autre-wrap" id="autreAct">
+        <input class="q-input" id="autreActInput" placeholder="Décris ton activité…">
+      </div>
+      <div class="err-msg" id="err-activite">✦ Choisis ton secteur pour que ton assistant soit bien calibré.</div>
+    </div>
+
+    <div class="q-block">
+      <label class="q-label">Ce qui te fatigue le plus en ce moment <span class="req">*</span></label>
+      <div class="btn-grid col1" id="douleurGrid">
+        <button class="choice-btn" data-val="clients" onclick="selectChoice('douleurGrid',this)">😓 Répondre à tous mes clients</button>
+        <button class="choice-btn" data-val="organisation" onclick="selectChoice('douleurGrid',this)">🗂️ Le manque d'organisation</button>
+        <button class="choice-btn" data-val="retards" onclick="selectChoice('douleurGrid',this)">⏰ Les retards et oublis</button>
+        <button class="choice-btn" data-val="relances" onclick="selectChoice('douleurGrid',this)">🔔 Les relances jamais faites</button>
+        <button class="choice-btn" data-val="seul" onclick="selectChoice('douleurGrid',this)">🏋️ Tout gérer seul(e)</button>
+        <button class="choice-btn" data-val="whatsapp" onclick="selectChoice('douleurGrid',this)">📱 Gérer l'entreprise via WhatsApp</button>
+        <button class="choice-btn autre-btn" data-val="autre" onclick="selectChoice('douleurGrid',this);toggleAutre('autreDoul')">✏️ Autre chose…</button>
+      </div>
+      <div class="autre-wrap" id="autreDoul">
+        <input class="q-input" id="autreDoulInput" placeholder="Décris ce qui te pèse…">
+      </div>
+      <div class="err-msg" id="err-douleur">✦ Dis à ton assistant ce qui te pèse — c'est son premier brief.</div>
+    </div>
+
+    <div class="q-block">
+      <label class="q-label">Ton marché principal <span class="req">*</span></label>
+      <div class="btn-grid" id="marcheGrid">
+        <button class="choice-btn selected" data-val="af" onclick="selectChoice('marcheGrid',this)">🌍 Afrique francophone</button>
+        <button class="choice-btn" data-val="fr" onclick="selectChoice('marcheGrid',this)">🇫🇷 France & Europe</button>
+        <button class="choice-btn" data-val="both" onclick="selectChoice('marcheGrid',this)" style="grid-column:span 2">🌍🇫🇷 Les deux marchés</button>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="perso-footer">
+    <div class="perso-block-msg" id="persoBlockMsg">✦ Ton assistant attend ton brief. Remplis tous les champs pour qu'il soit vraiment efficace.</div>
+    <button class="btn-gold" onclick="validatePerso()">Activer mon assistant →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     PAGE 3 — TRANSITION
+════════════════════════════════ -->
+<div class="page" id="p3">
+  <div class="trans-inner">
+    <div class="trans-ring"><div class="trans-logo-box">AA</div></div>
+    <div class="trans-title" id="transTitle">Attractor analyse<br>ton fonctionnement…</div>
+    <div class="trans-sub" id="transSub">On prépare quelque chose pour toi.</div>
+    <div class="trans-mission" id="transMission">✅ Votre assistant a reçu sa première mission.</div>
+    <div class="trans-tags" id="transTags"></div>
+    <div class="trans-bar-wrap"><div class="trans-bar" id="transBar"></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     PAGE 4 — CHAT DÉCOUVERTE
+════════════════════════════════ -->
+<div class="page" id="p4">
+  <div class="chat-hdr">
+    <div class="chat-hdr-info">
+      <div class="chat-hdr-name">Attractor Assists</div>
+      <div class="chat-hdr-status"><div class="chat-dot"></div>En ligne · répond en 2 sec</div>
+    </div>
+  </div>
+  <div class="msgs" id="chatMsgs"></div>
+  <div class="qr-wrap" id="qrWrap"></div>
+  <div class="chat-input-area" id="chatInputArea">
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Réponds ici…" onkeydown="handleKey(event)">
+      <button class="btn-send" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     PAGE 5 — OFFRES
+════════════════════════════════ -->
+<div class="page" id="p5">
+  <div class="scr">
+
+    <div class="offres-hdr">
+      <div class="offres-back" onclick="history.back()">
+        <span>←</span><div class="offres-back-label">Retour</div>
+      </div>
+      <div class="offres-title">Choisir mon offre</div>
+      <div class="offres-sub">Offre de lancement · Prix réduits · 72h seulement</div>
+    </div>
+
+    <div class="timer-band">
+      <div class="tb-body">
+        <div class="tb-title">⏳ Offre de lancement</div>
+        <div class="tb-sub">Valable 72h pour tout nouveau visiteur</div>
+      </div>
+      <div class="tb-timer" id="timerDisplay2">72:00:00</div>
+    </div>
+
+    <div class="zone-toggle">
+      <button class="zt-btn active" id="btnCI" onclick="setZone('CI')">🌍 Côte d'Ivoire</button>
+      <button class="zt-btn" id="btnEU" onclick="setZone('EU')">🇫🇷 France / Europe</button>
+    </div>
+
+    <div id="offreCards"></div>
+
+    <div class="chaos-block">
+      <div class="chaos-title">Le vrai coût du chaos</div>
+      <div class="chaos-items">
+        <div class="chaos-item"><span>🔴</span> Un client oublié.</div>
+        <div class="chaos-item"><span>🔴</span> Une relance manquée.</div>
+        <div class="chaos-item"><span>🔴</span> Une réponse tardive.</div>
+        <div class="chaos-item"><span>🔴</span> Une tâche non suivie.</div>
+        <div class="chaos-item"><span>🔴</span> Une journée désorganisée.</div>
+      </div>
+      <div class="chaos-conclusion">"Attractor coûte moins qu'une seule erreur importante."</div>
+    </div>
+
+    <div class="obj-block">
+      <div class="obj-title">Ce que tu te demandes peut-être</div>
+      <div class="obj-item">
+        <div class="obj-q">"Je ne comprends pas l'IA…"</div>
+        <div class="obj-a"><strong>Pas besoin d'être technique.</strong> Tu discutes simplement avec ton assistant, comme tu écris un message WhatsApp.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q">"Ça ne marchera pas pour mon activité…"</div>
+        <div class="obj-a"><strong>Chaque assistant est préparé selon ta manière de travailler.</strong> Pas un modèle générique.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q">"J'ai peur de payer pour rien…"</div>
+        <div class="obj-a"><strong>Garantie résultats 30 jours.</strong> Si tu ne sens pas la différence, on reprend tout sans frais.</div>
+      </div>
+      <div class="obj-item">
+        <div class="obj-q">"Je n'ai pas le temps de m'en occuper…"</div>
+        <div class="obj-a"><strong>L'objectif est justement de te faire gagner de l'espace mental.</strong> Ton assistant arrive déjà prêt à travailler.</div>
+      </div>
+    </div>
+
+    <div class="form-block" id="formBlock">
+      <div class="fb-title">Réserver ma place 🚀</div>
+      <div class="fb-sub">Juste deux informations. Mac Arthur s'occupe du reste.</div>
+      <input class="fb-input" id="fb-phone" type="tel" placeholder="Ton numéro WhatsApp *">
+      <select class="fb-select" id="fb-besoin">
+        <option value="">— Ce qui t'intéresse le plus —</option>
+        <option>Gérer mes clients & relances</option>
+        <option>Automatiser mes messages WhatsApp</option>
+        <option>Avoir un point de gestion au quotidien</option>
+        <option>Créer un assistant pour mon équipe</option>
+      </select>
+      <button class="btn-gold" id="btnReserver" onclick="submitForm()">📲 Envoyer ma demande</button>
+      <div class="fb-note">Aucune carte bancaire. Appel découverte offert (valeur 80€).</div>
+    </div>
+
+    <div class="cadeau-final" id="cadeauFinal">
+      <div class="cf-ico">🎁</div>
+      <div class="cf-title">Ton cadeau t'attend !</div>
+      <div class="cf-sub">Un guide stratégique pour t'aider à mettre en place un manuel de procédures — et piloter ton activité sans t'épuiser.</div>
+      <button class="btn-cadeau" onclick="window.open('https://agenceattractor.com/#ebook','_blank')">🎁 Accéder à mon guide gratuit</button>
+      <button class="btn-wa-final" id="btnWaFinal" onclick="openWA('')">💬 Écrire à Mac Arthur sur WhatsApp</button>
+    </div>
+
+    <div style="height:40px"></div>
+  </div>
+</div>
+
+</div>
+<script>
+const API_URL="https://api.anthropic.com/v1/messages";
+const SHEET_URL="https://script.google.com/macros/s/AKfycbxnsvcXaQERlcRKnwXzs0fMW34n68aMOB8IVmhtZZ256tNJMVRWcCjT3uJ82DjixlbJow/exec";
+const WA_NUMBER="33753902323";
+
+let uName="",uAct="commerce",uMarche="af",uDoul="";
+let messages=[],chatPhase=0,selectedOffre="",formDone=false;
+
+const marcheLabels={af:"🌍 Afrique francophone",fr:"🇫🇷 France & Europe",both:"🌍🇫🇷 Les deux marchés"};
+const actLabels={commerce:"Boutique / Commerce",services:"Prestataire de services",beaute:"Institut de beauté / Salon",restauration:"Restauration / Food",tpe:"TPE / Agence"};
+const doulLabels={clients:"répondre à tous tes clients",organisation:"le manque d'organisation",retards:"les retards et oublis",relances:"les relances jamais faites",seul:"tout gérer seul(e)",whatsapp:"gérer ton entreprise via WhatsApp"};
+
+function goTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const s=document.querySelector('#'+id+' .scr');
+  if(s) s.scrollTop=0;
+}
+
+function initStory(){
+  const track=document.getElementById('storyTrack');
+  const dots=document.getElementById('storyDots');
+  const cards=track.querySelectorAll('.story-card');
+  dots.innerHTML=[...cards].map((_,i)=>`<div class="story-dot${i===0?' active':''}"></div>`).join('');
+  track.addEventListener('scroll',()=>{
+    const idx=Math.round(track.scrollLeft/(track.scrollWidth/cards.length));
+    dots.querySelectorAll('.story-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  },{passive:true});
+}
+
+function toggleFaq(item){
+  const open=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!open) item.classList.add('open');
+}
+
+function selectChoice(gridId,btn){
+  document.querySelectorAll('#'+gridId+' .choice-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function toggleAutre(id){
+  const w=document.getElementById(id);
+  w.classList.toggle('show');
+  if(w.classList.contains('show')) w.querySelector('input').focus();
+}
+function getSelected(gridId){
+  const s=document.querySelector('#'+gridId+' .choice-btn.selected');
+  return s?s.dataset.val:null;
+}
+
+function validatePerso(){
+  let ok=true;
+  const prenom=document.getElementById('ob-prenom').value.trim();
+  const errP=document.getElementById('err-prenom');
+  const inpP=document.getElementById('ob-prenom');
+  if(!prenom){ok=false;errP.classList.add('show');inpP.classList.add('error');}
+  else{errP.classList.remove('show');inpP.classList.remove('error');}
+  const act=getSelected('activiteGrid');
+  const errA=document.getElementById('err-activite');
+  if(!act){ok=false;errA.classList.add('show');}
+  else{errA.classList.remove('show');}
+  const doul=getSelected('douleurGrid');
+  const errD=document.getElementById('err-douleur');
+  if(!doul){ok=false;errD.classList.add('show');}
+  else{errD.classList.remove('show');}
+
+  if(!ok){
+    const msg=document.getElementById('persoBlockMsg');
+    msg.classList.add('show');
+    document.querySelector('#p2 .scr').scrollTop=0;
+    return;
+  }
+  document.getElementById('persoBlockMsg').classList.remove('show');
+
+  uName=prenom.charAt(0).toUpperCase()+prenom.slice(1);
+  const actVal=act==='autre'?(document.getElementById('autreActInput').value.trim()||'entrepreneur'):act;
+  uAct=actVal;
+  const doulVal=doul==='autre'?(document.getElementById('autreDoulInput').value.trim()||'tout gérer seul(e)'):(doulLabels[doul]||doul);
+  uDoul=doulVal;
+  uMarche=getSelected('marcheGrid')||'af';
+
+  try{localStorage.setItem('aa_user',JSON.stringify({uName,uAct,uMarche,uDoul}));}catch(e){}
+  goTo('p3');
+  runTransition();
+}
+
+function runTransition(){
+  const bar=document.getElementById('transBar');
+  const tags=document.getElementById('transTags');
+  const title=document.getElementById('transTitle');
+  const sub=document.getElementById('transSub');
+  const mission=document.getElementById('transMission');
+
+  const tagList=[
+    {txt:uName,gold:true},
+    {txt:actLabels[uAct]||uAct},
+    {txt:uDoul},
+    {txt:marcheLabels[uMarche]||uMarche},
+    {txt:'Organisation'},{txt:'Relances'},{txt:'Clients'},
+  ];
+  tags.innerHTML='';
+  tagList.forEach(t=>{
+    const el=document.createElement('div');
+    el.className='trans-tag'+(t.gold?' gold':'');
+    el.textContent=t.txt;
+    tags.appendChild(el);
+  });
+
+  let pct=0;
+  const iv=setInterval(()=>{pct+=1.4;bar.style.width=Math.min(pct,100)+'%';if(pct>=100)clearInterval(iv);},42);
+  tags.querySelectorAll('.trans-tag').forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('show'),300+i*250);
+  });
+  setTimeout(()=>{title.textContent='Analyse en cours…';sub.textContent='Clients · Organisation · Charge mentale';},1100);
+  setTimeout(()=>{title.textContent='On y est presque…';sub.textContent='Ton assistant se prépare.';},2200);
+  setTimeout(()=>mission.classList.add('show'),2600);
+  setTimeout(()=>{
+    goTo('p4');
+    initChat();
+  },3400);
+}
+
+function buildSys(){
+  return`Tu es Attractor Assists, l'assistant personnel de ${uName} (${actLabels[uAct]||uAct}).
+Sa douleur : ${uDoul}. Marché : ${marcheLabels[uMarche]||uMarche}.
+
+FLOW STRICT — 3 échanges maximum :
+
+ÉCHANGE 1 (déjà envoyé) : reformulation + "Ai-je bien compris ?"
+
+ÉCHANGE 2 : 
+- Si réponse positive (oui, exactement, correct, ✅) : Dis que tu es là pour ça. Pose cette question exacte : "En ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?"
+- Si réponse négative ou correction : Réponds avec bienveillance 😊. Jamais de ton critique. Dis que l'écrit aide à mieux cerner. Demande-lui de te dire ce qu'il vit vraiment. Pose la même question : "En ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?"
+- Si réponse invalide / bruit / test (charabia, caractères aléatoires, réponse sans sens) : Réponds avec le sourire 😊. Dis clairement : "Ta réponse me semble un peu difficile à interpréter. Nous faisons un travail de précision ici — chaque mot compte. Peux-tu me dire en quelques mots ce que tu vis vraiment ?"
+
+ÉCHANGE 3 : 
+- Reçois ce que le prospect confie. Montre un aperçu concret de ce que tu pourrais faire pour lui (liste 3-4 exemples précis liés à ce qu'il a dit). 
+- Ton doit donner la sensation que tu es vraiment capable, que tu veux aider, pas vendre.
+- Termine avec : "Pour aller plus loin, je vous propose deux choses : je vous présente rapidement nos différentes offres et ensuite je vous envoie le lien pour télécharger votre bonus."
+- Puis écris exactement : [SHOW_OFFRES]
+
+POSTURE ABSOLUE :
+- Jamais paternaliste. Jamais critique. Toujours du côté du prospect.
+- Tu veux vraiment aider. Ce n'est pas du marketing. C'est de la précision.
+- Appelle toujours ${uName} par son prénom.
+- Tu n'es pas Claude. Tu es Attractor Assists.`;
+}
+
+function initChat(){
+  messages=[];chatPhase=0;
+  document.getElementById('chatMsgs').innerHTML='';
+  document.getElementById('qrWrap').innerHTML='';
+  document.getElementById('chatInputArea').style.display='block';
+
+  const act=actLabels[uAct]||uAct;
+  const intro=`Bonjour ${uName} 👋\n\nVoilà ce que je comprends de ta situation : tu travailles dans le secteur **${act}**, et ce qui te pèse le plus en ce moment, c'est **${uDoul}**.\n\nAi-je bien compris ?`;
+  addMsg('assistant',intro);
+  messages.push({role:'assistant',content:intro});
+  showQR(['✅ Oui, exactement','🔄 Pas tout à fait']);
+}
+
+async function processMsg(text){
+  clearQR();
+  addMsg('user',text);
+  messages.push({role:'user',content:text});
+  chatPhase++;
+  showTyping();
+
+  try{
+    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:700,system:buildSys(),messages})});
+    const data=await res.json();
+    removeTyping();
+    const reply=data.content?.[0]?.text||fallback(text);
+    finishAI(reply);
+  }catch(e){
+    removeTyping();
+    finishAI(fallback(text));
+  }
+}
+
+function finishAI(reply){
+  const clean=reply.replace('[SHOW_OFFRES]','').trim();
+  addMsg('assistant',clean);
+  messages.push({role:'assistant',content:clean});
+  if(reply.includes('[SHOW_OFFRES]')){
+    setTimeout(()=>{
+      document.getElementById('chatInputArea').style.display='none';
+      clearQR();
+      showQR(['✅ Oui, on y va !']);
+    },600);
+    setTimeout(()=>{
+      document.getElementById('qrWrap').innerHTML='<button class="qr-btn" style="background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-weight:700;border:none;" onclick="goTo(\'p5\')">✅ Oui, on y va !</button>';
+    },700);
+  } else if(chatPhase===1){
+    showQR([]);
+  }
+}
+
+function fallback(text){
+  const lower=text.toLowerCase();
+  const isOui=lower.includes('oui')||lower.includes('exactement')||lower.includes('✅')||lower.includes('correct')||lower.includes('ok');
+  const isInvalid=!/[a-záàâéèêëîïôùûüç\s]/i.test(text)||text.length<3;
+
+  if(isInvalid){
+    return`😊 Ta réponse me semble un peu difficile à interpréter. Nous faisons un travail de précision ici — chaque mot compte.\n\nPeux-tu me dire en quelques mots ce que tu vis vraiment ? Je suis là pour t'aider concrètement, ${uName}.`;
+  }
+  if(chatPhase<=1){
+    if(isOui){
+      return`Parfait ${uName} 😊 Je suis là exactement pour ça.\n\nEn ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?`;
+    } else {
+      return`😊 Je comprends mieux maintenant — l'écrit aide toujours à mieux cerner les choses.\n\nDis-moi ce que tu vis vraiment, ${uName}. Pas de filtre. En ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?`;
+    }
+  }
+  return`Merci ${uName} — c'est exactement le type d'information dont j'avais besoin.\n\nVoici un aperçu de ce que je pourrais faire pour toi dès demain :\n\n✅ Organiser et prioriser tes tâches chaque matin\n✅ Gérer tes relances clients automatiquement\n✅ Résumer tes messages et t'alerter sur l'essentiel\n✅ Enregistrer les besoins de tes clients à la volée\n\nTu as mentionné **${uDoul}** — c'est précisément là où je suis le plus utile.\n\nPour aller plus loin, je vous propose deux choses : je vous présente rapidement nos différentes offres et ensuite je vous envoie le lien pour télécharger votre bonus. [SHOW_OFFRES]`;
+}
+
+function sendMsg(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  processMsg(text);
+}
+function sendQuick(text){clearQR();processMsg(text);}
+function handleKey(e){if(e.key==='Enter')sendMsg();}
+
+function addMsg(role,text){
+  const c=document.getElementById('chatMsgs');
+  const now=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const isAI=role==='assistant';
+  const clean=text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  const div=document.createElement('div');
+  div.className=`msg ${isAI?'':'user'}`;
+  div.innerHTML=`
+    <div class="msg-av ${isAI?'ai':'me'}">${isAI?'AA':'👤'}</div>
+    <div class="msg-content">
+      <div class="bubble ${isAI?'ai':'me'}">${clean}</div>
+      <div class="msg-time">${now}</div>
+    </div>`;
+  c.appendChild(div);
+  requestAnimationFrame(()=>{ c.scrollTop=c.scrollHeight; });
+}
+function showTyping(){
+  const c=document.getElementById('chatMsgs');
+  const d=document.createElement('div');
+  d.className='msg';d.id='typing';
+  d.innerHTML=`<div class="msg-av ai">AA</div><div class="msg-content"><div class="typing-bubble"><span></span><span></span><span></span></div></div>`;
+  c.appendChild(d);
+  requestAnimationFrame(()=>{ c.scrollTop=c.scrollHeight; });
+}
+function removeTyping(){const el=document.getElementById('typing');if(el)el.remove();}
+function showQR(list){
+  document.getElementById('qrWrap').innerHTML=list.map(t=>`<button class="qr-btn" onclick="sendQuick('${t}')">${t}</button>`).join('');
+}
+function clearQR(){document.getElementById('qrWrap').innerHTML='';}
+
+const OFFRES={
+  CI:[
+    {id:'starter',name:'Le Bras Droit Personnel',promise:'Commencez à structurer votre quotidien sans porter l\'organisation seul.',
+     promo:'25 000',normal:'75 000',mensuel:'10 000',pct:'67',cur:'FCFA',featured:false,
+     items:['Assistant IA prêt à l\'emploi — configuré pour travailler immédiatement avec vous','Suivi quotidien intelligent — priorités, journées, tâches importantes','Structuration des premières procédures — réponses récurrentes, logique business','Mémoire active 3 mois — habitudes, priorités, fonctionnement'],
+     bonus:[{ico:'📘',txt:'Ebook stratégique "Organiser et piloter sans s\'épuiser"',val:'15 000 FCFA'},{ico:'📡',txt:'Canal privé Attractor — tips business & IA chaque semaine',val:'10 000 FCFA/an'},{ico:'🤝',txt:'Accès communauté entrepreneurs',val:'25 000 FCFA'},{ico:'⚡',txt:'Accès prioritaire aux nouveautés',val:'20 000 FCFA'}],
+     rare:'⚠ Accès réservé aux 100 premiers entrepreneurs.'},
+    {id:'pro',name:'Le Bras Droit Organisé',promise:'Transformez votre organisation personnelle en véritable système structuré.',
+     promo:'50 000',normal:'150 000',mensuel:'25 000',pct:'67',cur:'FCFA',featured:true,
+     items:['Tout Le Bras Droit Personnel','Gestion intelligente des mails','Synchronisation Google Agenda','Organisation avancée des priorités','Suivi structuré des tâches et rappels'],
+     bonus:[],rare:''},
+    {id:'business',name:'Le Bras Droit Pro',promise:'Faites tourner votre activité avec un véritable système d\'assistance connecté à votre business.',
+     promo:'75 000',normal:'300 000',mensuel:'45 000',pct:'75',cur:'FCFA',featured:false,
+     items:['Tout Le Bras Droit Organisé','Pilotage WhatsApp Business','Relances et réponses intelligentes','Assistance client augmentée','Continuité opérationnelle renforcée'],
+     bonus:[],rare:'🔥 L\'offre la plus désirable — une entreprise véritablement assistée.'},
+    {id:'team',name:'MA TEAM',promise:'Une équipe intelligente sur mesure entraînée pour fonctionner selon votre entreprise.',
+     promo:'Sur devis',normal:'',mensuel:'',pct:'',cur:'',featured:false,
+     items:['Infrastructure opérationnelle intelligente sur mesure','Équipe d\'assistants configurés selon vos process','Solution entreprise — tarification personnalisée'],
+     bonus:[],rare:'Ce n\'est plus un assistant. C\'est votre infrastructure intelligente.'},
+  ],
+  EU:[
+    {id:'starter',name:'Le Bras Droit Personnel',promise:'Commencez à structurer votre quotidien sans porter l\'organisation seul.',
+     promo:'37',normal:'117',mensuel:'17',pct:'68',cur:'€',featured:false,
+     items:['Assistant IA prêt à l\'emploi — configuré pour travailler immédiatement avec vous','Suivi quotidien intelligent — priorités, journées, tâches importantes','Structuration des premières procédures — réponses récurrentes, logique business','Mémoire active 3 mois — habitudes, priorités, fonctionnement'],
+     bonus:[{ico:'📘',txt:'Ebook stratégique "Organiser et piloter sans s\'épuiser"',val:'25€'},{ico:'📡',txt:'Canal privé Attractor — tips business & IA chaque semaine',val:'17€/an'},{ico:'🤝',txt:'Accès communauté entrepreneurs',val:'47€'},{ico:'⚡',txt:'Accès prioritaire aux nouveautés',val:'37€'}],
+     rare:'⚠ Accès réservé aux 100 premiers entrepreneurs.'},
+    {id:'pro',name:'Le Bras Droit Organisé',promise:'Transformez votre organisation personnelle en véritable système structuré.',
+     promo:'77',normal:'227',mensuel:'37',pct:'66',cur:'€',featured:true,
+     items:['Tout Le Bras Droit Personnel','Gestion intelligente des mails','Synchronisation Google Agenda','Organisation avancée des priorités','Suivi structuré des tâches et rappels'],
+     bonus:[],rare:''},
+    {id:'business',name:'Le Bras Droit Pro',promise:'Faites tourner votre activité avec un véritable système d\'assistance connecté à votre business.',
+     promo:'157',normal:'457',mensuel:'67',pct:'66',cur:'€',featured:false,
+     items:['Tout Le Bras Droit Organisé','Pilotage WhatsApp Business','Relances et réponses intelligentes','Assistance client augmentée','Continuité opérationnelle renforcée'],
+     bonus:[],rare:'🔥 L\'offre la plus désirable.'},
+    {id:'team',name:'MA TEAM',promise:'Une équipe intelligente sur mesure entraînée pour fonctionner selon votre entreprise.',
+     promo:'Sur devis',normal:'',mensuel:'',pct:'',cur:'',featured:false,
+     items:['Infrastructure opérationnelle intelligente sur mesure','Équipe d\'assistants configurés selon vos process','Solution entreprise — tarification personnalisée'],
+     bonus:[],rare:'Ce n\'est plus un assistant. C\'est votre infrastructure intelligente.'},
+  ]
+};
+
+let currentZone='CI';
+function setZone(z){
+  currentZone=z;
+  document.getElementById('btnCI').classList.toggle('active',z==='CI');
+  document.getElementById('btnEU').classList.toggle('active',z==='EU');
+  renderOffres();
+}
+
+function renderOffres(){
+  const list=OFFRES[currentZone];
+  document.getElementById('offreCards').innerHTML=list.map((o,i)=>{
+    const isDevis=o.promo==='Sur devis';
+    const pricesHTML=isDevis
+      ?`<div class="oh-promo" style="font-size:20px">Sur devis</div>`
+      :`<div class="oh-prices"><div class="oh-normal">${o.normal} ${o.cur}</div><div class="oh-promo">${o.promo}</div><div class="oh-cur">${o.cur}</div><span class="oh-pct">-${o.pct}%</span></div>`;
+    const bonusHTML=o.bonus.length?`
+      <div class="ob-divider"></div>
+      <div class="ob-bonus-title">🎁 Bonus inclus</div>
+      ${o.bonus.map(b=>`<div class="ob-bonus-item"><span>${b.ico}</span><span>${b.txt}</span><span class="ob-bonus-val">${b.val}</span></div>`).join('')}
+    `:'';
+    const rareHTML=o.rare?`<div class="ob-rare"><strong>${o.rare}</strong></div>`:'';
+    const mensuelHTML=(!isDevis&&o.mensuel)?`<div class="ob-mensuel">Entretien mensuel : <span>${o.mensuel} ${o.cur}/mois</span></div>`:'';
+    const btnLabel=isDevis?'Demander un devis sur mesure →':`Choisir ${o.name} →`;
+    const recHTML=o.featured?`<div class="oh-rec">⭐ RECOMMANDÉ</div>`:'';
+
+    return`<div class="offre-card${o.featured?' featured':''}" id="offre-${o.id}">
+      <div class="offre-head" onclick="toggleOffre('offre-${o.id}')">
+        <div class="oh-left">
+          ${recHTML}
+          <div class="oh-name">${o.name}</div>
+          ${pricesHTML}
+        </div>
+        <div class="oh-arrow">▾</div>
+      </div>
+      <div class="offre-body">
+        <div class="offre-inner">
+          <div class="ob-promise">${o.promise}</div>
+          <div class="ob-items">${o.items.map(it=>`<div class="ob-item"><span class="ob-item-icon">✔</span><span>${it}</span></div>`).join('')}</div>
+          ${bonusHTML}
+          ${rareHTML}
+          ${mensuelHTML}
+          <button class="btn-offre" onclick="choisirOffre('${o.name}')">${btnLabel}</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleOffre(id){
+  const card=document.getElementById(id);
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.offre-card.open').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen) card.classList.add('open');
+}
+
+function choisirOffre(name){
+  selectedOffre=name;
+  document.getElementById('formBlock').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function submitForm(){
+  const phone=document.getElementById('fb-phone').value.trim();
+  if(!phone){showToast('⚠️ Numéro WhatsApp requis');return;}
+  const besoin=document.getElementById('fb-besoin').value||'Non précisé';
+  const now=new Date().toLocaleString('fr-FR');
+  const act=actLabels[uAct]||uAct;
+  const marche=marcheLabels[uMarche]||uMarche;
+  const besoinFull=besoin+(uDoul?' | Douleur : '+uDoul:'')+(selectedOffre?' | Offre : '+selectedOffre:'');
+
+  try{
+    await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({date:now,prenom:uName,phone,activite:act,marche,besoin:besoinFull,source:window.location.href})});
+  }catch(e){}
+
+  formDone=true;
+  document.getElementById('formBlock').style.display='none';
+  const cadeau=document.getElementById('cadeauFinal');
+  cadeau.classList.add('show');
+  const offreTxt=selectedOffre?`Je suis intéressé(e) par l'offre **${selectedOffre}**.`:'';
+  document.getElementById('btnWaFinal').onclick=()=>openWA(offreTxt);
+  cadeau.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openWA(offreTxt){
+  const base=`Bonjour Mac Arthur, j'ai complété ma demande sur Attractor Assists. ${offreTxt}`.trim();
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(base)}`,'_blank');
+}
+
+function showToast(msg){
+  const ex=document.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3200);
+}
+
+function startTimer(){
+  let key='aa_timer';let start;
+  try{start=parseInt(localStorage.getItem(key)||'0');if(!start){start=Date.now();localStorage.setItem(key,start);}}catch(e){start=Date.now();}
+  function tick(){
+    const remain=Math.max(0,72*3600000-(Date.now()-start));
+    const h=Math.floor(remain/3600000),m=Math.floor((remain%3600000)/60000),s=Math.floor((remain%60000)/1000);
+    const val=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    ['timerDisplay','timerDisplay2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=val;});
+    if(remain>0)setTimeout(tick,1000);
+  }
+  tick();
+}
+
+initStory();
+renderOffres();
+startTimer();
+try{
+  const s=JSON.parse(localStorage.getItem('aa_user')||'{}');
+  if(s.uName){uName=s.uName;uAct=s.uAct||'commerce';uMarche=s.uMarche||'af';uDoul=s.uDoul||'';}
+}catch(e){}
+
+(()=>{
+  const p=new URLSearchParams(window.location.search);
+  if(p.get('n')) uName=decodeURIComponent(p.get('n'));
+  if(p.get('a')) uAct=decodeURIComponent(p.get('a'));
+  if(p.get('m')) uMarche=decodeURIComponent(p.get('m'));
+  if(p.get('d')) uDoul=decodeURIComponent(p.get('d'));
+  if(p.get('offres')==='1') goTo('p5');
+})();
+</script>
+</body>
+</html>
