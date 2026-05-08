@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#06060E">
+<title>Attractor Assists — Découverte</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{
+  height:100%;
+  background:#06060E;
+  color:#F2EEE6;
+  font-family:'Outfit',sans-serif;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* HEADER */
+.hdr{
+  flex-shrink:0;
+  padding:52px 20px 14px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid rgba(242,238,230,0.07);
+  background:#06060E;
+}
+.hdr-logo{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-weight:700;font-size:13px;color:#06060E;
+  flex-shrink:0;
+  box-shadow:0 4px 16px rgba(201,168,76,0.3);
+}
+.hdr-info{flex:1;min-width:0;}
+.hdr-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#F2EEE6;}
+.hdr-status{display:flex;align-items:center;gap:5px;font-size:12px;color:#3DC98A;margin-top:2px;}
+.hdr-dot{width:6px;height:6px;border-radius:50%;background:#3DC98A;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* MESSAGES */
+.msgs{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.msgs::-webkit-scrollbar{display:none;}
+
+.msg{display:flex;gap:10px;align-items:flex-end;}
+.msg.user{flex-direction:row-reverse;}
+
+.av{
+  width:30px;height:30px;border-radius:50%;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;
+}
+.av.ai{background:linear-gradient(135deg,#C9A84C,#E8C96A);color:#06060E;font-family:'Cormorant Garamond',serif;font-weight:700;}
+.av.me{background:#1A1A32;border:1px solid rgba(255,255,255,0.08);font-size:16px;}
+
+.msg-body{flex:1;min-width:0;display:flex;flex-direction:column;}
+.msg.user .msg-body{align-items:flex-end;}
+
+.bubble{
+  display:inline-block;
+  max-width:82%;
+  padding:12px 15px;
+  border-radius:18px;
+  font-size:14px;
+  line-height:1.65;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+.bubble.ai{
+  background:#141428;
+  border:1px solid rgba(255,255,255,0.06);
+  border-bottom-left-radius:4px;
+  color:#F2EEE6;
+  text-align:left;
+}
+.bubble.me{
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;
+  font-weight:600;
+  border-bottom-right-radius:4px;
+  text-align:left;
+}
+.t{font-size:10px;color:rgba(242,238,230,0.28);margin-top:4px;padding:0 2px;}
+
+/* TYPING */
+.typing{display:flex;gap:5px;align-items:center;padding:13px 16px;background:#141428;border:1px solid rgba(255,255,255,0.06);border-radius:18px;border-bottom-left-radius:4px;width:fit-content;}
+.typing span{width:6px;height:6px;border-radius:50%;background:#C9A84C;animation:dot 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}
+.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{transform:translateY(0);opacity:.35;}40%{transform:translateY(-5px);opacity:1;}}
+
+/* QUICK REPLIES */
+.qr{
+  flex-shrink:0;
+  padding:8px 16px;
+  display:flex;gap:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.qr::-webkit-scrollbar{display:none;}
+.qr-btn{
+  flex-shrink:0;
+  padding:9px 16px;
+  border-radius:100px;
+  border:1.5px solid rgba(201,168,76,0.3);
+  background:rgba(201,168,76,0.1);
+  color:#C9A84C;
+  font-size:13px;font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  font-family:'Outfit',sans-serif;
+}
+.qr-btn.gold{
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;
+  border-color:transparent;
+  box-shadow:0 4px 16px rgba(201,168,76,0.3);
+}
+.qr-btn:active{transform:scale(0.96);}
+
+/* MINI FORM */
+.mini-form{
+  flex-shrink:0;
+  margin:8px 16px;
+  background:linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.03));
+  border:1.5px solid rgba(201,168,76,0.25);
+  border-radius:18px;
+  padding:20px;
+  display:none;
+}
+.mini-form.show{display:block;}
+.mf-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#F2EEE6;margin-bottom:4px;}
+.mf-sub{font-size:13px;color:rgba(242,238,230,0.6);margin-bottom:16px;line-height:1.5;}
+.mf-input{
+  width:100%;
+  background:#1A1A32;
+  border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:13px 16px;
+  color:#F2EEE6;
+  font-family:'Outfit',sans-serif;font-size:15px;
+  outline:none;margin-bottom:10px;
+  transition:border-color .2s;
+}
+.mf-input:focus{border-color:rgba(201,168,76,0.4);}
+.mf-input::placeholder{color:rgba(242,238,230,0.28);}
+.mf-select{
+  width:100%;
+  background:#1A1A32;
+  border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:13px 16px;
+  color:#F2EEE6;
+  font-family:'Outfit',sans-serif;font-size:15px;
+  outline:none;appearance:none;cursor:pointer;margin-bottom:14px;
+}
+.mf-select option{background:#0B0B18;}
+.btn-gold{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;box-shadow:0 6px 24px rgba(201,168,76,0.3);
+}
+.btn-gold:active{transform:scale(0.97);}
+.mf-note{font-size:11px;color:rgba(242,238,230,0.28);text-align:center;margin-top:10px;line-height:1.6;}
+
+/* SUCCÈS */
+.success{
+  flex-shrink:0;
+  margin:8px 16px;
+  background:#141428;
+  border:1px solid rgba(61,201,138,0.2);
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+  display:none;
+}
+.success.show{display:block;}
+.sc-ico{font-size:48px;margin-bottom:12px;}
+.sc-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:#F2EEE6;margin-bottom:8px;}
+.sc-sub{font-size:13px;color:rgba(242,238,230,0.6);line-height:1.7;margin-bottom:18px;}
+.btn-cadeau{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#3DC98A,#2aad72);color:white;font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:10px;}
+.btn-wa{width:100%;padding:13px;border-radius:14px;border:none;background:linear-gradient(135deg,#25D366,#128C7E);color:white;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+/* INPUT */
+.input-area{
+  flex-shrink:0;
+  padding:10px 16px 28px;
+  background:linear-gradient(to top,#06060E 80%,transparent);
+}
+.input-row{
+  display:flex;align-items:center;gap:8px;
+  background:#141428;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:100px;
+  padding:8px 8px 8px 18px;
+}
+.input-row input{
+  flex:1;min-width:0;
+  background:none;border:none;outline:none;
+  color:#F2EEE6;font-family:'Outfit',sans-serif;font-size:15px;
+}
+.input-row input::placeholder{color:rgba(242,238,230,0.28);}
+.btn-send{
+  width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#C9A84C,#E8C96A);
+  color:#06060E;font-size:17px;
+  box-shadow:0 4px 16px rgba(201,168,76,0.3);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:#141428;border:1px solid rgba(201,168,76,0.2);
+  border-radius:12px;padding:10px 18px;font-size:13px;color:#F2EEE6;
+  z-index:999;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5);
+  animation:fadeIn .2s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.msg{animation:slideUp .2s ease both;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">AA</div>
+  <div class="hdr-info">
+    <div class="hdr-name">Attractor Assists</div>
+    <div class="hdr-status"><div class="hdr-dot"></div>En ligne · répond en 2 sec</div>
+  </div>
+</div>
+
+<!-- MESSAGES -->
+<div class="msgs" id="msgs"></div>
+
+<!-- QUICK REPLIES -->
+<div class="qr" id="qr"></div>
+
+<!-- MINI FORM -->
+<div class="mini-form" id="miniForm">
+  <div class="mf-title">On va plus loin 🚀</div>
+  <div class="mf-sub">Juste deux informations et Mac Arthur s'occupe du reste.</div>
+  <input class="mf-input" id="mf-phone" type="tel" placeholder="Ton numéro WhatsApp *">
+  <select class="mf-select" id="mf-besoin">
+    <option value="">— Ce qui t'intéresse le plus —</option>
+    <option>Gérer mes clients & relances</option>
+    <option>Automatiser mes messages WhatsApp</option>
+    <option>Avoir un point de gestion au quotidien</option>
+    <option>Créer un assistant pour mon équipe</option>
+  </select>
+  <button class="btn-gold" onclick="submitForm()">📲 Envoyer ma demande</button>
+  <div class="mf-note">Aucune carte bancaire. Appel découverte offert (valeur 80€).</div>
+</div>
+
+<!-- SUCCÈS -->
+<div class="success" id="success">
+  <div class="sc-ico">✅</div>
+  <div class="sc-title" id="scTitle">C'est noté !</div>
+  <div class="sc-sub">Mac Arthur va te contacter sous 24h sur WhatsApp pour configurer ton assistant personnel.</div>
+  <button class="btn-cadeau" onclick="window.open('https://agenceattractor.com/#ebook','_blank')">🎁 Accéder à mon guide gratuit</button>
+  <button class="btn-wa" id="btnWa" onclick="openWA()">💬 Écrire à Mac Arthur sur WhatsApp</button>
+</div>
+
+<!-- INPUT -->
+<div class="input-area" id="inputArea">
+  <div class="input-row">
+    <input type="text" id="chatInput" placeholder="Réponds ici…" onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="btn-send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<script>
+const API_URL   = "https://api.anthropic.com/v1/messages";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbxnsvcXaQERlcRKnwXzs0fMW34n68aMOB8IVmhtZZ256tNJMVRWcCjT3uJ82DjixlbJow/exec";
+const WA_NUMBER = "33753902323";
+
+// Récupérer les données depuis localStorage
+let data={};
+try{ data=JSON.parse(localStorage.getItem('aa_user')||'{}'); }catch(e){}
+
+const uName   = data.uName   || "toi";
+const uAct    = data.uAct    || "entrepreneur";
+const uMarche = data.uMarche || "af";
+const uDoul   = data.uDoul   || "tout gérer seul(e)";
+let selectedOffre = "";
+
+const actLabels={
+  commerce:"Boutique / Commerce",services:"Prestataire de services",
+  beaute:"Institut de beauté / Salon",restauration:"Restauration / Food",tpe:"TPE / Agence"
+};
+const marcheLabels={af:"🌍 Afrique francophone",fr:"🇫🇷 France & Europe",both:"🌍🇫🇷 Les deux marchés"};
+const actLabel = actLabels[uAct]||uAct;
+const marcheLabel = marcheLabels[uMarche]||uMarche;
+
+let messages=[], chatPhase=0, formShown=false;
+
+// ─── AFFICHAGE MESSAGES ───
+function addMsg(role,text){
+  const c=document.getElementById('msgs');
+  const now=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const isAI=role==='assistant';
+  const clean=text.replace('[SHOW_FORM]','').replace('[SHOW_OFFRES]','').trim();
+  const html=clean
+    .replace(/\n/g,'<br>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  const div=document.createElement('div');
+  div.className=`msg ${isAI?'':'user'}`;
+  div.innerHTML=`
+    <div class="av ${isAI?'ai':'me'}">${isAI?'AA':'👤'}</div>
+    <div class="msg-body">
+      <div class="bubble ${isAI?'ai':'me'}">${html}</div>
+      <div class="t">${now}</div>
+    </div>`;
+  c.appendChild(div);
+  setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
+}
+
+function showTyping(){
+  const c=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg'; d.id='typing';
+  d.innerHTML=`<div class="av ai">AA</div><div class="msg-body"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  c.appendChild(d);
+  setTimeout(()=>{ c.scrollTop=c.scrollHeight; },50);
+}
+function removeTyping(){ const el=document.getElementById('typing'); if(el)el.remove(); }
+
+function setQR(list){
+  const el=document.getElementById('qr');
+  if(!list||!list.length){ el.innerHTML=''; return; }
+  el.innerHTML=list.map((t,i)=>
+    `<button class="qr-btn${i===0&&list.length===1?' gold':''}" onclick="sendQuick('${t.replace(/'/g,"\\'")}'">${t}</button>`
+  ).join('');
+}
+
+// ─── SYSTEM PROMPT ───
+function buildSys(){
+  return `Tu es Attractor Assists, l'assistant personnel de ${uName}.
+Activité : ${actLabel}. Marché : ${marcheLabel}. Douleur déclarée : ${uDoul}.
+
+FLOW STRICT — 3 échanges :
+
+ÉCHANGE 1 (déjà envoyé) : reformulation + "Ai-je bien compris ?"
+
+ÉCHANGE 2 :
+- Réponse positive → Dis que tu es là pour ça. Pose : "En ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?"
+- Réponse négative/correction → Bienveillance 😊, jamais critique. Dis que l'écrit aide à mieux cerner. Pose la même question.
+- Réponse invalide/bruit/charabia → Réponds : "😊 Ta réponse me semble difficile à interpréter. Nous faisons un travail de précision — peux-tu me dire en quelques mots ce que tu vis vraiment ?"
+
+ÉCHANGE 3 :
+- Reçois la tâche confiée. Montre 3-4 exemples concrets de ce que tu ferais pour ${uName} vu sa situation.
+- Termine EXACTEMENT par : "Pour aller plus loin, je vous propose deux choses : je vous présente rapidement nos différentes offres, et ensuite je vous envoie le lien pour télécharger votre bonus."
+- Puis écris : [SHOW_OFFRES]
+
+POSTURE : jamais paternaliste, jamais critique. Tu veux vraiment aider. Appelle toujours ${uName} par son prénom. Tu es Attractor Assists, pas Claude.`;
+}
+
+// ─── FALLBACK ───
+function fallback(text,phase){
+  const l=text.toLowerCase().trim();
+  const isInvalid=text.length<2||!/[a-zA-ZÀ-ÿ]/.test(text);
+  const isOui=/oui|exactement|correct|ok|✅|yes|parfait|tout à fait/i.test(text);
+
+  if(isInvalid){
+    return `😊 Ta réponse me semble difficile à interpréter, ${uName}. Nous faisons un travail de précision ici.\n\nPeux-tu me dire en quelques mots ce que tu vis vraiment ?`;
+  }
+  if(phase<=1){
+    if(isOui){
+      return `Parfait ${uName} 😊 Je suis là exactement pour ça.\n\nEn ce moment, si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?`;
+    }
+    return `😊 Je comprends mieux maintenant — l'écrit aide toujours à mieux cerner les choses.\n\nDis-moi ${uName}, en ce moment : si j'étais capable de faire n'importe quoi pour t'aider professionnellement, qu'est-ce que tu me confierais comme tâche ?`;
+  }
+  return `Merci ${uName} — c'est exactement ce dont j'avais besoin.\n\nVoici un aperçu de ce que je pourrais faire pour toi dès demain :\n\n✅ Organiser tes priorités chaque matin\n✅ Gérer tes relances clients automatiquement\n✅ Résumer tes messages et t'alerter sur l'essentiel\n✅ Enregistrer les besoins de tes clients à la volée\n\nTu as mentionné **${uDoul}** — c'est précisément là où je suis le plus utile.\n\nPour aller plus loin, je vous propose deux choses : je vous présente rapidement nos différentes offres, et ensuite je vous envoie le lien pour télécharger votre bonus. [SHOW_OFFRES]`;
+}
+
+// ─── ENVOI ───
+async function processMsg(text){
+  setQR([]);
+  addMsg('user',text);
+  messages.push({role:'user',content:text});
+  chatPhase++;
+  showTyping();
+
+  try{
+    const res=await fetch(API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:buildSys(),messages})
+    });
+    const d=await res.json();
+    removeTyping();
+    const reply=d.content?.[0]?.text||fallback(text,chatPhase);
+    handleReply(reply);
+  }catch(e){
+    removeTyping();
+    handleReply(fallback(text,chatPhase));
+  }
+}
+
+function handleReply(reply){
+  addMsg('assistant',reply);
+  messages.push({role:'assistant',content:reply});
+
+  if(reply.includes('[SHOW_OFFRES]')&&!formShown){
+    formShown=true;
+    document.getElementById('inputArea').style.display='none';
+    setQR([]);
+    setTimeout(()=>{
+      // Rediriger vers page offres
+      localStorage.setItem('aa_show_offres','1');
+      window.location.href='attractor-assists-v4.html#offres';
+    },1800);
+    return;
+  }
+
+  if(chatPhase===1){
+    setQR(['✅ Oui, exactement','🔄 Pas tout à fait']);
+  }
+}
+
+function sendMsg(){
+  const inp=document.getElementById('chatInput');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';
+  processMsg(text);
+}
+
+function sendQuick(text){
+  setQR([]);
+  processMsg(text);
+}
+
+// ─── FORM ───
+async function submitForm(){
+  const phone=document.getElementById('mf-phone').value.trim();
+  if(!phone){showToast('⚠️ Numéro WhatsApp requis');return;}
+  const besoin=document.getElementById('mf-besoin').value||'Non précisé';
+  const now=new Date().toLocaleString('fr-FR');
+  const besoinFull=besoin+(uDoul?' | Douleur : '+uDoul:'')+(selectedOffre?' | Offre : '+selectedOffre:'');
+  try{
+    await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({date:now,prenom:uName,phone,activite:actLabel,marche:marcheLabel,besoin:besoinFull,source:window.location.href})});
+  }catch(e){}
+  document.getElementById('miniForm').classList.remove('show');
+  const sc=document.getElementById('success');
+  document.getElementById('scTitle').textContent=`C'est noté, ${uName} !`;
+  sc.classList.add('show');
+  setTimeout(()=>sc.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function openWA(){
+  const offreTxt=selectedOffre?` Je suis intéressé(e) par l'offre ${selectedOffre}.`:'';
+  window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Bonjour Mac Arthur, j'ai complété ma demande sur Attractor Assists.${offreTxt}`)}`, '_blank');
+}
+
+function showToast(msg){
+  const ex=document.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded',()=>{
+  const act=actLabels[uAct]||uAct;
+  const intro=`Bonjour ${uName} 👋\n\nVoilà ce que je comprends de ta situation : tu travailles dans le secteur **${act}**, et ce qui te pèse le plus en ce moment, c'est **${uDoul}**.\n\nAi-je bien compris ?`;
+  setTimeout(()=>{
+    addMsg('assistant',intro);
+    messages.push({role:'assistant',content:intro});
+    setQR(['✅ Oui, exactement','🔄 Pas tout à fait']);
+  },400);
+});
+</script>
+</body>
+</html>
