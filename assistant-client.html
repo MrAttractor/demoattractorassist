@@ -234,12 +234,26 @@ async function getBroadcast(){try{var r=await fetch(SURL+'?action=getBroadcast')
 async function saveMsg(role,content){var now=new Date();try{await fetch(SURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveMessage',id:cid,role:role,content:content,date:now.toLocaleDateString('fr-FR'),heure:fH(now)})});}catch(e){}}
 
 function toggleVoice(){
-  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){toast('Dictée vocale non disponible');return;}
+  var ua=navigator.userAgent.toLowerCase();
+  var isIOS=/iphone|ipad|ipod/.test(ua);
+  if(isIOS){
+    // iOS — activer le clavier vocal natif via inputmode
+    var inp=document.getElementById('inp');
+    inp.focus();
+    toast('🎙️ Appuie sur le micro de ton clavier');
+    return;
+  }
+  // Android / Desktop — Web Speech API
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){
+    toast('Utilise le micro de ton clavier pour dicter');return;
+  }
   if(isRec){stopVoice();return;}
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;rec=new SR();rec.lang='fr-FR';rec.continuous=false;rec.interimResults=false;
-  rec.onstart=function(){isRec=true;document.getElementById('btnMic').classList.add('rec');document.getElementById('inp').placeholder='🎙️ J\'écoute...';};
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new SR();rec.lang='fr-FR';rec.continuous=false;rec.interimResults=false;
+  rec.onstart=function(){isRec=true;document.getElementById('btnMic').classList.add('rec');document.getElementById('inp').placeholder='🎙️ Écoute...';};
   rec.onresult=function(e){document.getElementById('inp').value=e.results[0][0].transcript;stopVoice();};
-  rec.onerror=rec.onend=function(){stopVoice();};rec.start();
+  rec.onerror=rec.onend=function(){stopVoice();};
+  rec.start();
 }
 function stopVoice(){isRec=false;document.getElementById('btnMic').classList.remove('rec');document.getElementById('inp').placeholder='Écris ou dicte ta question...';if(rec){try{rec.stop();}catch(e){}}}
 
