@@ -212,12 +212,13 @@ async function send(txt){
   if(obOn){await traiterOB(msg);return;}
   msgs.push({role:'user',content:msg});showTyp();
   try{
-    // GET request — évite CORS preflight sur Safari iOS
+    // GET request — prompt reconstruit côté serveur
     var params=new URLSearchParams();
     params.set('action','chat');
-    params.set('system',sys);
-    params.set('messages',JSON.stringify(msgs.slice(-20)));
-    var res=await fetch(SURL+'&'+params.toString());
+    params.set('id',cid);
+    params.set('msg',msgs[msgs.length-1].content);
+    params.set('hist',JSON.stringify(msgs.slice(-10)));
+    var res=await fetch(SURL+'?'+params.toString());
     var d=await sJ(res);hideTyp();if(!d.success)throw new Error(d.error||'Erreur');
     var rep=d.reply||"Je n'ai pas pu répondre. Réessaie.";
     msgs.push({role:'assistant',content:rep});addMsg('assistant',rep,fH(new Date()),true);await saveMsg('assistant',rep);
