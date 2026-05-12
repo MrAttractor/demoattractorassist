@@ -527,6 +527,7 @@ async function soumettre() {
 }
 
 function afficherSucces(prenom, url) {
+  try { localStorage.setItem('aa_client_url', url); localStorage.setItem('aa_client_prenom', prenom); } catch(e) {}
   document.getElementById('mainApp').style.display = 'none';
   var sc = document.getElementById('successScreen');
   sc.classList.add('show');
@@ -534,6 +535,13 @@ function afficherSucces(prenom, url) {
   document.getElementById('successUrl').textContent = url;
   document.getElementById('btnGo').onclick = function() { window.location.href = url; };
 }
+
+(function() {
+  try {
+    var url = localStorage.getItem('aa_client_url');
+    if (url) { window.location.href = url; }
+  } catch(e) {}
+})();
 
 // ── TOAST ────────────────────────────────
 function toast(msg) {
