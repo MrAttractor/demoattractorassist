@@ -133,7 +133,7 @@ body{min-height:100vh;padding-bottom:120px;}
 // CONFIG — À NE PAS MODIFIER
 // ══════════════════════════════════════════════
 const ANTHROPIC_KEY = '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
-; // ← Remplace par ta clé Anthropic
+'; // ← Remplace par ta clé Anthropic
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbxEC0WyeWASiy7ZsIt2XQkcDEOrlvuCQX40pd2mu1k7OVluXTe-kGCANdArIzGNKztQ/exec';
 
 // ══════════════════════════════════════════════
@@ -146,6 +146,79 @@ let systemPrompt = '';
 
 // ══════════════════════════════════════════════
 // INIT
+// ══════════════════════════════════════════════
+// ONBOARDING GUIDÉ — une seule fois par client
+// ══════════════════════════════════════════════
+async function lancerOnboarding(profil, now) {
+  var prenom = profil.prenom;
+  var questions = [
+    'Bonjour ' + prenom + ' 👋\n\nJe suis ton assistant personnel — configuré pour toi, pas pour tout le monde.\n\nAvant qu\'on commence, j\'ai 4 questions rapides pour mieux te connaître. Ça prend 2 minutes et ça change tout.\n\n**Question 1/4**\nQu\'est-ce qui t\'a amené à chercher un assistant comme moi ? Qu\'est-ce que tu voulais changer dans ton quotidien ?',
+    '**Question 2/4**\nQuel est ton plus grand blocage en ce moment — la chose qui te prend le plus d\'énergie sans vraiment avancer ?',
+    '**Question 3/4**\nQuand tu imagines ton activité dans 6 mois, exactement comme tu le veux — tu vois quoi concrètement ?',
+    '**Question 4/4**\nQu\'est-ce qui te pousse à continuer quand c\'est difficile ? Ton moteur profond.'
+  ];
+
+  var reponsesOnboarding = [];
+  var questionIndex = 0;
+
+  // Afficher la première question
+  afficherMessage('assistant', questions[0], formatHeure(now), true);
+  await sauvegarderMessage('assistant', questions[0]);
+
+  // Intercepter les réponses pendant l'onboarding
+  window._onboardingActif = true;
+  window._onboardingIndex = 0;
+  window._onboardingQuestions = questions;
+  window._onboardingReponses = reponsesOnboarding;
+  window._onboardingProfil = profil;
+  window._onboardingClientId = clientId;
+}
+
+async function traiterReponseOnboarding(msg) {
+  var reponses = window._onboardingReponses;
+  var questions = window._onboardingQuestions;
+  var idx = window._onboardingIndex;
+
+  reponses.push(msg);
+  window._onboardingIndex = idx + 1;
+
+  if (window._onboardingIndex < questions.length - 1) {
+    // Prochaine question
+    var prochaine = questions[window._onboardingIndex + 1];
+    afficherMessage('assistant', prochaine, formatHeure(new Date()), true);
+    await sauvegarderMessage('assistant', prochaine);
+  } else {
+    // Onboarding terminé — enrichir le profil
+    window._onboardingActif = false;
+
+    var synthese = 'Onboarding ' + window._onboardingProfil.prenom + ':\n'
+      + 'Motivation: ' + reponses[0] + '\n'
+      + 'Blocage: ' + reponses[1] + '\n'
+      + 'Vision 6 mois: ' + reponses[2] + '\n'
+      + 'Moteur: ' + reponses[3];
+
+    // Sauvegarder en localStorage
+    try { localStorage.setItem('aa_onboarding_' + window._onboardingClientId, '1'); } catch(e) {}
+
+    // Sauvegarder dans le Sheet via Apps Script (enrichir colonne H)
+    try {
+      await fetch(APPS_SCRIPT_URL + '?action=saveOnboarding', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: window._onboardingClientId, onboarding: synthese })
+      });
+    } catch(e) {}
+
+    // Message de fin et démarrage du chat
+    var profil = window._onboardingProfil;
+    var msgFin = 'Merci ' + profil.prenom + ' — j\'ai tout noté.\n\nJe connais maintenant ton moteur, tes blocages et ta vision. Je vais m\'en servir pour être vraiment utile — pas juste répondre à des questions.\n\nOn commence. Qu\'est-ce que tu veux faire maintenant ?';
+    afficherMessage('assistant', msgFin, formatHeure(new Date()), true);
+    await sauvegarderMessage('assistant', msgFin);
+    afficherCommandes(profil.modules);
+  }
+}
+
 // ══════════════════════════════════════════════
 async function init() {
   // Récupérer l'ID client depuis l'URL
@@ -211,10 +284,19 @@ async function init() {
       // Scroll en bas
       window.scrollTo(0, document.body.scrollHeight);
     } else {
-      // Premier message de bienvenue
-      const bienvenue = 'Bonjour ' + profil.prenom + ' 👋\n\nJe suis ton assistant personnel, configuré pour t\'aider avec **' + profil.activite + '**.\n\n**Priorité actuelle :** ' + profil.priorite + '\n\nUtilise les commandes rapides ou pose-moi ta question directement.';
-      afficherMessage('assistant', bienvenue, formatHeure(now), true);
-      await sauvegarderMessage('assistant', bienvenue);
+      // Vérifier si onboarding déjà complété
+      var onboardingFait = false;
+      try { onboardingFait = localStorage.getItem('aa_onboarding_' + clientId) === '1'; } catch(e) {}
+
+      if (onboardingFait) {
+        // Onboarding déjà fait — message de retour simple
+        var msgRetour = 'Content de te revoir ' + profil.prenom + ' 👋\n\nQue veux-tu faire aujourd\'hui ?';
+        afficherMessage('assistant', msgRetour, formatHeure(now), true);
+        await sauvegarderMessage('assistant', msgRetour);
+      } else {
+        // Premier accès — lancer l'onboarding guidé
+        await lancerOnboarding(profil, now);
+      }
     }
 
   } catch(err) {
@@ -392,9 +474,15 @@ async function sendMsg(txt) {
   const heure = formatHeure(now);
 
   afficherMessage('user', msg, heure, true);
-  messages.push({role:'user', content:msg});
   await sauvegarderMessage('user', msg);
 
+  // Si onboarding en cours — traiter la réponse différemment
+  if (window._onboardingActif) {
+    await traiterReponseOnboarding(msg);
+    return;
+  }
+
+  messages.push({role:'user', content:msg});
   showTyping();
 
   try {
