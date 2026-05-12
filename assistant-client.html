@@ -8,544 +8,251 @@
 <meta name="apple-mobile-web-app-title" content="Attractor Assists">
 <meta name="theme-color" content="#06060E">
 <title>Attractor Assists</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--or:#C9A84C;--or2:#E8C96A;--bg:#06060E;--s1:#141428;--s2:#1A1A32;--s3:#20203C;--txt:#F2EEE6;--txt2:rgba(242,238,230,0.5);--txt3:rgba(242,238,230,0.22);--txt4:rgba(242,238,230,0.08);--green:#3DC98A;--red:#E85858;}
+:root{--or:#C9A84C;--or2:#E8C96A;--or-dim:rgba(201,168,76,0.1);--or-glow:rgba(201,168,76,0.2);--bg:#06060E;--s1:#0F0F1E;--s2:#141428;--s3:#1A1A32;--txt:#F2EEE6;--txt2:rgba(242,238,230,0.55);--txt3:rgba(242,238,230,0.25);--txt4:rgba(242,238,230,0.07);--green:#3DC98A;--red:#E85858;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;overflow-x:hidden;background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;}
-body{min-height:100vh;padding-bottom:120px;}
-
-/* ── LOADER ── */
-.loader{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
-.loader-logo{width:64px;height:64px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;color:#06060E;animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,168,76,0.4);}50%{transform:scale(1.05);box-shadow:0 0 0 12px rgba(201,168,76,0);}}
-.loader-text{font-size:14px;color:var(--txt3);letter-spacing:1px;}
-
-/* ── BROADCAST BANNER ── */
-.broadcast{background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border-bottom:1px solid rgba(201,168,76,0.2);padding:12px 20px;display:none;align-items:flex-start;gap:10px;}
-.broadcast.show{display:flex;}
-.bc-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
-.bc-text{flex:1;font-size:13px;color:var(--txt);line-height:1.5;}
-.bc-close{background:none;border:none;color:var(--txt3);font-size:20px;cursor:pointer;padding:0 4px;line-height:1;}
-
-/* ── HEADER ── */
-.header{padding:52px 20px 16px;display:flex;align-items:center;justify-content:space-between;}
-.h-logo{display:flex;align-items:center;gap:10px;}
-.h-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:11px;color:#06060E;box-shadow:0 4px 16px rgba(201,168,76,0.2);}
-.h-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;}
-.h-name span{color:var(--or);}
-.h-date{font-size:11px;color:var(--txt3);letter-spacing:0.5px;}
-
-/* ── GREETING ── */
-.greeting{padding:4px 20px 20px;}
-.g-time{font-size:12px;color:var(--or);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;}
-.g-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;line-height:1.1;}
-.g-status{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:13px;color:var(--txt2);}
-.g-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+html,body{background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
+body{padding-bottom:120px;}
+.loader{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loader-logo{width:64px;height:64px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;color:#06060E;animation:lp 1.5s infinite;}
+@keyframes lp{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,168,76,0.4);}50%{transform:scale(1.05);box-shadow:0 0 0 12px rgba(201,168,76,0);}}
+.loader-text{font-size:13px;color:var(--txt3);letter-spacing:1px;}
+.broadcast{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.03));border-bottom:1px solid rgba(201,168,76,0.2);padding:12px 20px;display:none;align-items:flex-start;gap:10px;}
+.broadcast.show{display:flex;}.bc-icon{font-size:16px;flex-shrink:0;}.bc-text{flex:1;font-size:13px;color:var(--txt);line-height:1.5;}.bc-close{background:none;border:none;color:var(--txt3);font-size:20px;cursor:pointer;}
+.header{padding:48px 20px 12px;display:flex;align-items:center;justify-content:space-between;}
+.h-left{display:flex;align-items:center;gap:10px;}
+.h-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:11px;color:#06060E;}
+.h-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;}.h-name span{color:var(--or);}
+.h-right{display:flex;align-items:center;gap:8px;}
+.streak-pill{display:flex;align-items:center;gap:4px;background:rgba(245,168,64,0.1);border:1px solid rgba(245,168,64,0.25);border-radius:100px;padding:4px 10px;font-size:12px;font-weight:700;color:#F5A840;display:none;}
+.h-date{font-size:11px;color:var(--txt3);}
+.jauge-card{margin:8px 16px 0;background:var(--s2);border:1px solid rgba(255,255,255,0.05);border-radius:14px;padding:12px 14px;}
+.jc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.jc-label{font-size:11px;font-weight:600;color:var(--txt2);}.jc-pct{font-size:13px;font-weight:700;color:var(--or);}
+.jc-bar{height:6px;background:var(--txt4);border-radius:100px;overflow:hidden;margin-bottom:8px;}
+.jc-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:100px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1);}
+.jc-steps{display:flex;flex-wrap:wrap;gap:4px;}
+.jc-step{font-size:10px;color:var(--txt3);background:var(--s3);border-radius:4px;padding:2px 6px;}
+.jc-step.done{color:var(--green);background:rgba(61,201,138,0.1);}
+.greeting{padding:14px 20px 8px;}
+.g-time{font-size:11px;color:var(--or);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;}
+.g-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;line-height:1.1;}
+.g-status{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:var(--txt2);}
+.g-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
-
-/* ── CHAT ── */
-.chat-wrap{padding:0 16px;display:flex;flex-direction:column;gap:12px;}
-.msg{padding:12px 16px;border-radius:16px;line-height:1.6;font-size:14px;max-width:88%;animation:fadeUp 0.2s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.msg.ai{background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-bottom-left-radius:4px;align-self:flex-start;}
-.msg.user{background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-weight:500;border-bottom-right-radius:4px;align-self:flex-end;}
-.msg-time{font-size:10px;color:var(--txt3);margin-top:4px;padding:0 4px;}
-.msg.user .msg-time{text-align:right;color:rgba(6,6,14,0.5);}
-
-.typing{display:flex;gap:4px;align-items:center;padding:14px 16px;background:var(--s1);border:1px solid rgba(255,255,255,0.05);border-radius:16px;border-bottom-left-radius:4px;align-self:flex-start;width:fit-content;}
-.typing span{width:6px;height:6px;border-radius:50%;background:var(--or);animation:bounce 1.2s infinite;}
-.typing span:nth-child(2){animation-delay:0.2s;}
-.typing span:nth-child(3){animation-delay:0.4s;}
-@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:0.4;}40%{transform:translateY(-5px);opacity:1;}}
-
-/* ── QUICK REPLIES ── */
-.qb-row{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;}
-.qb{padding:8px 14px;background:var(--s1);border:1px solid rgba(201,168,76,0.25);border-radius:100px;color:var(--or);font-size:12px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s;white-space:nowrap;}
-.qb:active{background:rgba(201,168,76,0.15);transform:scale(0.96);}
-
-/* ── INPUT ── */
-.input-wrap{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 32px;background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:50;}
-.input-row{display:flex;gap:8px;align-items:center;background:var(--s1);border:1px solid rgba(255,255,255,0.07);border-radius:100px;padding:8px 8px 8px 18px;transition:border-color 0.2s;}
+.essai-strip{margin:8px 16px 0;background:rgba(232,88,88,0.07);border:1px solid rgba(232,88,88,0.2);border-radius:12px;padding:10px 14px;display:none;align-items:center;gap:10px;}
+.essai-strip.show{display:flex;}.es-text{flex:1;font-size:12px;color:var(--txt2);}
+.es-btn{background:var(--or);color:#06060E;border:none;border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:11px;cursor:pointer;}
+.ob-dots{display:none;align-items:center;gap:6px;padding:8px 20px;}
+.ob-dots.show{display:flex;}.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--txt4);transition:all 0.3s;}
+.ob-dot.active{background:var(--or);transform:scale(1.2);}.ob-dot.done{background:var(--green);}
+.chat{padding:8px 16px 0;display:flex;flex-direction:column;gap:10px;}
+.mw{display:flex;flex-direction:column;}.mw.ai{align-items:flex-start;}.mw.user{align-items:flex-end;}
+.mt{font-size:10px;color:var(--txt3);padding:2px 4px;margin-bottom:2px;}.mw.user .mt{text-align:right;}
+.msg{padding:12px 15px;border-radius:16px;line-height:1.6;font-size:14px;max-width:88%;animation:fu 0.25s ease both;}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.ai{background:var(--s2);border:1px solid rgba(255,255,255,0.05);border-bottom-left-radius:4px;}
+.msg.user{background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-weight:500;border-bottom-right-radius:4px;}
+.typing{display:flex;gap:4px;align-items:center;padding:13px 15px;background:var(--s2);border:1px solid rgba(255,255,255,0.05);border-radius:16px;border-bottom-left-radius:4px;align-self:flex-start;width:fit-content;}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--or);animation:td 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes td{0%,80%,100%{transform:translateY(0);opacity:0.4;}40%{transform:translateY(-5px);opacity:1;}}
+.qr-row{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px 4px;}
+.qr-btn{padding:8px 14px;background:var(--s2);border:1px solid rgba(201,168,76,0.22);border-radius:100px;color:var(--or);font-size:12px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;}
+.qr-btn:active{background:var(--or-dim);transform:scale(0.95);}
+.input-area{position:fixed;bottom:0;left:0;right:0;padding:10px 16px 28px;background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:50;}
+.input-row{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid rgba(255,255,255,0.07);border-radius:100px;padding:8px 8px 8px 16px;transition:border-color 0.2s;}
 .input-row:focus-within{border-color:rgba(201,168,76,0.3);}
 .input-row input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;}
 .input-row input::placeholder{color:var(--txt3);}
-.btn-send{width:38px;height:38px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(201,168,76,0.2);}
+.btn-mic{width:38px;height:38px;border-radius:50%;border:none;background:var(--s3);color:var(--txt2);font-size:17px;cursor:pointer;flex-shrink:0;transition:all 0.15s;}
+.btn-mic.rec{background:var(--red);color:white;animation:rp 1s infinite;}
+@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(232,88,88,0.4);}50%{box-shadow:0 0 0 8px rgba(232,88,88,0);}}
+.btn-send{width:38px;height:38px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;font-size:16px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 16px var(--or-glow);}
 .btn-send:active{transform:scale(0.92);}
-
-/* ── ERROR STATE ── */
-.error-state{padding:40px 24px;text-align:center;}
-.error-icon{font-size:48px;margin-bottom:16px;}
-.error-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:var(--or);}
-.error-sub{font-size:14px;color:var(--txt2);line-height:1.7;}
+.bdg-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:498;display:none;}
+.bdg-overlay.show{display:block;}
+.bdg-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:499;background:var(--s2);border:1px solid rgba(201,168,76,0.3);border-radius:24px;padding:32px 28px;text-align:center;max-width:300px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,0.6);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+.bdg-modal.show{transform:translate(-50%,-50%) scale(1);}
+.bm-emoji{font-size:52px;margin-bottom:12px;display:block;animation:pi 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;}
+@keyframes pi{from{transform:scale(0)}to{transform:scale(1)}}
+.bm-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--or);margin-bottom:6px;}
+.bm-sub{font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:20px;}
+.bm-btn{background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:12px;padding:12px 28px;font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;cursor:pointer;}
+.err-state{padding:48px 24px;text-align:center;}
+.err-icon{font-size:44px;margin-bottom:16px;}.err-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--or);margin-bottom:8px;}.err-sub{font-size:14px;color:var(--txt2);line-height:1.7;}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--or-dim);border-radius:12px;padding:11px 18px;font-size:13px;color:var(--txt);z-index:400;white-space:nowrap;}
 </style>
 </head>
 <body>
-
-<!-- LOADER -->
-<div class="loader" id="loader">
-  <div class="loader-logo">AA</div>
-  <div class="loader-text">Chargement de ton assistant...</div>
-</div>
-
-<!-- BROADCAST BANNER -->
-<div class="broadcast" id="broadcastBanner">
-  <div class="bc-icon">📢</div>
-  <div class="bc-text" id="broadcastText"></div>
-  <button class="bc-close" onclick="closeBroadcast()">×</button>
-</div>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="h-logo">
-    <div class="h-mark">AA</div>
-    <div class="h-name">Attractor <span>Assists</span></div>
-  </div>
-  <div class="h-date" id="headerDate"></div>
-</div>
-
-<!-- GREETING -->
-<div class="greeting">
-  <div class="g-time" id="timeLabel">Bonjour</div>
-  <div class="g-name" id="clientName">...</div>
-  <div class="g-status">
-    <div class="g-dot"></div>
-    <span id="clientActivity">Assistant actif</span>
-  </div>
-</div>
-
-<!-- CHAT -->
-<div class="chat-wrap" id="chat"></div>
-
-<!-- QUICK REPLIES -->
-<div class="qb-row" id="quickReplies"></div>
-
-<!-- INPUT -->
-<div class="input-wrap">
-  <div class="input-row">
-    <input type="text" id="inp" placeholder="Pose ta question..." onkeypress="if(event.key==='Enter')sendMsg()">
-    <button class="btn-send" onclick="sendMsg()">➤</button>
-  </div>
-</div>
+<div class="loader" id="loader"><div class="loader-logo">AA</div><div class="loader-text">Chargement de ton assistant...</div></div>
+<div class="bdg-overlay" id="bdgOvl" onclick="closeBadge()"></div>
+<div class="bdg-modal" id="bdgModal"><span class="bm-emoji" id="bmE">🏆</span><div class="bm-title" id="bmT">Badge</div><div class="bm-sub" id="bmS">Tu avances.</div><button class="bm-btn" onclick="closeBadge()">Super !</button></div>
+<div class="broadcast" id="bcBanner"><div class="bc-icon">📢</div><div class="bc-text" id="bcText"></div><button class="bc-close" onclick="document.getElementById('bcBanner').classList.remove('show')">×</button></div>
+<div class="header"><div class="h-left"><div class="h-mark">AA</div><div class="h-name">Attractor <span>Assists</span></div></div><div class="h-right"><div class="streak-pill" id="strPill">🔥 <span id="strNum">1</span></div><div class="h-date" id="hDate"></div></div></div>
+<div class="jauge-card" id="jCard"><div class="jc-top"><div class="jc-label" id="jLbl">🧠 Ton assistant apprend...</div><div class="jc-pct" id="jPct">0%</div></div><div class="jc-bar"><div class="jc-fill" id="jFill" style="width:0%"></div></div><div class="jc-steps" id="jSteps"></div></div>
+<div class="greeting"><div class="g-time" id="gTime">Bonjour</div><div class="g-name" id="gName">...</div><div class="g-status"><div class="g-dot"></div><span id="gAct">Assistant actif</span></div></div>
+<div class="essai-strip" id="essaiStrip"><div class="es-text" id="essaiTxt"></div><button class="es-btn" onclick="ouvrirOffre()">Continuer →</button></div>
+<div class="ob-dots" id="obDots"><div class="ob-dot" id="od0"></div><div class="ob-dot" id="od1"></div><div class="ob-dot" id="od2"></div><div class="ob-dot" id="od3"></div></div>
+<div class="chat" id="chat"></div>
+<div class="qr-row" id="qrRow"></div>
+<div class="input-area"><div class="input-row"><input type="text" id="inp" placeholder="Écris ou dicte ta question..." onkeypress="if(event.key==='Enter')send()"><button class="btn-mic" id="btnMic" onclick="toggleVoice()">🎙️</button><button class="btn-send" onclick="send()">➤</button></div></div>
 
 <script>
-// ══════════════════════════════════════════════
-// CONFIG — À NE PAS MODIFIER
-// ══════════════════════════════════════════════
-const ANTHROPIC_KEY = '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
-'; // ← Remplace par ta clé Anthropic
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbxEC0WyeWASiy7ZsIt2XQkcDEOrlvuCQX40pd2mu1k7OVluXTe-kGCANdArIzGNKztQ/exec';
+var SURL='https://script.google.com/macros/s/AKfycbwbxEC0WyeWASiy7ZsIt2XQkcDEOrlvuCQX40pd2mu1k7OVluXTe-kGCANdArIzGNKztQ/exec';
+var WA='+33753902323';
+var cid='',pr=null,sys='',msgs=[],obOn=false,obIdx=0,obRep=[],rec=null,isRec=false;
+var JAUGE=[{id:'inscription',l:'Inscription',w:10},{id:'onboarding',l:'Bilan de parcours',w:30},{id:'client1',l:'1er client noté',w:15},{id:'objectif',l:'Objectif financier',w:15},{id:'tache1',l:'1ère tâche dictée',w:15},{id:'streak3',l:'3 jours consécutifs',w:15}];
+var OBQ=["Qu'est-ce qui t'a amené à vouloir un assistant comme moi ? Qu'est-ce que tu voulais changer dans ton quotidien ?","Quel est ton plus grand blocage en ce moment — la chose qui te prend le plus d'énergie sans vraiment avancer ?","Quand tu imagines ton activité dans 6 mois exactement comme tu la veux — tu vois quoi concrètement ?","Qu'est-ce qui te pousse à continuer quand c'est difficile ? Ton moteur profond."];
+var BDGS={inscription:{e:'🌱',t:'Premiers pas',s:"Ton assistant est né. Bienvenue dans la relation."},onboarding:{e:'💬',t:'Je te connais',s:"J'ai tout noté. Je m'en souviendrai."},client1:{e:'👥',t:'Carnet client',s:"Je surveille tes relances maintenant."},objectif:{e:'🎯',t:'Objectif posé',s:"Je sais où on va. Je vais y penser pour toi."},tache1:{e:'📋',t:'Première action',s:"C'est parti. Je retiens tout ce que tu me donnes."},streak3:{e:'🔥',t:"3 jours d'affilée",s:"Tu es dans la zone. Garde le rythme."},jauge100:{e:'🚀',t:'Bras droit activé',s:"Je te connais maintenant. Laisse-moi travailler pour toi."}};
 
-// ══════════════════════════════════════════════
-// ÉTAT
-// ══════════════════════════════════════════════
-let clientId = '';
-let clientProfile = null;
-let messages = [];
-let systemPrompt = '';
-
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-// ONBOARDING GUIDÉ — une seule fois par client
-// ══════════════════════════════════════════════
-async function lancerOnboarding(profil, now) {
-  var prenom = profil.prenom;
-  var questions = [
-    'Bonjour ' + prenom + ' 👋\n\nJe suis ton assistant personnel — configuré pour toi, pas pour tout le monde.\n\nAvant qu\'on commence, j\'ai 4 questions rapides pour mieux te connaître. Ça prend 2 minutes et ça change tout.\n\n**Question 1/4**\nQu\'est-ce qui t\'a amené à chercher un assistant comme moi ? Qu\'est-ce que tu voulais changer dans ton quotidien ?',
-    '**Question 2/4**\nQuel est ton plus grand blocage en ce moment — la chose qui te prend le plus d\'énergie sans vraiment avancer ?',
-    '**Question 3/4**\nQuand tu imagines ton activité dans 6 mois, exactement comme tu le veux — tu vois quoi concrètement ?',
-    '**Question 4/4**\nQu\'est-ce qui te pousse à continuer quand c\'est difficile ? Ton moteur profond.'
-  ];
-
-  var reponsesOnboarding = [];
-  var questionIndex = 0;
-
-  // Afficher la première question
-  afficherMessage('assistant', questions[0], formatHeure(now), true);
-  await sauvegarderMessage('assistant', questions[0]);
-
-  // Intercepter les réponses pendant l'onboarding
-  window._onboardingActif = true;
-  window._onboardingIndex = 0;
-  window._onboardingQuestions = questions;
-  window._onboardingReponses = reponsesOnboarding;
-  window._onboardingProfil = profil;
-  window._onboardingClientId = clientId;
+async function init(){
+  var p=new URLSearchParams(window.location.search);
+  cid=decodeURIComponent(p.get('id')||'');
+  if(!cid){showErr('Lien invalide','Contacte Mac Arthur pour obtenir ton lien.');return;}
+  var now=new Date(),h=now.getHours();
+  document.getElementById('hDate').textContent=now.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+  document.getElementById('gTime').textContent=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';
+  majStreak();
+  try{
+    pr=await getClient();
+    if(!pr){showErr('Assistant introuvable',"Ton assistant n'est pas encore prêt. Contacte Mac Arthur.");return;}
+    document.getElementById('gName').textContent=pr.prenom+' 👋';
+    document.getElementById('gAct').textContent=pr.activite;
+    document.title='Attractor Assists — '+pr.prenom;
+    chargerJauge();
+    sys=buildPrompt(pr,now);
+    var bc=await getBroadcast();
+    if(bc&&bc.message){var k='bc_'+bc.id;if(!ls(k)){document.getElementById('bcText').textContent=bc.message;document.getElementById('bcBanner').classList.add('show');lsSet(k,'1');}}
+    if(pr.joursRestants!==''&&parseInt(pr.joursRestants)<=2&&pr.statut==='ESSAI_GRATUIT'){document.getElementById('essaiTxt').textContent='Il te reste '+pr.joursRestants+' jour(s) d\'essai gratuit.';document.getElementById('essaiStrip').classList.add('show');}
+    var hist=await getConv();
+    if(hist&&hist.length>0){
+      msgs=hist.map(function(m){return{role:m.role,content:m.content};});
+      hist.forEach(function(m){addMsg(m.role,m.content,nH(m.heure),false);});
+      window.scrollTo(0,document.body.scrollHeight);showQR();
+    }else{debloquerBadge('inscription');startOB(now);}
+  }catch(e){console.error(e);showErr('Erreur de connexion','Vérifie ta connexion internet et réessaie.');}
+  document.getElementById('loader').style.display='none';
 }
 
-async function traiterReponseOnboarding(msg) {
-  var reponses = window._onboardingReponses;
-  var questions = window._onboardingQuestions;
-  var idx = window._onboardingIndex;
-
-  reponses.push(msg);
-  window._onboardingIndex = idx + 1;
-
-  if (window._onboardingIndex < questions.length - 1) {
-    // Prochaine question
-    var prochaine = questions[window._onboardingIndex + 1];
-    afficherMessage('assistant', prochaine, formatHeure(new Date()), true);
-    await sauvegarderMessage('assistant', prochaine);
-  } else {
-    // Onboarding terminé — enrichir le profil
-    window._onboardingActif = false;
-
-    var synthese = 'Onboarding ' + window._onboardingProfil.prenom + ':\n'
-      + 'Motivation: ' + reponses[0] + '\n'
-      + 'Blocage: ' + reponses[1] + '\n'
-      + 'Vision 6 mois: ' + reponses[2] + '\n'
-      + 'Moteur: ' + reponses[3];
-
-    // Sauvegarder en localStorage
-    try { localStorage.setItem('aa_onboarding_' + window._onboardingClientId, '1'); } catch(e) {}
-
-    // Sauvegarder dans le Sheet via Apps Script (enrichir colonne H)
-    try {
-      await fetch(APPS_SCRIPT_URL + '?action=saveOnboarding', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: window._onboardingClientId, onboarding: synthese })
-      });
-    } catch(e) {}
-
-    // Message de fin et démarrage du chat
-    var profil = window._onboardingProfil;
-    var msgFin = 'Merci ' + profil.prenom + ' — j\'ai tout noté.\n\nJe connais maintenant ton moteur, tes blocages et ta vision. Je vais m\'en servir pour être vraiment utile — pas juste répondre à des questions.\n\nOn commence. Qu\'est-ce que tu veux faire maintenant ?';
-    afficherMessage('assistant', msgFin, formatHeure(new Date()), true);
-    await sauvegarderMessage('assistant', msgFin);
-    afficherCommandes(profil.modules);
+function startOB(now){
+  obOn=true;obIdx=0;obRep=[];
+  document.getElementById('obDots').classList.add('show');majOBD();
+  var intro='Bonjour '+pr.prenom+' 👋\n\nJe suis ton assistant personnel — conçu pour toi, pas pour tout le monde.\n\nAvant de commencer, j\'ai **4 questions** pour mieux te connaître. 2 minutes — et ça change tout à la qualité de mon aide.\n\n**Question 1/4 :**\n'+OBQ[0];
+  addMsg('assistant',intro,fH(now),true);saveMsg('assistant',intro);
+}
+function majOBD(){for(var i=0;i<4;i++){var d=document.getElementById('od'+i);d.className='ob-dot';if(i<obIdx)d.classList.add('done');else if(i===obIdx)d.classList.add('active');}}
+async function traiterOB(msg){
+  obRep.push(msg);obIdx++;majOBD();var now=new Date();
+  if(obIdx<OBQ.length){var q='**Question '+(obIdx+1)+'/4 :**\n'+OBQ[obIdx];addMsg('assistant',q,fH(now),true);await saveMsg('assistant',q);}
+  else{
+    obOn=false;document.getElementById('obDots').classList.remove('show');lsSet('ob_'+cid,'1');
+    var syn='ONBOARDING '+pr.prenom+'\nMotivation: '+obRep[0]+'\nBlocage: '+obRep[1]+'\nVision 6 mois: '+obRep[2]+'\nMoteur: '+obRep[3];
+    try{await fetch(SURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveOnboarding',id:cid,onboarding:syn})});}catch(e){}
+    majJauge('onboarding');debloquerBadge('onboarding');
+    var hc=now.getHours(),mom=hc<12?'le matin':hc<18?"l'après-midi":'le soir';
+    var mots=detectMots(obRep.join(' '));
+    var fin='Merci '+pr.prenom+' — j\'ai tout noté. 📝\n\n'
+      +'Je vois que tu travailles '+mom+'.'+(mots.length>0?' Les mots qui reviennent chez toi : **'+mots.join('**, **')+'**. Je m\'en souviendrai.\n\n':'\n\n')
+      +'Voilà ce qu\'on va faire ensemble :\n\n'
+      +'📅 **Brief du jour** — chaque matin, l\'essentiel sans chercher\n'
+      +'🎙️ **Dictée intelligente** — tu parles, je structure et j\'agis\n'
+      +'📊 **Tableau de bord** — "Où j\'en suis ?" → 10 secondes\n'
+      +'🎯 **Progression guidée** — je propose, tu décides\n\n'
+      +'On commence. Qu\'est-ce que tu veux faire maintenant ?';
+    addMsg('assistant',fin,fH(now),true);await saveMsg('assistant',fin);msgs.push({role:'assistant',content:fin});showQR();
   }
 }
+function detectMots(t){return['client','relance','finance','temps','organisation','prospection','contenu','équipe','stress','objectif'].filter(function(m){return t.toLowerCase().indexOf(m)>=0;}).slice(0,3);}
 
-// ══════════════════════════════════════════════
-async function init() {
-  // Récupérer l'ID client depuis l'URL
-  const params = new URLSearchParams(window.location.search);
-  clientId = params.get('id') || '';
-
-  if (!clientId) {
-    showError('Lien invalide', 'Ce lien ne contient pas d\'identifiant client. Contacte Mac Arthur pour obtenir ton lien personnel.');
-    return;
-  }
-
-  // Date du jour
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  const h = now.getHours();
-  document.getElementById('headerDate').textContent = dateStr;
-  document.getElementById('timeLabel').textContent = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
-
-  try {
-    // Charger profil + historique + broadcasts en parallèle
-    const [profil, historique, broadcasts] = await Promise.all([
-      chargerProfil(),
-      chargerHistorique(),
-      chargerBroadcasts()
-    ]);
-
-    if (!profil) {
-      showError('Assistant introuvable', 'Ton assistant n\'est pas encore configuré. Contacte Mac Arthur pour finaliser ta configuration.');
-      return;
-    }
-
-    clientProfile = profil;
-
-    // Afficher le profil
-    document.getElementById('clientName').textContent = profil.prenom + ' 👋';
-    document.getElementById('clientActivity').textContent = profil.activite;
-    document.title = 'Attractor Assists — ' + profil.prenom;
-
-    // Construire le prompt système avec date
-    systemPrompt = construirePrompt(profil, now);
-
-    // Charger les commandes rapides
-    afficherCommandes(profil.modules);
-
-    // Afficher le broadcast si actif
-    if (broadcasts && broadcasts.message) {
-      const vueKey = 'broadcast_vu_' + broadcasts.id;
-      if (!localStorage.getItem(vueKey)) {
-        document.getElementById('broadcastText').textContent = broadcasts.message;
-        document.getElementById('broadcastBanner').classList.add('show');
-        localStorage.setItem(vueKey, '1');
-      }
-    }
-
-    // Charger l'historique ou message de bienvenue
-    if (historique && historique.length > 0) {
-      messages = historique;
-      historique.forEach(function(m) {
-        var heure = m.heure || '';
-        if (heure.indexOf('T') > -1) { try { heure = new Date(heure).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); } catch(e) { heure = ''; } }
-        afficherMessage(m.role, m.content, heure, false);
-      });
-      // Scroll en bas
-      window.scrollTo(0, document.body.scrollHeight);
-    } else {
-      // Vérifier si onboarding déjà complété
-      var onboardingFait = false;
-      try { onboardingFait = localStorage.getItem('aa_onboarding_' + clientId) === '1'; } catch(e) {}
-
-      if (onboardingFait) {
-        // Onboarding déjà fait — message de retour simple
-        var msgRetour = 'Content de te revoir ' + profil.prenom + ' 👋\n\nQue veux-tu faire aujourd\'hui ?';
-        afficherMessage('assistant', msgRetour, formatHeure(now), true);
-        await sauvegarderMessage('assistant', msgRetour);
-      } else {
-        // Premier accès — lancer l'onboarding guidé
-        await lancerOnboarding(profil, now);
-      }
-    }
-
-  } catch(err) {
-    console.error(err);
-    showError('Erreur de connexion', 'Impossible de charger ton assistant. Vérifie ta connexion internet et réessaie.');
-  }
-
-  // Cacher le loader
-  document.getElementById('loader').style.display = 'none';
+function chargerJauge(){var d=lsJ('j_'+cid)||{};d.inscription=true;affJ(d);}
+function majJauge(id){var d=lsJ('j_'+cid)||{};if(d[id])return;d[id]=true;lsJSet('j_'+cid,d);affJ(d);if(calcJ(d)>=100)setTimeout(function(){debloquerBadge('jauge100');},800);}
+function calcJ(d){var t=0;JAUGE.forEach(function(e){if(d[e.id])t+=e.w;});return Math.min(t,100);}
+function affJ(d){
+  var pct=calcJ(d);
+  document.getElementById('jFill').style.width=pct+'%';
+  document.getElementById('jPct').textContent=pct+'%';
+  document.getElementById('jLbl').textContent=pct>=100?'🚀 Assistant opérationnel !':pct>=60?'⚡ Ton assistant progresse...':'🧠 Ton assistant apprend...';
+  var c=document.getElementById('jSteps');c.innerHTML='';
+  JAUGE.forEach(function(e){var el=document.createElement('div');el.className='jc-step'+(d[e.id]?' done':'');el.textContent=(d[e.id]?'✓ ':'')+e.l;c.appendChild(el);});
+  if(pct>=100)document.getElementById('jCard').style.display='none';
 }
 
-// ══════════════════════════════════════════════
-// APPS SCRIPT — LECTURE / ÉCRITURE
-// ══════════════════════════════════════════════
-async function safeJson(res) {
-  try { const t = await res.text(); return JSON.parse(t); } catch(e) { return {success:false}; }
+function majStreak(){
+  var today=new Date().toDateString(),last=ls('sl_'+cid),n=parseInt(ls('sc_'+cid)||'0');
+  if(last!==today){var y=new Date();y.setDate(y.getDate()-1);n=(last===y.toDateString())?n+1:1;lsSet('sl_'+cid,today);lsSet('sc_'+cid,n.toString());}
+  if(n>=1){document.getElementById('strPill').style.display='flex';document.getElementById('strNum').textContent=n;}
+  if(n>=3&&!ls('bs3_'+cid)){majJauge('streak3');debloquerBadge('streak3');lsSet('bs3_'+cid,'1');}
 }
 
-async function chargerProfil() {
-  const url = APPS_SCRIPT_URL + '?action=getClient&id=' + encodeURIComponent(clientId);
-  const res = await fetch(url);
-  const data = await safeJson(res);
-  return data.success ? data.profil : null;
+function debloquerBadge(id){var k='bd_'+id+'_'+cid;if(ls(k))return;lsSet(k,'1');var b=BDGS[id];if(!b)return;setTimeout(function(){document.getElementById('bmE').textContent=b.e;document.getElementById('bmT').textContent=b.t;document.getElementById('bmS').textContent=b.s;document.getElementById('bdgModal').classList.add('show');document.getElementById('bdgOvl').classList.add('show');},600);}
+function closeBadge(){document.getElementById('bdgModal').classList.remove('show');document.getElementById('bdgOvl').classList.remove('show');}
+
+function showQR(){
+  var cmds=[{l:'📅 Brief du jour',m:'Donne-moi mon brief du jour'},{l:'🎙️ Dicter une info',m:'Je veux noter quelque chose'},{l:"📊 Où j'en suis ?",m:"Où est-ce que j'en suis ?"},{l:'🔔 Mes relances',m:"Qui dois-je relancer aujourd'hui ?"}];
+  var row=document.getElementById('qrRow');row.innerHTML='';
+  cmds.forEach(function(c){var btn=document.createElement('button');btn.className='qr-btn';btn.textContent=c.l;btn.onclick=function(){send(c.m);};row.appendChild(btn);});
 }
 
-async function chargerHistorique() {
-  const url = APPS_SCRIPT_URL + '?action=getConversation&id=' + encodeURIComponent(clientId);
-  const res = await fetch(url);
-  const data = await safeJson(res);
-  return data.success ? data.messages : [];
+function addMsg(role,txt,h,ani){
+  var w=document.createElement('div');w.className='mw '+role;
+  var t=document.createElement('div');t.className='mt';t.textContent=h||'';
+  var b=document.createElement('div');b.className='msg '+role;
+  b.innerHTML=txt.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  w.appendChild(t);w.appendChild(b);document.getElementById('chat').appendChild(w);
+  if(ani)window.scrollTo(0,document.body.scrollHeight);
+}
+function showTyp(){var t=document.createElement('div');t.className='typing';t.id='typ';t.innerHTML='<span></span><span></span><span></span>';document.getElementById('chat').appendChild(t);window.scrollTo(0,document.body.scrollHeight);}
+function hideTyp(){var t=document.getElementById('typ');if(t)t.remove();}
+
+async function send(txt){
+  var inp=document.getElementById('inp'),msg=txt||inp.value.trim();if(!msg)return;inp.value='';
+  var now=new Date();addMsg('user',msg,fH(now),true);await saveMsg('user',msg);detectJ(msg);
+  if(obOn){await traiterOB(msg);return;}
+  msgs.push({role:'user',content:msg});showTyp();
+  try{
+    var res=await fetch(SURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'chat',system:sys,messages:msgs.slice(-20)})});
+    var d=await sJ(res);hideTyp();if(!d.success)throw new Error(d.error||'Erreur');
+    var rep=d.reply||"Je n'ai pas pu répondre. Réessaie.";
+    msgs.push({role:'assistant',content:rep});addMsg('assistant',rep,fH(new Date()),true);await saveMsg('assistant',rep);
+    if(msgs.length===6)proposerPartage();
+  }catch(e){hideTyp();addMsg('assistant','Erreur de connexion. Vérifie internet et réessaie.',fH(new Date()),true);}
+}
+function detectJ(msg){var l=msg.toLowerCase();if(l.indexOf('client')>=0||l.indexOf('prospect')>=0)majJauge('client1');if(l.indexOf('objectif')>=0||l.indexOf(' ca ')>=0||l.indexOf('chiffre')>=0)majJauge('objectif');if(l.indexOf('tâche')>=0||l.indexOf('tache')>=0)majJauge('tache1');}
+function proposerPartage(){var wa=encodeURIComponent("J'utilise Attractor Assists — assistant IA personnel. 7 jours gratuits : https://assists.agenceattractor.com");addMsg('assistant',"Tu viens de faire en 2 minutes ce qui t'aurait pris 20 minutes.\n\nTu connais quelqu'un qui en a besoin ? Partage : https://wa.me/?text="+wa,fH(new Date()),true);}
+
+function buildPrompt(p,now){
+  var j=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  return '# ASSISTANT PERSONNEL — '+p.prenom+'\n\n## CONTEXTE\nAujourd\'hui : '+j+'\nHeure : '+fH(now)+'\n\n## QUI JE SERS\n'+p.prenom+' gère : '+p.activite+'\nPriorités : '+p.priorite+'\nRésultat attendu : '+p.objectif+'\n\n## CE QUE JE SAIS\n'+(p.promptModules||'')+'\n\n## MES 4 MISSIONS\n1. BRIEF DU JOUR — chaque matin, l\'essentiel\n2. DICTÉE INTELLIGENTE — transformer ce qui est dicté en action\n3. TABLEAU DE BORD — "Où j\'en suis ?" en 10 secondes\n4. PROGRESSION GUIDÉE — proposer proactivement\n\n## RÈGLES\n- Français, ton direct\n- Je mémorise tout ce qui m\'est dicté\n- UNE seule question si info manque\n- Je rappelle les échéances sans qu\'on me le demande\n- Je m\'appelle "ton assistant" — jamais Claude\n- J\'appelle '+p.prenom+' par son prénom';
 }
 
-async function chargerBroadcasts() {
-  const url = APPS_SCRIPT_URL + '?action=getBroadcast';
-  const res = await fetch(url);
-  const data = await safeJson(res);
-  return data.success ? data.broadcast : null;
+async function sJ(r){try{var t=await r.text();return JSON.parse(t);}catch(e){return{success:false};}}
+async function getClient(){var r=await fetch(SURL+'?action=getClient&id='+encodeURIComponent(cid));var d=await sJ(r);return d.success?d.profil:null;}
+async function getConv(){var r=await fetch(SURL+'?action=getConversation&id='+encodeURIComponent(cid));var d=await sJ(r);return d.success?d.messages:[];}
+async function getBroadcast(){try{var r=await fetch(SURL+'?action=getBroadcast');var d=await sJ(r);return d.success?d.broadcast:null;}catch(e){return null;}}
+async function saveMsg(role,content){var now=new Date();try{await fetch(SURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveMessage',id:cid,role:role,content:content,date:now.toLocaleDateString('fr-FR'),heure:fH(now)})});}catch(e){}}
+
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){toast('Dictée vocale non disponible');return;}
+  if(isRec){stopVoice();return;}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;rec=new SR();rec.lang='fr-FR';rec.continuous=false;rec.interimResults=false;
+  rec.onstart=function(){isRec=true;document.getElementById('btnMic').classList.add('rec');document.getElementById('inp').placeholder='🎙️ J\'écoute...';};
+  rec.onresult=function(e){document.getElementById('inp').value=e.results[0][0].transcript;stopVoice();};
+  rec.onerror=rec.onend=function(){stopVoice();};rec.start();
 }
+function stopVoice(){isRec=false;document.getElementById('btnMic').classList.remove('rec');document.getElementById('inp').placeholder='Écris ou dicte ta question...';if(rec){try{rec.stop();}catch(e){}}}
 
-async function sauvegarderMessage(role, content) {
-  const now = new Date();
-  await fetch(APPS_SCRIPT_URL + '?action=saveMessage', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      id: clientId,
-      role: role,
-      content: content,
-      date: now.toLocaleDateString('fr-FR'),
-      heure: formatHeure(now)
-    })
-  });
-}
+function fH(d){return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function nH(h){if(!h)return'';if(h.indexOf('T')>=0){try{return fH(new Date(h));}catch(e){return'';}}return h;}
+function ouvrirOffre(){window.open('https://wa.me/'+WA+'?text=Bonjour+Mac+Arthur,+je+veux+continuer+avec+mon+assistant','_blank');}
+function showErr(t,s){document.getElementById('loader').style.display='none';document.getElementById('chat').innerHTML='<div class="err-state"><div class="err-icon">⚠️</div><div class="err-title">'+t+'</div><div class="err-sub">'+s+'</div></div>';document.getElementById('qrRow').innerHTML='';document.querySelector('.input-area').style.display='none';}
+function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){if(t.parentNode)t.remove();},3000);}
+function ls(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function lsJ(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function lsJSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// ══════════════════════════════════════════════
-// PROMPT SYSTÈME
-// ══════════════════════════════════════════════
-function construirePrompt(profil, now) {
-  const jourSemaine = now.toLocaleDateString('fr-FR', {weekday:'long'});
-  const dateComplete = now.toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
-  const heure = formatHeure(now);
-
-  return `# ASSISTANT PERSONNEL — ${profil.prenom}
-
-## CONTEXTE TEMPOREL
-Aujourd'hui : ${jourSemaine} ${dateComplete}
-Heure actuelle : ${heure}
-Tu dois toujours être conscient de la date pour les rappels, échéances et relances.
-
-## QUI JE SUIS
-Je suis ${profil.prenom}, je gère ${profil.activite}.
-Mon objectif : ${profil.objectif || 'Développer mon activité'}.
-
-## MES MODULES ACTIFS
-${profil.promptModules || ''}
-
-## MA PRIORITÉ ACTUELLE
-${profil.priorite || 'Organiser mon activité'}
-
-## MES RÈGLES
-- Tu me parles en français, ton direct et simple
-- Tu mémorises tout ce que je te dis dans la conversation
-- Si une info manque, tu me poses UNE seule question
-- Tu me rappelles mes relances et mes échéances sans que je le demande
-- Tu notes les noms, montants et dates que je te donne
-- Tu es mon bras droit — proactif, efficace, orienté résultats
-- Quand je dicte une info (client, vente, relance) tu confirmes et tu la structures`;
-}
-
-// ══════════════════════════════════════════════
-// COMMANDES RAPIDES
-// ══════════════════════════════════════════════
-function afficherCommandes(modulesStr) {
-  const modules = modulesStr ? modulesStr.split('|') : [];
-  const container = document.getElementById('quickReplies');
-  container.innerHTML = '';
-
-  const cmds = [];
-  if (modules.indexOf('AGENDA & TÂCHES') >= 0) {
-    cmds.push({label:'📅 Point du jour', msg:'Point du jour'});
-    cmds.push({label:'⚡ Priorités', msg:'Mes priorités'});
-  }
-  if (modules.indexOf('TABLEAU DE BORD FINANCES') >= 0) {
-    cmds.push({label:'💰 CA du mois', msg:'CA ce mois'});
-    cmds.push({label:'📈 Objectif', msg:'Suivi objectif'});
-  }
-  if (modules.indexOf('SUIVI CLIENTS & RELANCES') >= 0) {
-    cmds.push({label:'📬 Relances', msg:'Qui dois-je relancer aujourd\'hui ?'});
-    cmds.push({label:'🔥 Prospects', msg:'Mes prospects chauds'});
-  }
-  if (modules.indexOf('GESTION ASSISTANTES') >= 0) {
-    cmds.push({label:'👥 Équipe', msg:'Tâches équipe'});
-  }
-  if (modules.indexOf('CONTENU RÉSEAUX SOCIAUX') >= 0) {
-    cmds.push({label:'📱 Idée post', msg:'Donne-moi une idée de post pour aujourd\'hui'});
-  }
-
-  // Commandes universelles
-  cmds.push({label:'📝 Dicter une info', msg:'Je veux noter quelque chose'});
-
-  cmds.forEach(function(c) {
-    const btn = document.createElement('button');
-    btn.className = 'qb';
-    btn.textContent = c.label;
-    btn.onclick = function() { sendMsg(c.msg); };
-    container.appendChild(btn);
-  });
-}
-
-// ══════════════════════════════════════════════
-// CHAT
-// ══════════════════════════════════════════════
-function afficherMessage(role, text, heure, animate) {
-  const chat = document.getElementById('chat');
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:' + (role === 'user' ? 'flex-end' : 'flex-start') + ';';
-
-  const msg = document.createElement('div');
-  msg.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
-  msg.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-
-  const time = document.createElement('div');
-  time.className = 'msg-time';
-  time.textContent = heure;
-
-  wrap.appendChild(msg);
-  wrap.appendChild(time);
-  chat.appendChild(wrap);
-
-  if (animate) window.scrollTo(0, document.body.scrollHeight);
-}
-
-function showTyping() {
-  const chat = document.getElementById('chat');
-  const d = document.createElement('div');
-  d.className = 'typing'; d.id = 'typing';
-  d.innerHTML = '<span></span><span></span><span></span>';
-  chat.appendChild(d);
-  window.scrollTo(0, document.body.scrollHeight);
-}
-
-function hideTyping() {
-  const t = document.getElementById('typing');
-  if (t) t.remove();
-}
-
-async function sendMsg(txt) {
-  const inp = document.getElementById('inp');
-  const msg = txt || inp.value.trim();
-  if (!msg) return;
-  inp.value = '';
-
-  const now = new Date();
-  const heure = formatHeure(now);
-
-  afficherMessage('user', msg, heure, true);
-  await sauvegarderMessage('user', msg);
-
-  // Si onboarding en cours — traiter la réponse différemment
-  if (window._onboardingActif) {
-    await traiterReponseOnboarding(msg);
-    return;
-  }
-
-  messages.push({role:'user', content:msg});
-  showTyping();
-
-  try {
-    // Appel via Apps Script (proxy) pour éviter CORS
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'chat',
-        system: systemPrompt,
-        messages: messages.slice(-20)
-      })
-    });
-
-    const data = await res.json();
-    hideTyping();
-
-    if (!data.success) throw new Error(data.error || 'Erreur serveur');
-
-    const reply = data.reply || 'Pas de réponse';
-    messages.push({role:'assistant', content:reply});
-    afficherMessage('assistant', reply, formatHeure(new Date()), true);
-    await sauvegarderMessage('assistant', reply);
-
-  } catch(e) {
-    hideTyping();
-    console.error('Erreur chat:', e);
-    afficherMessage('assistant', '❌ Erreur : ' + e.message, formatHeure(new Date()), true);
-  }
-}
-
-// ══════════════════════════════════════════════
-// BROADCAST
-// ══════════════════════════════════════════════
-function closeBroadcast() {
-  document.getElementById('broadcastBanner').classList.remove('show');
-}
-
-// ══════════════════════════════════════════════
-// ERROR STATE
-// ══════════════════════════════════════════════
-function showError(titre, message) {
-  document.getElementById('loader').style.display = 'none';
-  document.getElementById('chat').innerHTML = `
-    <div class="error-state">
-      <div class="error-icon">⚠️</div>
-      <div class="error-title">${titre}</div>
-      <div class="error-sub">${message}</div>
-    </div>`;
-  document.getElementById('quickReplies').innerHTML = '';
-  document.querySelector('.input-wrap').style.display = 'none';
-}
-
-// ══════════════════════════════════════════════
-// UTILITAIRES
-// ══════════════════════════════════════════════
-function formatHeure(date) {
-  return date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0');
-}
-
-// ══════════════════════════════════════════════
-// LANCEMENT
-// ══════════════════════════════════════════════
 init();
 </script>
 </body>
