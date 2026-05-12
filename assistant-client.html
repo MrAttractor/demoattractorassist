@@ -110,14 +110,14 @@ var BDGS={inscription:{e:'🌱',t:'Premiers pas',s:"Ton assistant est né. Bienv
 async function init(){
   var p=new URLSearchParams(window.location.search);
   cid=decodeURIComponent(p.get('id')||'');
-  if(!cid){showErr('Lien invalide','Contacte Mac Arthur pour obtenir ton lien.');return;}
+  if(!cid){showErr('Lien invalide','Ton lien est invalide.<br><br><a href="https://wa.me/2250576877070" style="color:var(--or);font-weight:600;">📲 Contacter le service client</a>');return;}
   var now=new Date(),h=now.getHours();
   document.getElementById('hDate').textContent=now.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
   document.getElementById('gTime').textContent=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';
   majStreak();
   try{
     pr=await getClient();
-    if(!pr){showErr('Assistant introuvable',"Ton assistant n'est pas encore prêt. Contacte Mac Arthur.");return;}
+    if(!pr){showErr('Assistant introuvable','Ton assistant n\'est pas encore prêt.<br><br><a href="https://wa.me/2250576877070" style="color:var(--or);font-weight:600;">📲 Contacter le service client</a>');return;}
     document.getElementById('gName').textContent=pr.prenom+' 👋';
     document.getElementById('gAct').textContent=pr.activite;
     document.title='Attractor Assists — '+pr.prenom;
@@ -132,7 +132,7 @@ async function init(){
       hist.forEach(function(m){addMsg(m.role,m.content,nH(m.heure),false);});
       window.scrollTo(0,document.body.scrollHeight);showQR();
     }else{debloquerBadge('inscription');startOB(now);}
-  }catch(e){console.error(e);showErr('Erreur de connexion','Vérifie ta connexion internet et réessaie.');}
+  }catch(e){console.error(e);showErr('Erreur de connexion','Vérifie ta connexion et réessaie.<br><br><a href="https://wa.me/2250576877070" style="color:var(--or);font-weight:600;">📲 Contacter le service client</a>');}
   document.getElementById('loader').style.display='none';
 }
 
@@ -161,7 +161,7 @@ async function traiterOB(msg){
       +'📊 **Tableau de bord** — "Où j\'en suis ?" → 10 secondes\n'
       +'🎯 **Progression guidée** — je propose, tu décides\n\n'
       +'On commence. Qu\'est-ce que tu veux faire maintenant ?';
-    addMsg('assistant',fin,fH(now),true);await saveMsg('assistant',fin);msgs.push({role:'assistant',content:fin});showQR();
+    addMsg('assistant',fin,fH(now),true);await saveMsg('assistant',fin);msgs.push({role:'assistant',content:fin});showQR();setTimeout(proposerInstallation,2000);
   }
 }
 function detectMots(t){return['client','relance','finance','temps','organisation','prospection','contenu','équipe','stress','objectif'].filter(function(m){return t.toLowerCase().indexOf(m)>=0;}).slice(0,3);}
@@ -252,6 +252,42 @@ function ls(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function lsJ(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsJSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+
+function proposerInstallation() {
+  var k = 'install_shown_' + cid;
+  if (ls(k)) return;
+  lsSet(k, '1');
+
+  var ua = navigator.userAgent.toLowerCase();
+  var isIOS = /iphone|ipad|ipod/.test(ua);
+  var isAndroid = /android/.test(ua);
+
+  if (!isIOS && !isAndroid) return;
+
+  var titre = isIOS
+    ? '📲 Installer sur ton iPhone'
+    : '📲 Installer sur ton téléphone';
+
+  var etapes = isIOS
+    ? '1. Appuie sur <strong>⬆️</strong> en bas de Safari<br>2. Choisis <strong>"Sur l\'écran d\'accueil"</strong><br>3. Appuie sur <strong>"Ajouter"</strong>'
+    : '1. Appuie sur <strong>⋮</strong> en haut à droite<br>2. Choisis <strong>"Installer l\'application"</strong><br>3. Confirme en appuyant sur <strong>"Installer"</strong>';
+
+  var modal = document.createElement('div');
+  modal.id = 'installModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:600;display:flex;align-items:flex-end;padding:20px;';
+  modal.innerHTML = '<div style="background:var(--s2);border:1px solid rgba(201,168,76,0.25);border-radius:20px;padding:24px;width:100%;max-width:440px;margin:0 auto;">'
+    + '<div style="font-size:28px;margin-bottom:12px;">' + (isIOS ? '🍎' : '🤖') + '</div>'
+    + '<div style="font-family:\'Cormorant Garamond\',serif;font-size:20px;font-weight:700;color:var(--or);margin-bottom:8px;">' + titre + '</div>'
+    + '<div style="font-size:13px;color:var(--txt2);line-height:1.9;margin-bottom:20px;">'
+    + 'Installe ton assistant sur ton écran d\'accueil — il sera disponible en 1 tap, comme une vraie app.<br><br>'
+    + etapes
+    + '</div>'
+    + '<button onclick="document.getElementById(\'installModal\').remove()" style="width:100%;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:14px;padding:14px;font-family:\'Outfit\',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:8px;">C\'est fait !</button>'
+    + '<button onclick="document.getElementById(\'installModal\').remove()" style="width:100%;background:none;border:none;color:var(--txt3);font-size:12px;cursor:pointer;padding:8px;font-family:\'Outfit\',sans-serif;">Plus tard</button>'
+    + '</div>';
+  document.body.appendChild(modal);
+}
 
 init();
 </script>
