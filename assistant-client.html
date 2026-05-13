@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ══════════════════════════════════════════
 async function loadAssistant() {
   try {
-    const r = await fetch(`${SURL}?action=getClient&id=${encodeURIComponent(clientId)}`);
+    const r = await fetch(`${SURL}?action=getAssistant&id=${encodeURIComponent(clientId)}`);
     const d = await r.json();
     if (!d || !d.success || !d.profil) { showError('Assistant introuvable. Contacte Mac Arthur.'); return; }
     clientData = d.profil;
