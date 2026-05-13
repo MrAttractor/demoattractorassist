@@ -642,7 +642,9 @@ async function sendMessage() {
   document.getElementById('send-btn').disabled = false;
   scrollBottom();
 }
-
+if(['partager','referral','parrainage','lien','mon lien'].some(k => text.toLowerCase().includes(k))) {
+  ta.value='';ta.style.height='auto';showReferralModal();return;
+}
 // ══════════════════════════════════════════
 // CHAT API — FIX #7 : timeout 15s + retry 1x
 //             FIX #8 : règle agenda + formule supérieure
