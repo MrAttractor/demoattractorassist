@@ -100,8 +100,9 @@ body{padding-bottom:120px;}
 <div class="input-area"><div class="input-row"><input type="text" id="inp" placeholder="Écris ou dicte ta question..." onkeypress="if(event.key==='Enter')send()"><button class="btn-mic" id="btnMic" onclick="toggleVoice()">🎙️</button><button class="btn-send" onclick="send()">➤</button></div></div>
 
 <script>
+// CORRECTION 1 — Nouvelle URL du script backend
 var SURL='https://script.google.com/macros/s/AKfycbzJwCbgEYDNk90uFRxwIcWDWFmr9QdMXtd1jvQL-cqWnJ1L-z_jJS1bbKNThPQaK4As1w/exec';
-var WA='+33753902323';
+var WA='+2250576877070';
 var cid='',pr=null,sys='',msgs=[],obOn=false,obIdx=0,obRep=[],rec=null,isRec=false;
 var JAUGE=[{id:'inscription',l:'Inscription',w:10},{id:'onboarding',l:'Bilan de parcours',w:30},{id:'client1',l:'1er client noté',w:15},{id:'objectif',l:'Objectif financier',w:15},{id:'tache1',l:'1ère tâche dictée',w:15},{id:'streak3',l:'3 jours consécutifs',w:15}];
 var OBQ=["Qu'est-ce qui t'a amené à vouloir un assistant comme moi ? Qu'est-ce que tu voulais changer dans ton quotidien ?","Quel est ton plus grand blocage en ce moment — la chose qui te prend le plus d'énergie sans vraiment avancer ?","Quand tu imagines ton activité dans 6 mois exactement comme tu la veux — tu vois quoi concrètement ?","Qu'est-ce qui te pousse à continuer quand c'est difficile ? Ton moteur profond."];
@@ -151,10 +152,11 @@ async function traiterOB(msg){
     var syn='ONBOARDING '+pr.prenom+'\nMotivation: '+obRep[0]+'\nBlocage: '+obRep[1]+'\nVision 6 mois: '+obRep[2]+'\nMoteur: '+obRep[3];
     try{await fetch(SURL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveOnboarding',id:cid,onboarding:syn})});}catch(e){}
     majJauge('onboarding');debloquerBadge('onboarding');
-    var hc=now.getHours(),mom=hc<12?'le matin':hc<18?"l'après-midi":'le soir';
+
+    // CORRECTION 2 — Message fin onboarding sans détection heure
     var mots=detectMots(obRep.join(' '));
     var fin = 'Merci '+pr.prenom+' — j\'ai tout noté. 📝\n\n'
-  +(mots.length>0?'Les mots qui reviennent dans tes réponses : **'+mots.join('**, **')+'**. Je vais les garder en tête.\n\n':'')
+      +(mots.length>0?'Les mots qui reviennent dans tes réponses : **'+mots.join('**, **')+'**. Je vais les garder en tête.\n\n':'')
       +'Voilà ce qu\'on va faire ensemble :\n\n'
       +'📅 **Brief du jour** — chaque matin, l\'essentiel sans chercher\n'
       +'🎙️ **Dictée intelligente** — tu parles, je structure et j\'agis\n'
@@ -212,7 +214,6 @@ async function send(txt){
   if(obOn){await traiterOB(msg);return;}
   msgs.push({role:'user',content:msg});showTyp();
   try{
-    // GET request — prompt reconstruit côté serveur
     var params=new URLSearchParams();
     params.set('action','chat');
     params.set('id',cid);
@@ -223,14 +224,18 @@ async function send(txt){
     var rep=d.reply||"Je n'ai pas pu répondre. Réessaie.";
     msgs.push({role:'assistant',content:rep});addMsg('assistant',rep,fH(new Date()),true);await saveMsg('assistant',rep);
     if(msgs.length===6)proposerPartage();
-  }catch(e){hideTyp();addMsg('assistant','Erreur de connexion. Vérifie internet et réessaie.',fH(new Date()),true);}
+  }catch(e){
+    hideTyp();
+    // CORRECTION 3 — Lien WhatsApp service client dans le message d'erreur
+    addMsg('assistant','Erreur de connexion. Vérifie internet et réessaie.<br><br><a href="https://wa.me/2250576877070" style="color:var(--or);font-weight:600;">📲 Contacter le service client</a>',fH(new Date()),true);
+  }
 }
 function detectJ(msg){var l=msg.toLowerCase();if(l.indexOf('client')>=0||l.indexOf('prospect')>=0)majJauge('client1');if(l.indexOf('objectif')>=0||l.indexOf(' ca ')>=0||l.indexOf('chiffre')>=0)majJauge('objectif');if(l.indexOf('tâche')>=0||l.indexOf('tache')>=0)majJauge('tache1');}
 function proposerPartage(){var wa=encodeURIComponent("J'utilise Attractor Assists — assistant IA personnel. 7 jours gratuits : https://assists.agenceattractor.com");addMsg('assistant',"Tu viens de faire en 2 minutes ce qui t'aurait pris 20 minutes.\n\nTu connais quelqu'un qui en a besoin ? Partage : https://wa.me/?text="+wa,fH(new Date()),true);}
 
 function buildPrompt(p,now){
   var j=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  return '# ASSISTANT PERSONNEL — '+p.prenom+'\n\n## CONTEXTE\nAujourd\'hui : '+j+'\nHeure : '+fH(now)+'\n\n## QUI JE SERS\n'+p.prenom+' gère : '+p.activite+'\nPriorités : '+p.priorite+'\nRésultat attendu : '+p.objectif+'\n\n## CE QUE JE SAIS\n'+(p.promptModules||'')+'\n\n## MES 4 MISSIONS\n1. BRIEF DU JOUR — chaque matin, l\'essentiel\n2. DICTÉE INTELLIGENTE — transformer ce qui est dicté en action\n3. TABLEAU DE BORD — "Où j\'en suis ?" en 10 secondes\n4. PROGRESSION GUIDÉE — proposer proactivement\n\n## RÈGLES\n- Français, ton direct\n- Je mémorise tout ce qui m\'est dicté\n- UNE seule question si info manque\n- Je rappelle les échéances sans qu\'on me le demande\n- Je m\'appelle "ton assistant" — jamais Claude\n- J\'appelle '+p.prenom+' par son prénom';
+  return '# ASSISTANT PERSONNEL — '+p.prenom+'\n\n## CONTEXTE\nAujourd\'hui : '+j+'\n\n## QUI JE SERS\n'+p.prenom+' gère : '+p.activite+'\nPriorités : '+p.priorite+'\nRésultat attendu : '+p.objectif+'\n\n## CE QUE JE SAIS\n'+(p.promptModules||'')+'\n\n## MES 4 MISSIONS\n1. BRIEF DU JOUR — chaque matin, l\'essentiel\n2. DICTÉE INTELLIGENTE — transformer ce qui est dicté en action\n3. TABLEAU DE BORD — "Où j\'en suis ?" en 10 secondes\n4. PROGRESSION GUIDÉE — proposer proactivement\n\n## RÈGLES\n- Français, ton direct\n- Je mémorise tout ce qui m\'est dicté\n- UNE seule question si info manque\n- Je rappelle les échéances sans qu\'on me le demande\n- Je m\'appelle "ton assistant" — jamais Claude\n- J\'appelle '+p.prenom+' par son prénom';
 }
 
 async function sJ(r){try{var t=await r.text();return JSON.parse(t);}catch(e){return{success:false};}}
@@ -243,13 +248,11 @@ function toggleVoice(){
   var ua=navigator.userAgent.toLowerCase();
   var isIOS=/iphone|ipad|ipod/.test(ua);
   if(isIOS){
-    // iOS — activer le clavier vocal natif via inputmode
     var inp=document.getElementById('inp');
     inp.focus();
     toast('🎙️ Appuie sur le micro de ton clavier');
     return;
   }
-  // Android / Desktop — Web Speech API
   if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){
     toast('Utilise le micro de ton clavier pour dicter');return;
   }
@@ -273,26 +276,18 @@ function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function lsJ(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsJSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-
 function proposerInstallation() {
   var k = 'install_shown_' + cid;
   if (ls(k)) return;
   lsSet(k, '1');
-
   var ua = navigator.userAgent.toLowerCase();
   var isIOS = /iphone|ipad|ipod/.test(ua);
   var isAndroid = /android/.test(ua);
-
   if (!isIOS && !isAndroid) return;
-
-  var titre = isIOS
-    ? '📲 Installer sur ton iPhone'
-    : '📲 Installer sur ton téléphone';
-
+  var titre = isIOS ? '📲 Installer sur ton iPhone' : '📲 Installer sur ton téléphone';
   var etapes = isIOS
     ? '1. Appuie sur <strong>⬆️</strong> en bas de Safari<br>2. Choisis <strong>"Sur l\'écran d\'accueil"</strong><br>3. Appuie sur <strong>"Ajouter"</strong>'
     : '1. Appuie sur <strong>⋮</strong> en haut à droite<br>2. Choisis <strong>"Installer l\'application"</strong><br>3. Confirme en appuyant sur <strong>"Installer"</strong>';
-
   var modal = document.createElement('div');
   modal.id = 'installModal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:600;display:flex;align-items:flex-end;padding:20px;';
