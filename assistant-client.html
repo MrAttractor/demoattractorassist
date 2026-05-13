@@ -153,8 +153,8 @@ async function traiterOB(msg){
     majJauge('onboarding');debloquerBadge('onboarding');
     var hc=now.getHours(),mom=hc<12?'le matin':hc<18?"l'après-midi":'le soir';
     var mots=detectMots(obRep.join(' '));
-    var fin='Merci '+pr.prenom+' — j\'ai tout noté. 📝\n\n'
-      +'Je vois que tu travailles '+mom+'.'+(mots.length>0?' Les mots qui reviennent chez toi : **'+mots.join('**, **')+'**. Je m\'en souviendrai.\n\n':'\n\n')
+    var fin = 'Merci '+pr.prenom+' — j\'ai tout noté. 📝\n\n'
+  +(mots.length>0?'Les mots qui reviennent dans tes réponses : **'+mots.join('**, **')+'**. Je vais les garder en tête.\n\n':'')
       +'Voilà ce qu\'on va faire ensemble :\n\n'
       +'📅 **Brief du jour** — chaque matin, l\'essentiel sans chercher\n'
       +'🎙️ **Dictée intelligente** — tu parles, je structure et j\'agis\n'
