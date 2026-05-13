@@ -10,203 +10,142 @@
 <link rel="manifest" href="manifest.json">
 <title>Attractor — Ton Assistant</title>
 <style>
-  :root {
-    --gold: #C9A84C;
-    --gold-light: #E8C97A;
-    --dark: #0a0a0a;
-    --dark2: #111111;
-    --dark3: #1a1a1a;
-    --dark4: #222222;
-    --text: #f0ede8;
-    --text-muted: #888;
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--dark); color: var(--text); }
+:root {
+  --gold:#C9A84C;--gold2:#E8C97A;--gold-dim:rgba(201,168,76,0.12);
+  --dark:#0a0a0a;--dark2:#111;--dark3:#1a1a1a;--dark4:#222;
+  --text:#f0ede8;--muted:#888;--muted2:rgba(240,237,232,0.4);
+  --green:#3DC98A;--red:#E85858;--radius:16px;--radius-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--dark);color:var(--text);}
 
-  /* ── HEADER ── */
-  #header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: linear-gradient(180deg, #0a0a0aee 80%, transparent);
-    padding: 14px 18px 10px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  #avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--gold), #8B5E1A);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0; box-shadow: 0 0 0 2px #C9A84C44;
-  }
-  #header-info { flex: 1; min-width: 0; }
-  #header-name { font-size: 15px; font-weight: 700; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #header-status { font-size: 11px; color: #4CAF50; display: flex; align-items: center; gap: 4px; }
-  #header-status::before { content: ''; width: 6px; height: 6px; background: #4CAF50; border-radius: 50%; display: inline-block; }
-  #msg-counter {
-    font-size: 11px; color: var(--text-muted);
-    background: var(--dark3); border: 1px solid #333;
-    padding: 3px 8px; border-radius: 20px;
-  }
+#header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,#0a0a0af0 80%,transparent);padding:12px 16px 8px;}
+#header-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+#avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 0 0 2px #C9A84C44;}
+#header-info{flex:1;min-width:0;}
+#header-name{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#header-status{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;}
+#header-status::before{content:'';width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;}
+#msg-counter{font-size:11px;color:var(--muted);background:var(--dark3);border:1px solid #333;padding:3px 8px;border-radius:20px;white-space:nowrap;}
 
-  /* ── BROADCAST ── */
-  #broadcast-banner {
-    display: none; position: fixed; top: 68px; left: 12px; right: 12px; z-index: 99;
-    background: linear-gradient(135deg, #1a1200, #2a1e00);
-    border: 1px solid var(--gold); border-radius: var(--radius-sm);
-    padding: 10px 14px; font-size: 13px; line-height: 1.5;
-    animation: slideDown .3s ease;
-  }
-  #broadcast-banner strong { color: var(--gold); }
-  #broadcast-close { float: right; cursor: pointer; color: var(--text-muted); font-size: 16px; margin-left: 8px; line-height: 1; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+#journey-bar{display:flex;align-items:center;gap:4px;padding:0 2px;}
+.journey-day{flex:1;height:4px;border-radius:100px;background:var(--dark4);transition:background 0.4s;}
+.journey-day.done{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.journey-day.today{background:linear-gradient(90deg,var(--gold),var(--gold2));box-shadow:0 0 6px var(--gold);}
+#journey-label{font-size:10px;color:var(--muted);text-align:right;margin-top:4px;letter-spacing:0.3px;}
 
-  /* ── CHAT ── */
-  #chat-area {
-    position: fixed; top: 68px; bottom: 72px; left: 0; right: 0;
-    overflow-y: auto; padding: 12px 14px;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-  }
-  #chat-area.with-broadcast { top: 140px; }
+#broadcast-banner{display:none;position:fixed;top:112px;left:12px;right:12px;z-index:99;background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;line-height:1.5;animation:slideDown .3s ease;}
+#broadcast-banner strong{color:var(--gold);}
+#broadcast-close{float:right;cursor:pointer;color:var(--muted);font-size:16px;margin-left:8px;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 
-  .msg { display: flex; gap: 8px; margin-bottom: 14px; animation: fadeUp .25s ease; }
-  .msg.user { flex-direction: row-reverse; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+#chat-area{position:fixed;top:110px;bottom:72px;left:0;right:0;overflow-y:auto;padding:12px 14px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+#chat-area.with-broadcast{top:180px;}
 
-  .bubble {
-    max-width: 82%; padding: 10px 14px; border-radius: 18px;
-    font-size: 14.5px; line-height: 1.55; position: relative;
-    word-break: break-word;
-  }
-  .msg.bot .bubble { background: var(--dark3); border-bottom-left-radius: 4px; }
-  .msg.user .bubble { background: linear-gradient(135deg, var(--gold), #a87830); color: #0a0a0a; font-weight: 500; border-bottom-right-radius: 4px; }
+.msg{display:flex;gap:8px;margin-bottom:14px;animation:fadeUp .25s ease;}
+.msg.user{flex-direction:row-reverse;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.bubble{max-width:82%;padding:10px 14px;border-radius:18px;font-size:14.5px;line-height:1.55;word-break:break-word;}
+.msg.bot .bubble{background:var(--dark3);border-bottom-left-radius:4px;}
+.msg.user .bubble{background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;font-weight:500;border-bottom-right-radius:4px;}
+.bot-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;align-self:flex-end;}
 
-  .bot-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #8B5E1A); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; align-self: flex-end; }
+.typing{display:flex;align-items:center;gap:5px;padding:12px 16px;}
+.typing span{width:7px;height:7px;background:var(--gold);border-radius:50%;animation:bounce .9s infinite;}
+.typing span:nth-child(2){animation-delay:.15s;}
+.typing span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
 
-  .typing { display: flex; align-items: center; gap: 5px; padding: 12px 16px; }
-  .typing span { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; animation: bounce .9s infinite; }
-  .typing span:nth-child(2) { animation-delay: .15s; }
-  .typing span:nth-child(3) { animation-delay: .3s; }
-  @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+#input-area{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--dark2);border-top:1px solid #222;padding:10px 12px 20px;display:flex;gap:10px;align-items:flex-end;}
+#user-input{flex:1;background:var(--dark3);border:1px solid #333;border-radius:22px;padding:10px 16px;color:var(--text);font-size:15px;resize:none;max-height:120px;line-height:1.4;outline:none;font-family:inherit;}
+#user-input::placeholder{color:var(--muted);}
+#user-input:focus{border-color:var(--gold);}
+#send-btn{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#a87830);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .15s;}
+#send-btn:active{transform:scale(.92);}
+#send-btn:disabled{opacity:.4;cursor:not-allowed;}
+#send-btn svg{width:20px;height:20px;fill:#0a0a0a;}
 
-  /* ── INPUT ── */
-  #input-area {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    background: var(--dark2); border-top: 1px solid #222;
-    padding: 10px 12px 20px; display: flex; gap: 10px; align-items: flex-end;
-  }
-  #user-input {
-    flex: 1; background: var(--dark3); border: 1px solid #333;
-    border-radius: 22px; padding: 10px 16px; color: var(--text);
-    font-size: 15px; resize: none; max-height: 120px; line-height: 1.4;
-    outline: none; font-family: inherit;
-  }
-  #user-input::placeholder { color: var(--text-muted); }
-  #user-input:focus { border-color: var(--gold); }
-  #send-btn {
-    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--gold), #a87830);
-    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: transform .15s, opacity .15s;
-  }
-  #send-btn:active { transform: scale(.92); }
-  #send-btn:disabled { opacity: .4; cursor: not-allowed; }
-  #send-btn svg { width: 20px; height: 20px; fill: #0a0a0a; }
+#degraded-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--dark2);border-top:2px solid var(--gold);padding:14px 16px 28px;}
+.deg-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.deg-msgs{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.deg-tarifs{display:flex;gap:8px;margin-bottom:12px;}
+.tarif-box{flex:1;background:var(--dark3);border:1px solid #333;border-radius:10px;padding:10px;text-align:center;}
+.tarif-box .t-name{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.tarif-box .t-price{font-size:11px;color:var(--text);line-height:1.5;}
+#degraded-bar a{display:block;background:#25D366;color:white;padding:12px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;text-align:center;}
 
-  /* ── MODALS ── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,.85); backdrop-filter: blur(6px);
-    align-items: flex-end; justify-content: center;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal-box {
-    background: var(--dark2); border: 1px solid #333; border-radius: 20px 20px 0 0;
-    padding: 28px 22px 40px; width: 100%; max-width: 500px; max-height: 90vh;
-    overflow-y: auto; animation: slideUp .3s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-title { font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 16px; }
-  .modal-text { font-size: 14px; line-height: 1.6; color: #ccc; margin-bottom: 20px; }
-  .modal-btn {
-    width: 100%; padding: 14px; border-radius: 12px; border: none; cursor: pointer;
-    font-size: 15px; font-weight: 600; margin-bottom: 10px; transition: opacity .15s;
-  }
-  .modal-btn.primary { background: linear-gradient(135deg, var(--gold), #a87830); color: #0a0a0a; }
-  .modal-btn.secondary { background: var(--dark3); color: var(--text); border: 1px solid #333; }
-  .modal-btn:active { opacity: .8; }
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;}
+.modal-overlay.active{display:flex;}
+.modal-box{background:var(--dark2);border:1px solid #333;border-radius:20px 20px 0 0;padding:28px 22px 40px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-title{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:14px;}
+.modal-text{font-size:14px;line-height:1.6;color:#ccc;margin-bottom:18px;}
+.modal-btn{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;font-size:15px;font-weight:600;margin-bottom:10px;transition:opacity .15s;font-family:inherit;}
+.modal-btn.primary{background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;}
+.modal-btn.secondary{background:var(--dark3);color:var(--text);border:1px solid #333;}
+.modal-btn:active{opacity:.8;}
 
-  /* ── CGV ── */
-  .cgv-box { background: var(--dark3); border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 13px; line-height: 1.6; color: #bbb; }
-  .cgv-box strong { color: var(--gold); }
+.cgv-box{background:var(--dark3);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.6;color:#bbb;}
+.cgv-box strong{color:var(--gold);}
 
-  /* ── BADGE ── */
-  #badge-container {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-    z-index: 150; pointer-events: none;
-  }
-  .badge-toast {
-    background: linear-gradient(135deg, #1a1200, #2a1e00);
-    border: 1px solid var(--gold); border-radius: 20px;
-    padding: 8px 16px; font-size: 13px; color: var(--gold);
-    white-space: nowrap; animation: badgeIn .4s ease forwards;
-    margin-bottom: 8px; display: block;
-  }
-  @keyframes badgeIn { from { opacity:0; transform: translateY(10px) scale(.9); } to { opacity:1; transform: translateY(0) scale(1); } }
+#badge-container{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;}
+.badge-toast{background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--gold);white-space:nowrap;animation:badgeIn .4s ease forwards;margin-bottom:8px;display:block;}
+@keyframes badgeIn{from{opacity:0;transform:translateY(10px) scale(.9);}to{opacity:1;transform:translateY(0) scale(1);}}
 
-  /* ── PWA GUIDE ── */
-  #pwa-modal .modal-box { border-radius: 20px; margin: 20px; max-height: 80vh; }
-  .pwa-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
-  .pwa-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #0a0a0a; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-  .pwa-step-text { font-size: 13px; color: #ccc; line-height: 1.5; padding-top: 3px; }
+.ref-card{background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:14px 16px;margin-top:10px;}
+.ref-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.ref-score{font-size:26px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.ref-sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.ref-btns{display:flex;gap:8px;}
+.ref-btn{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;}
+.ref-btn.wa{background:#25D366;color:white;}
+.ref-btn.share{background:var(--dark3);color:var(--text);border:1px solid #333;}
+.ref-btn.copy{background:var(--dark3);color:var(--muted);border:1px solid #333;}
 
-  /* ── UPSELL BLOCK ── */
-  .upsell-block {
-    background: linear-gradient(135deg, #1a1200, #2a1e00);
-    border: 1px solid var(--gold); border-radius: var(--radius-sm);
-    padding: 14px 16px; margin-top: 12px; font-size: 13.5px; line-height: 1.6;
-  }
-  .upsell-block a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.bilan-stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #222;font-size:14px;}
+.bilan-stat:last-child{border-bottom:none;}
+.bilan-val{font-weight:700;color:var(--gold);}
 
-  /* ── BLOCKED STATE ── */
-  #blocked-bar {
-    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
-    background: linear-gradient(135deg, #1a0a00, #2a1000);
-    border-top: 2px solid var(--gold); padding: 16px 18px 30px;
-    text-align: center;
-  }
-  #blocked-bar p { font-size: 14px; color: #ccc; margin-bottom: 12px; line-height: 1.5; }
-  #blocked-bar a { display: inline-block; background: #25D366; color: white; padding: 12px 28px; border-radius: 24px; font-weight: 700; font-size: 15px; text-decoration: none; }
+.pwa-step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.pwa-step-num{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.pwa-step-text{font-size:13px;color:#ccc;line-height:1.5;padding-top:3px;}
 
-  /* ── RETRY INDICATOR ── */
-  #retry-indicator { display: none; text-align: center; font-size: 12px; color: var(--text-muted); padding: 6px; }
+#retry-indicator{display:none;text-align:center;font-size:12px;color:var(--muted);padding:6px;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div id="header">
-  <div id="avatar">⚡</div>
-  <div id="header-info">
-    <div id="header-name">Attractor</div>
-    <div id="header-status">En ligne</div>
+  <div id="header-top">
+    <div id="avatar">⚡</div>
+    <div id="header-info">
+      <div id="header-name">Attractor</div>
+      <div id="header-status">En ligne</div>
+    </div>
+    <div id="msg-counter">0 / 300</div>
   </div>
-  <div id="msg-counter">0 / 300</div>
+  <div id="journey-bar">
+    <div class="journey-day" data-day="1"></div>
+    <div class="journey-day" data-day="2"></div>
+    <div class="journey-day" data-day="3"></div>
+    <div class="journey-day" data-day="4"></div>
+    <div class="journey-day" data-day="5"></div>
+    <div class="journey-day" data-day="6"></div>
+    <div class="journey-day" data-day="7"></div>
+  </div>
+  <div id="journey-label">Chargement...</div>
 </div>
 
-<!-- BROADCAST BANNER -->
 <div id="broadcast-banner">
   <span id="broadcast-close" onclick="closeBroadcast()">✕</span>
   <strong>📢 Message de Mac Arthur :</strong>
   <span id="broadcast-text"></span>
 </div>
 
-<!-- CHAT -->
 <div id="chat-area">
   <div id="retry-indicator">🔄 Reconnexion en cours…</div>
 </div>
 
-<!-- INPUT -->
 <div id="input-area">
   <textarea id="user-input" placeholder="Écris ton message…" rows="1"></textarea>
   <button id="send-btn" onclick="sendMessage()">
@@ -214,608 +153,543 @@
   </button>
 </div>
 
-<!-- BLOCKED BAR -->
-<div id="blocked-bar">
-  <p>Tu as atteint la limite de <strong>300 messages</strong>.<br>Pour continuer avec Attractor, parle à Mac Arthur.</p>
-  <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20je%20veux%20continuer%20avec%20mon%20assistant%20Attractor%20%F0%9F%94%A5" target="_blank">💬 Contacter Mac Arthur sur WhatsApp</a>
+<div id="degraded-bar">
+  <div class="deg-title">⚡ Essai terminé</div>
+  <div class="deg-msgs" id="deg-msgs-left"></div>
+  <div class="deg-tarifs" id="deg-tarifs"></div>
+  <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20je%20veux%20continuer%20avec%20Attractor%20!" target="_blank">💬 Continuer avec Mac Arthur</a>
 </div>
 
-<!-- BADGE CONTAINER -->
 <div id="badge-container"></div>
 
-<!-- ══════════════ MODALS ══════════════ -->
-
-<!-- ONBOARDING 1 : Accueil -->
+<!-- MODAL WELCOME -->
 <div id="modal-welcome" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-title">⚡ Mac Arthur m'a parlé de toi.</div>
-    <div class="modal-text" id="welcome-text">Avant que tu arrives, il m'a dit que tu gères <strong id="w-activite"></strong> et que ta priorité c'est <strong id="w-priorite"></strong>.<br><br>Je ne suis pas un chatbot. Je suis <strong style="color:var(--gold)">Attractor</strong> — ton bras droit personnel, formé par Mac Arthur pour une seule mission : te soulager.</div>
+    <div class="modal-title">⚡ Je t'attendais.</div>
+    <div class="modal-text" id="welcome-text"></div>
     <button class="modal-btn primary" onclick="nextOnboarding(1)">Je suis prêt →</button>
   </div>
 </div>
 
-<!-- ONBOARDING 2 : Nom -->
+<!-- MODAL NOM -->
 <div id="modal-name" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">Comment tu veux qu'on t'appelle ?</div>
     <div class="modal-text">Patron ? Boss ? Ton prénom ? C'est toi qui décides.</div>
-    <input id="name-input" type="text" placeholder="Patron / Boss / Mon prénom…"
-      style="width:100%;padding:12px 16px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:15px;margin-bottom:16px;outline:none;">
+    <input id="name-input" type="text" placeholder="Patron / Boss / Mon prénom…" style="width:100%;padding:12px 16px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:15px;margin-bottom:16px;outline:none;">
     <button class="modal-btn primary" onclick="saveName()">C'est parti →</button>
   </div>
 </div>
 
-<!-- ONBOARDING 3 : Démarcation -->
+<!-- MODAL UNIQUE -->
 <div id="modal-unique" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">🎯 Je ne suis pas comme les autres.</div>
-    <div class="modal-text">
-      La plupart des IAs te donnent des réponses génériques. Moi, j'ai été formé par Mac Arthur sur <em>ta</em> situation.<br><br>
-      <strong style="color:var(--gold)">"L'automatisation n'est pas pour gagner du temps. Elle sert à ne plus perdre d'argent."</strong><br><br>
-      Je suis là pour ça. Concrètement.
-    </div>
+    <div class="modal-text">La plupart des IAs te donnent des réponses génériques. Moi, j'ai été formé par Mac Arthur sur <em>ta</em> situation — ton activité, tes priorités, ton objectif.<br><br><strong style="color:var(--gold)">"Ce qui reste dans ta tête t'enchaîne. Ce qui est écrit te libère."</strong><br><br>Ma mission : être ton bras droit. Pas te répondre — t'avancer.</div>
     <button class="modal-btn primary" onclick="nextOnboarding(3)">Je comprends →</button>
   </div>
 </div>
 
-<!-- ONBOARDING 4 : CGV -->
+<!-- MODAL CGV -->
 <div id="modal-cgv" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">📋 Conditions d'utilisation</div>
     <div class="cgv-box" id="cgv-content"></div>
-    <div class="modal-text" style="font-size:12px;color:var(--text-muted);">En continuant, tu acceptes ces conditions.</div>
+    <div class="modal-text" style="font-size:12px;color:var(--muted);">En continuant, tu acceptes ces conditions.</div>
     <button class="modal-btn primary" onclick="nextOnboarding(4)">J'accepte et je continue →</button>
     <button class="modal-btn secondary" onclick="openWhatsApp()">💬 Une question à Mac Arthur</button>
   </div>
 </div>
 
-<!-- ONBOARDING 5 : Première priorité -->
+<!-- MODAL PRIORITÉ -->
 <div id="modal-priority" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">🎯 Ta première mission.</div>
-    <div class="modal-text">Qu'est-ce que tu aurais dû faire cette semaine et que tu n'as pas encore fait ?<br><br>Sois honnête. Je ne juge pas — j'aide.</div>
-    <textarea id="priority-input" placeholder="Ex: Appeler 3 prospects chauds, finir ma présentation client, lancer ma pub Facebook…"
-      style="width:100%;padding:12px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:14px;resize:none;height:90px;margin-bottom:16px;outline:none;font-family:inherit;"></textarea>
+    <div class="modal-text">Qu'est-ce que tu aurais dû faire cette semaine et que tu n'as pas encore fait ?<br><br>Sois honnête. Je ne juge pas — j'agis.</div>
+    <textarea id="priority-input" placeholder="Ex: Appeler 3 prospects chauds, finir ma présentation client…" style="width:100%;padding:12px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:14px;resize:none;height:90px;margin-bottom:16px;outline:none;font-family:inherit;"></textarea>
     <button class="modal-btn primary" onclick="savePriority()">Noté. On y va →</button>
   </div>
 </div>
 
-<!-- ONBOARDING 6 : Guide PWA -->
+<!-- MODAL PWA -->
 <div id="pwa-modal" class="modal-overlay" style="align-items:center;">
   <div class="modal-box" style="border-radius:20px;margin:20px;max-height:80vh;overflow-y:auto;">
     <div class="modal-title">📲 Installe Attractor sur ton téléphone</div>
-    <div class="modal-text">Accède à ton assistant en 1 tap, comme une vraie appli.</div>
+    <div class="modal-text">Accède à ton assistant en 1 tap — comme une vraie appli.</div>
     <div id="pwa-steps"></div>
     <button class="modal-btn primary" style="margin-top:8px;" onclick="closePwaModal()">C'est fait ✓</button>
     <button class="modal-btn secondary" onclick="closePwaModal()">Plus tard</button>
   </div>
 </div>
 
-<!-- UPSELL MODAL (280 msg) -->
+<!-- MODAL UPSELL -->
 <div id="modal-upsell" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-title">🔥 Tu cartonnes.</div>
-    <div class="modal-text">Tu approches de la limite de ta formule actuelle (<strong id="upsell-count"></strong> messages utilisés).<br><br>Passe à la formule supérieure pour continuer sans interruption et débloquer des fonctionnalités avancées.</div>
-    <button class="modal-btn primary" onclick="openWhatsApp(); closeModal('modal-upsell');">💬 Parler à Mac Arthur</button>
+    <div class="modal-title">🔥 Tu cartones.</div>
+    <div class="modal-text">Tu approches de ta limite (<strong id="upsell-count"></strong> messages utilisés).<br><br>Passe à la formule supérieure pour continuer sans interruption.</div>
+    <button class="modal-btn primary" onclick="openWhatsApp();closeModal('modal-upsell');">💬 Parler à Mac Arthur</button>
     <button class="modal-btn secondary" onclick="closeModal('modal-upsell')">Continuer pour l'instant</button>
   </div>
 </div>
 
+<!-- MODAL BILAN J7 -->
+<div id="bilan-modal" class="modal-overlay" style="align-items:center;">
+  <div class="modal-box" style="border-radius:20px;margin:20px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-title">🏆 7 jours accomplis !</div>
+    <div class="modal-text" id="bilan-objectif" style="font-style:italic;font-size:13px;color:var(--muted);"></div>
+    <div id="bilan-stats" style="margin:16px 0;"></div>
+    <div id="bilan-ref-bonus" style="display:none;background:var(--dark3);border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--gold);"></div>
+    <div style="margin-bottom:16px;">
+      <div class="ref-card">
+        <div class="ref-title">Partage et gagne des jours gratuits</div>
+        <div class="ref-sub" id="bilan-ref-next"></div>
+        <div class="ref-btns">
+          <button class="ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
+          <button class="ref-btn share" onclick="shareNative()">Partager</button>
+          <button class="ref-btn copy" onclick="copyRefLink()">Copier lien</button>
+        </div>
+      </div>
+    </div>
+    <button class="modal-btn primary" onclick="openWhatsApp();closeModal('bilan-modal');">💬 Continuer avec Mac Arthur</button>
+    <button class="modal-btn secondary" onclick="closeModal('bilan-modal')">Fermer</button>
+  </div>
+</div>
+
+<!-- MODAL REFERRAL -->
+<div id="referral-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎁 Partage et gagne</div>
+    <div class="modal-text">Pour chaque ami qui s'inscrit via ton lien :<br><br>
+      <strong style="color:var(--gold)">1</strong> parrainage → +1 jour gratuit<br>
+      <strong style="color:var(--gold)">3</strong> parrainages → +1 semaine<br>
+      <strong style="color:var(--gold)">5</strong> parrainages → +1 mois<br>
+      <strong style="color:var(--gold)">10</strong> parrainages → +2 mois<br>
+      <strong style="color:var(--gold)">20</strong> parrainages → +2 mois supplémentaires<br>
+      <strong style="color:var(--gold)">30+</strong> parrainages → +3 mois gratuits
+    </div>
+    <div class="ref-card">
+      <div class="ref-title">Tes parrainages validés</div>
+      <div class="ref-score" id="ref-count-display">0</div>
+      <div class="ref-sub" id="ref-next-level"></div>
+      <div class="ref-btns">
+        <button class="ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
+        <button class="ref-btn share" onclick="shareNative()">Partager</button>
+        <button class="ref-btn copy" onclick="copyRefLink()">Copier</button>
+      </div>
+    </div>
+    <button class="modal-btn secondary" style="margin-top:16px;" onclick="closeModal('referral-modal')">Fermer</button>
+  </div>
+</div>
+
 <script>
-// ══════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════
-const SURL = 'https://script.google.com/macros/s/AKfycbzJwCbgEYDNk90uFRxwIcWDWFmr9QdMXtd1jvQL-cqWnJ1L-z_jJS1bbKNThPQaK4As1w/exec';
-const WA_NUMBER = '2250576877070';
-const MSG_TEASE = 250;
-const MSG_LIMIT = 300;
-const MSG_UPSELL_SHOWN = 'upsellShown';
-const HIST_MAX = 6; // FIX #10 : max 6 messages en GET
+const SURL='https://script.google.com/macros/s/AKfycbzJwCbgEYDNk90uFRxwIcWDWFmr9QdMXtd1jvQL-cqWnJ1L-z_jJS1bbKNThPQaK4As1w/exec';
+const WA_NUMBER='2250576877070';
+const BASE_URL='https://assists.agenceattractor.com';
+const MSG_TEASE=250,MSG_LIMIT=300,HIST_MAX=6,ESSAI_JOURS=7;
+const DEGRADED_LIMITS={1:5,2:3,3:1,4:0};
 
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-let clientId = '';
-let clientData = {};
-let conversationHistory = [];
-let messageCount = 0;
-let isBlocked = false;
-let isBotTyping = false;
-let onboardingStep = 0; // 0=pas démarré, 1..6=en cours, 7=terminé
-let modalQueue = [];   // FIX #3 : file d'attente modals
-let modalActive = false;
+let clientId='',clientData={},conversationHistory=[];
+let messageCount=0,isBlocked=false,isBotTyping=false;
+let modalQueue=[],modalActive=false;
+let jourEssai=1,joursDepasses=0,msgLimitToday=999,refCount=0;
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
-  const params = new URLSearchParams(window.location.search);
-  clientId = params.get('id') || '';
-  if (!clientId) { showError('Lien invalide. Contacte Mac Arthur.'); return; }
-
-  messageCount = parseInt(localStorage.getItem('msgCount_' + clientId) || '0');
+document.addEventListener('DOMContentLoaded',async()=>{
+  const params=new URLSearchParams(window.location.search);
+  clientId=params.get('id')||'';
+  if(!clientId){showError('Lien invalide. Contacte Mac Arthur.');return;}
+  const ref=params.get('ref');
+  if(ref&&ref!==clientId)localStorage.setItem('ref_source_'+clientId,ref);
+  messageCount=parseInt(localStorage.getItem('msgCount_'+clientId)||'0');
   updateCounter();
-
-  if (messageCount >= MSG_LIMIT) { showBlocked(); return; }
-
   await loadAssistant();
 });
 
-// ══════════════════════════════════════════
-// LOAD ASSISTANT
-// ══════════════════════════════════════════
-async function loadAssistant() {
-  try {
-    const r = await fetch(`${SURL}?action=getAssistant&id=${encodeURIComponent(clientId)}`);
-    const d = await r.json();
-    if (!d || !d.success || !d.profil) { showError('Assistant introuvable. Contacte Mac Arthur.'); return; }
-    clientData = d.profil;
-
-    document.getElementById('header-name').textContent = 'Attractor — ' + (d.prenom || '');
-
+async function loadAssistant(){
+  try{
+    const r=await fetch(SURL+'?action=getAssistant&id='+encodeURIComponent(clientId));
+    const d=await r.json();
+    if(!d||!d.success||!d.profil){showError('Assistant introuvable. Contacte Mac Arthur.');return;}
+    clientData=d.profil;
+    refCount=parseInt(clientData.ref_count||0);
+    document.getElementById('header-name').textContent='Attractor — '+(clientData.prenom||'');
+    calculerJourEssai();
+    updateJourneyBar();
     await loadBroadcast();
     await loadHistory();
     checkOnboardingState();
-  } catch(e) {
-    showError('Impossible de charger ton assistant. Vérifie ta connexion.');
+  }catch(e){showError('Impossible de charger. Vérifie ta connexion.');}
+}
+
+function calculerJourEssai(){
+  try {
+    // Le Sheet stocke la date dans joursRestants (col S = index 18)
+    // joursRestants = jours restants sur 7 => jourEssai = 7 - joursRestants + 1
+    const jr = parseInt(clientData.joursRestants);
+    if (!isNaN(jr) && jr >= 0) {
+      if (jr > 0) {
+        jourEssai = Math.max(1, ESSAI_JOURS - jr + 1);
+        joursDepasses = 0;
+      } else {
+        jourEssai = ESSAI_JOURS;
+        joursDepasses = 1; // expired
+        const k = Math.min(joursDepasses, 4);
+        msgLimitToday = DEGRADED_LIMITS[k] !== undefined ? DEGRADED_LIMITS[k] : 0;
+      }
+    } else {
+      jourEssai = 1; joursDepasses = 0;
+    }
+  } catch(e) { jourEssai = 1; joursDepasses = 0; }
+}
+
+function updateJourneyBar(){
+  document.querySelectorAll('.journey-day').forEach((d,i)=>{
+    const day=i+1;
+    d.classList.remove('done','today');
+    if(day<jourEssai)d.classList.add('done');
+    else if(day===jourEssai&&joursDepasses===0)d.classList.add('today');
+  });
+  const lbl=document.getElementById('journey-label');
+  if(joursDepasses===0){
+    lbl.textContent='Jour '+jourEssai+' sur '+ESSAI_JOURS;
+    lbl.style.color='var(--muted)';
+  }else{
+    lbl.textContent='Essai terminé — '+msgLimitToday+' message(s) aujourd\'hui';
+    lbl.style.color='var(--gold)';
+    showDegradedBar();
+  }
+  if(jourEssai===ESSAI_JOURS&&joursDepasses===0&&!localStorage.getItem('bilan_shown_'+clientId)){
+    setTimeout(()=>enqueueModal(()=>showBilan()),2500);
   }
 }
 
-// ══════════════════════════════════════════
-// BROADCAST — FIX #5 : case-insensitive
-// ══════════════════════════════════════════
-async function loadBroadcast() {
-  try {
-    const r = await fetch(`${SURL}?action=getBroadcast`);
-    const d = await r.json();
-    if (d && d.broadcast && d.broadcast.message) {
-      const key = 'bc_' + clientId + '_' + (d.broadcast.date || '').toString().replace(/\W/g,'');
-      if (!localStorage.getItem(key)) {
-        document.getElementById('broadcast-text').textContent = d.broadcast.message;
-        document.getElementById('broadcast-banner').style.display = 'block';
-        document.getElementById('chat-area').classList.add('with-broadcast');
-        localStorage.setItem(key, '1');
-      }
-    }
-  } catch(e) { /* silencieux */ }
+function showDegradedBar(){
+  const zone=(clientData.zone||'').toLowerCase();
+  const isCI=zone==='ci'||zone.includes('ivoire');
+  document.getElementById('deg-tarifs').innerHTML=isCI
+    ?'<div class="tarif-box"><div class="t-name">Starter</div><div class="t-price">25 000 FCFA<br>+ 10 000/mois</div></div><div class="tarif-box"><div class="t-name">Pro</div><div class="t-price">50 000 FCFA<br>+ 25 000/mois</div></div>'
+    :'<div class="tarif-box"><div class="t-name">Starter</div><div class="t-price">37€<br>+ 15€/mois</div></div><div class="tarif-box"><div class="t-name">Pro</div><div class="t-price">77€<br>+ 37€/mois</div></div>';
+  if(msgLimitToday===0){
+    document.getElementById('deg-msgs-left').textContent='Plus de messages aujourd\'hui. Reviens demain ou contacte Mac Arthur.';
+    document.getElementById('input-area').style.display='none';
+    isBlocked=true;
+  }else{
+    const key='msgToday_'+clientId+'_'+todayKey();
+    const used=parseInt(localStorage.getItem(key)||'0');
+    const rem=Math.max(0,msgLimitToday-used);
+    document.getElementById('deg-msgs-left').textContent=rem+' message(s) restant(s) aujourd\'hui.';
+    if(rem===0){document.getElementById('input-area').style.display='none';isBlocked=true;}
+  }
+  document.getElementById('degraded-bar').style.display='block';
 }
 
-function closeBroadcast() {
-  document.getElementById('broadcast-banner').style.display = 'none';
+function todayKey(){return new Date().toISOString().split('T')[0];}
+
+function showBilan(){
+  localStorage.setItem('bilan_shown_'+clientId,'1');
+  const obj=clientData.objectif||'';
+  document.getElementById('bilan-objectif').innerHTML='<em>"'+obj+'"</em>';
+  document.getElementById('bilan-stats').innerHTML=
+    '<div class="bilan-stat"><span>Messages échangés</span><span class="bilan-val">'+messageCount+'</span></div>'+
+    '<div class="bilan-stat"><span>Jours d\'essai</span><span class="bilan-val">'+jourEssai+' / 7</span></div>'+
+    '<div class="bilan-stat"><span>Amis parrainés</span><span class="bilan-val">'+refCount+'</span></div>';
+  if(refCount>0){
+    const bonus=calculerBonusJours(refCount);
+    document.getElementById('bilan-ref-bonus').style.display='block';
+    document.getElementById('bilan-ref-bonus').textContent='🎁 Tu as gagné '+bonus+' jour(s) bonus grâce à tes parrainages !';
+  }
+  document.getElementById('bilan-ref-next').textContent=getNextPalier(refCount);
+  showModal('bilan-modal');
+}
+
+function calculerBonusJours(c){
+  if(c>=30)return 90;if(c>=20)return 60;if(c>=10)return 30;if(c>=5)return 30;if(c>=3)return 7;return c;
+}
+
+async function loadBroadcast(){
+  try{
+    const r=await fetch(SURL+'?action=getBroadcast');
+    const d=await r.json();
+    if(d&&d.broadcast&&d.broadcast.message){
+      const key='bc_'+clientId+'_'+(d.broadcast.date||'').toString().replace(/\W/g,'');
+      if(!localStorage.getItem(key)){
+        document.getElementById('broadcast-text').textContent=d.broadcast.message;
+        document.getElementById('broadcast-banner').style.display='block';
+        document.getElementById('chat-area').classList.add('with-broadcast');
+        localStorage.setItem(key,'1');
+      }
+    }
+  }catch(e){}
+}
+function closeBroadcast(){
+  document.getElementById('broadcast-banner').style.display='none';
   document.getElementById('chat-area').classList.remove('with-broadcast');
 }
 
-// ══════════════════════════════════════════
-// HISTORY
-// ══════════════════════════════════════════
-async function loadHistory() {
-  try {
-    const r = await fetch(`${SURL}?action=getConversation&id=${encodeURIComponent(clientId)}`);
-    const d = await r.json();
-    if (d && Array.isArray(d.messages)) {
-      conversationHistory = d.messages.map(m => ({ role: m.role, content: m.content || m.message || '' }));
-      // Afficher les 10 derniers dans le chat
-      const recent = d.messages.slice(-10);
-      recent.forEach(m => appendBubble(m.role === 'user' ? 'user' : 'bot', m.content || m.message || '', false));
+async function loadHistory(){
+  try{
+    const r=await fetch(SURL+'?action=getConversation&id='+encodeURIComponent(clientId));
+    const d=await r.json();
+    if(d&&Array.isArray(d.messages)){
+      conversationHistory=d.messages.map(m=>({role:m.role,content:m.content||m.message||''}));
+      d.messages.slice(-10).forEach(m=>appendBubble(m.role==='user'?'user':'bot',m.content||m.message||'',false));
       scrollBottom();
     }
-  } catch(e) { /* historique vide */ }
+  }catch(e){}
 }
 
-// ══════════════════════════════════════════
-// ONBOARDING STATE — FIX #4 : reprise si interrompu
-// ══════════════════════════════════════════
-function checkOnboardingState() {
-  const done = localStorage.getItem('onb_done_' + clientId);
-  const step = parseInt(localStorage.getItem('onb_step_' + clientId) || '0');
-
-  if (done === '1') {
-    // Onboarding terminé — FIX #6 : PWA guide 1x par device même pour clients existants
-    const pwaShown = localStorage.getItem('pwa_shown_' + clientId);
-    if (!pwaShown) {
-      enqueueModal(() => showPwaModal());
-    }
+function checkOnboardingState(){
+  const done=localStorage.getItem('onb_done_'+clientId);
+  const step=parseInt(localStorage.getItem('onb_step_'+clientId)||'0');
+  if(done==='1'){
+    if(!localStorage.getItem('pwa_shown_'+clientId))enqueueModal(()=>showPwaModal());
     startChat();
+    if(conversationHistory.length===0)setTimeout(()=>triggerJourMessage(),800);
     return;
   }
-
-  // Reprise si interrompu ou premier démarrage
-  // Si on a de l'historique, l'onboarding est probablement terminé mais localStorage perdu
-  if (conversationHistory.length > 4 && step < 3) {
-    // Considère onboarding terminé
-    localStorage.setItem('onb_done_' + clientId, '1');
-    const pwaShown = localStorage.getItem('pwa_shown_' + clientId);
-    if (!pwaShown) enqueueModal(() => showPwaModal());
-    startChat();
-    return;
+  if(conversationHistory.length>4&&step<3){
+    localStorage.setItem('onb_done_'+clientId,'1');
+    if(!localStorage.getItem('pwa_shown_'+clientId))enqueueModal(()=>showPwaModal());
+    startChat();return;
   }
+  if(step>=1&&step<=6)runOnboardingStep(step);
+  else{localStorage.setItem('onb_step_'+clientId,'1');buildWelcome();showModal('modal-welcome');}
+}
 
-  // Démarrer ou reprendre à l'étape sauvegardée
-  if (step >= 1 && step <= 6) {
-    onboardingStep = step;
-    runOnboardingStep(step);
-  } else {
-    onboardingStep = 1;
-    localStorage.setItem('onb_step_' + clientId, '1');
-    showModal('modal-welcome');
-    document.getElementById('w-activite').textContent = clientData.activite || 'ton activité';
-    document.getElementById('w-priorite').textContent = clientData.priorite || 'ta croissance';
+function buildWelcome(){
+  document.getElementById('welcome-text').innerHTML=
+    'Mac Arthur m\'a parlé de toi avant que tu arrives.<br><br>'+
+    'Il m\'a dit que tu gères <strong style="color:var(--gold)">'+(clientData.activite||'ton activité')+'</strong> '+
+    'et que ta priorité c\'est <strong style="color:var(--gold)">'+(clientData.priorite||'ta croissance')+'</strong>.<br><br>'+
+    'Je ne suis pas un chatbot. Je suis <strong style="color:var(--gold)">Attractor</strong> — '+
+    'ton bras droit, formé par Mac Arthur pour une seule mission : te soulager.';
+}
+
+function runOnboardingStep(step){
+  switch(step){
+    case 1:buildWelcome();showModal('modal-welcome');break;
+    case 2:showModal('modal-name');break;
+    case 3:showModal('modal-unique');break;
+    case 4:showCGV();break;
+    case 5:showModal('modal-priority');break;
+    case 6:showPwaModal();break;
   }
 }
 
-function runOnboardingStep(step) {
-  switch(step) {
-    case 1: showModal('modal-welcome'); document.getElementById('w-activite').textContent = clientData.activite || 'ton activité'; document.getElementById('w-priorite').textContent = clientData.priorite || 'ta croissance'; break;
-    case 2: showModal('modal-name'); break;
-    case 3: showModal('modal-unique'); break;
-    case 4: showCGV(); break;
-    case 5: showModal('modal-priority'); break;
-    case 6: showPwaModal(); break;
-  }
-}
-
-function nextOnboarding(currentStep) {
-  closeModal('modal-welcome');
-  closeModal('modal-name');
-  closeModal('modal-unique');
-  closeModal('modal-cgv');
-  closeModal('modal-priority');
-  closePwaModal();
-
-  const next = currentStep + 1;
-  localStorage.setItem('onb_step_' + clientId, next);
-
-  if (next > 6) {
-    finishOnboarding();
-    return;
-  }
+function nextOnboarding(cur){
+  ['modal-welcome','modal-name','modal-unique','modal-cgv','modal-priority','pwa-modal'].forEach(id=>closeModalSilent(id));
+  const next=cur+1;
+  localStorage.setItem('onb_step_'+clientId,next);
+  if(next>6){finishOnboarding();return;}
   runOnboardingStep(next);
 }
 
-function finishOnboarding() {
-  localStorage.setItem('onb_done_' + clientId, '1');
-  localStorage.setItem('onb_step_' + clientId, '7');
+function finishOnboarding(){
+  localStorage.setItem('onb_done_'+clientId,'1');
+  localStorage.setItem('onb_step_'+clientId,'7');
   startChat();
-  setTimeout(() => {
-    appendBubble('bot', `Parfait, ${localStorage.getItem('userName_' + clientId) || clientData.prenom || ''}. Je suis là. Qu'est-ce qu'on attaque en premier ?`);
-  }, 400);
+  setTimeout(()=>triggerJourMessage(),600);
 }
 
-// ══════════════════════════════════════════
-// CGV
-// ══════════════════════════════════════════
-function showCGV() {
-  const zone = (clientData.zone || '').toLowerCase();
-  const isCI = zone === 'ci' || zone === 'côte d\'ivoire' || zone === 'cote d\'ivoire';
-  let html = '';
-  if (isCI) {
-    html = `<strong>Formule Starter CI</strong><br>Setup : <strong>25 000 FCFA</strong> | Abonnement : <strong>10 000 FCFA/mois</strong><br><br>Paiement via Wave / Djamo / MTN / Orange Money (+225 05 76 87 70 70).<br><br>L'abonnement est renouvelé chaque mois. Sans renouvellement, l'accès est suspendu. Aucun remboursement après activation.`;
-  } else {
-    html = `<strong>Formule Starter EU</strong><br>Setup : <strong>37 €</strong> | Abonnement : <strong>15 €/mois</strong><br><br>Paiement via PayPal @Myattractor · Wero/Revolut +33753902323.<br><br>L'abonnement est renouvelé chaque mois. Sans renouvellement, l'accès est suspendu. Aucun remboursement après activation.`;
-  }
-  document.getElementById('cgv-content').innerHTML = html;
+function triggerJourMessage(){
+  if(conversationHistory.length>0)return;
+  const u=localStorage.getItem('userName_'+clientId)||clientData.prenom||'';
+  const a=clientData.activite||'ton activité';
+  const p=clientData.priorite||'tes priorités';
+  const o=clientData.objectif||'ton objectif';
+  const msgs={
+    1:u+', je suis là. Mac Arthur m\'a tout dit sur toi.\n\nTu gères **'+a+'**. Ta priorité : **'+p+'**.\n\nUne seule question pour commencer :\n\n**Quelle est la tâche que tu répètes le plus chaque semaine et qui te prend le plus de temps ?**',
+    2:'Jour 2. On va plus loin aujourd\'hui.\n\n**Décris-moi une semaine type dans ton activité — du lundi au vendredi. Ce qui se passe vraiment.**',
+    3:'Jour 3, **'+u+'**. Aujourd\'hui on passe à l\'action.\n\nJ\'ai une question directe pour toi :\n\n**Quels sont tes 3 prospects les plus chauds en ce moment ? Et quand les as-tu contactés pour la dernière fois ?**',
+    4:'Jour 4. Tu tiens — c\'est déjà beaucoup.\n\n**La tâche qu\'on a ciblée hier — tu l\'as faite ? Oui ou non.**\n\nPas de jugement. Juste la vérité.',
+    5:'Jour 5. On entre dans la profondeur.\n\n*"'+o+'"*\n\nC\'est ce que tu m\'as dit au départ.\n\n**Dans ta tête en ce moment — qu\'est-ce qui te retient vraiment ? Pas les raisons pratiques. Les vraies.**',
+    6:'Jour 6, **'+u+'**. Demain c\'est le dernier jour de ton essai.\n\nTu peux faire progresser quelqu\'un d\'autre en même temps que toi.\n\nTape **"partager"** pour voir ton lien referral et gagner des jours gratuits.',
+    7:'Jour 7. On a construit quelque chose ensemble cette semaine.\n\n*"'+o+'"*\n\nDemain je serai encore là — si tu choisis de continuer.\n\nTape **"bilan"** pour voir ce qu\'on a accompli ensemble.'
+  };
+  const msg=msgs[jourEssai]||msgs[1];
+  appendBubble('bot',msg);
+}
+
+function showCGV(){
+  const zone=(clientData.zone||'').toLowerCase();
+  const isCI=zone==='ci'||zone.includes('ivoire');
+  document.getElementById('cgv-content').innerHTML=isCI
+    ?'<strong>Formule Starter CI</strong><br>Setup : <strong>25 000 FCFA</strong> | Abonnement : <strong>10 000 FCFA/mois</strong><br><br>Paiement via Wave / Djamo / MTN / Orange (+225 05 76 87 70 70).<br><br>Sans renouvellement, accès suspendu. Aucun remboursement après activation.'
+    :'<strong>Formule Starter EU</strong><br>Setup : <strong>37 €</strong> | Abonnement : <strong>15 €/mois</strong><br><br>Paiement via PayPal @Myattractor · Wero/Revolut +33753902323.<br><br>Sans renouvellement, accès suspendu. Aucun remboursement après activation.';
   showModal('modal-cgv');
 }
 
-// ══════════════════════════════════════════
-// NAME
-// ══════════════════════════════════════════
-function saveName() {
-  const v = document.getElementById('name-input').value.trim();
-  if (v) localStorage.setItem('userName_' + clientId, v);
+function saveName(){
+  const v=document.getElementById('name-input').value.trim();
+  if(v)localStorage.setItem('userName_'+clientId,v);
   nextOnboarding(2);
 }
-
-// ══════════════════════════════════════════
-// PRIORITY
-// ══════════════════════════════════════════
-function savePriority() {
-  const v = document.getElementById('priority-input').value.trim();
-  if (v) {
-    saveMsg('user', v); // sauvegarde dans CONVERSATIONS
-  }
+function savePriority(){
+  const v=document.getElementById('priority-input').value.trim();
+  if(v)saveMsg('user',v);
   nextOnboarding(5);
 }
 
-// ══════════════════════════════════════════
-// PWA GUIDE — FIX #6 : aussi pour clients existants
-// ══════════════════════════════════════════
-function showPwaModal() {
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isAndroid = /android/i.test(navigator.userAgent);
-  let stepsHTML = '';
+function showPwaModal(){
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid=/android/i.test(navigator.userAgent);
+  let h='';
+  if(isIOS)h='<div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre dans <strong>Safari</strong>.</div></div><div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text">Icône <strong>Partager</strong> en bas.</div></div><div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text">Sélectionne <strong>"Sur l\'écran d\'accueil"</strong>.</div></div>';
+  else if(isAndroid)h='<div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre dans <strong>Chrome</strong>.</div></div><div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text"><strong>3 points</strong> en haut à droite.</div></div><div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text"><strong>"Ajouter à l\'écran d\'accueil"</strong>.</div></div>';
+  else h='<div class="pwa-step"><div class="pwa-step-num">💡</div><div class="pwa-step-text">Utilise "Ajouter à l\'écran d\'accueil" depuis ton navigateur mobile.</div></div>';
+  document.getElementById('pwa-steps').innerHTML=h;
+  showModal('pwa-modal');
+  localStorage.setItem('pwa_shown_'+clientId,'1');
+}
+function closePwaModal(){
+  closeModalSilent('pwa-modal');
+  const step=parseInt(localStorage.getItem('onb_step_'+clientId)||'0');
+  if(step===6)finishOnboarding();else processModalQueue();
+}
 
-  if (isIOS) {
-    stepsHTML = `
-      <div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre ce lien dans <strong>Safari</strong> (pas Chrome).</div></div>
-      <div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text">Appuie sur l'icône <strong>Partager</strong> (carré avec flèche vers le haut) en bas de l'écran.</div></div>
-      <div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text">Sélectionne <strong>"Sur l'écran d'accueil"</strong>.</div></div>
-      <div class="pwa-step"><div class="pwa-step-num">4</div><div class="pwa-step-text">Appuie sur <strong>Ajouter</strong>. Attractor apparaît comme une vraie appli.</div></div>`;
-  } else if (isAndroid) {
-    stepsHTML = `
-      <div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre ce lien dans <strong>Chrome</strong>.</div></div>
-      <div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text">Appuie sur les <strong>3 points</strong> en haut à droite.</div></div>
-      <div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text">Sélectionne <strong>"Ajouter à l'écran d'accueil"</strong>.</div></div>
-      <div class="pwa-step"><div class="pwa-step-num">4</div><div class="pwa-step-text">Confirme. Attractor est installé.</div></div>`;
-  } else {
-    stepsHTML = `<div class="pwa-step"><div class="pwa-step-num">💡</div><div class="pwa-step-text">Sur mobile, ouvre ce lien dans ton navigateur et utilise "Ajouter à l'écran d'accueil" pour accéder à Attractor comme une appli.</div></div>`;
+function getRefLink(){return BASE_URL+'/?ref='+encodeURIComponent(clientId);}
+function getRefMessage(){
+  const u=localStorage.getItem('userName_'+clientId)||clientData.prenom||'';
+  return 'J\'utilise Attractor depuis '+jourEssai+' jours et ça change vraiment ma façon de travailler.\n\nTu peux tester 7 jours gratuitement ici :\n'+getRefLink()+'\n\nC\'est un assistant configuré pour TOI — pas un chatbot générique.';
+}
+function shareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(getRefMessage()),'_blank');}
+function shareNative(){
+  if(navigator.share){navigator.share({title:'Attractor — Ton assistant personnel',text:getRefMessage(),url:getRefLink()}).catch(()=>{});}
+  else shareWhatsApp();
+}
+function copyRefLink(){
+  navigator.clipboard.writeText(getRefLink()).then(()=>showBadgeToast('🔗 Lien copié !')).catch(()=>shareWhatsApp());
+}
+function getNextPalier(c){
+  if(c<1)return 'Encore '+(1-c)+' parrainage pour +1 jour';
+  if(c<3)return 'Encore '+(3-c)+' pour +1 semaine';
+  if(c<5)return 'Encore '+(5-c)+' pour +1 mois';
+  if(c<10)return 'Encore '+(10-c)+' pour +2 mois';
+  if(c<20)return 'Encore '+(20-c)+' pour +2 mois supplémentaires';
+  if(c<30)return 'Encore '+(30-c)+' pour +3 mois gratuits';
+  return '🏆 Maximum atteint !';
+}
+function showReferralModal(){
+  document.getElementById('ref-count-display').textContent=refCount;
+  document.getElementById('ref-next-level').textContent=getNextPalier(refCount);
+  showModal('referral-modal');
+}
+
+function startChat(){
+  document.getElementById('input-area').style.display='flex';
+  const ta=document.getElementById('user-input');
+  ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
+  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+}
+
+async function sendMessage(){
+  if(isBlocked||isBotTyping)return;
+  const ta=document.getElementById('user-input');
+  const text=ta.value.trim();
+  if(!text)return;
+  if(['partager','referral','parrainage'].includes(text.toLowerCase())){ta.value='';ta.style.height='auto';showReferralModal();return;}
+  if(text.toLowerCase()==='bilan'){ta.value='';ta.style.height='auto';showBilan();return;}
+  ta.value='';ta.style.height='auto';
+  document.getElementById('send-btn').disabled=true;
+
+  if(joursDepasses>0){
+    const key='msgToday_'+clientId+'_'+todayKey();
+    const used=parseInt(localStorage.getItem(key)||'0')+1;
+    localStorage.setItem(key,used);
+    if(used>msgLimitToday){showError('Plus de messages disponibles aujourd\'hui.');document.getElementById('send-btn').disabled=false;return;}
   }
 
-  document.getElementById('pwa-steps').innerHTML = stepsHTML;
-  showModal('pwa-modal');
-  localStorage.setItem('pwa_shown_' + clientId, '1');
-}
-
-function closePwaModal() {
-  closeModal('pwa-modal');
-  // Si on était dans l'onboarding step 6, terminer
-  const step = parseInt(localStorage.getItem('onb_step_' + clientId) || '0');
-  if (step === 6) finishOnboarding();
-  else processModalQueue();
-}
-
-// ══════════════════════════════════════════
-// MODAL QUEUE — FIX #3 : jamais deux modals simultanés
-// ══════════════════════════════════════════
-function enqueueModal(fn) {
-  modalQueue.push(fn);
-  if (!modalActive) processModalQueue();
-}
-
-function processModalQueue() {
-  if (modalQueue.length === 0) { modalActive = false; return; }
-  modalActive = true;
-  const fn = modalQueue.shift();
-  fn();
-}
-
-function showModal(id) {
-  document.getElementById(id).classList.add('active');
-}
-
-function closeModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('active');
-  // Processer la file après fermeture (sauf pwa qui a son propre handler)
-  if (id !== 'pwa-modal') processModalQueue();
-}
-
-// ══════════════════════════════════════════
-// CHAT ACTIVE
-// ══════════════════════════════════════════
-function startChat() {
-  document.getElementById('input-area').style.display = 'flex';
-  const ta = document.getElementById('user-input');
-  ta.addEventListener('input', autoResize);
-  ta.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-}
-
-function autoResize() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-}
-
-// ══════════════════════════════════════════
-// SEND MESSAGE — FIX #1, #7, #8, #9, #10
-// ══════════════════════════════════════════
-async function sendMessage() {
-  if (isBlocked || isBotTyping) return;
-  const ta = document.getElementById('user-input');
-  const text = ta.value.trim();
-  if (!text) return;
-
-  ta.value = ''; ta.style.height = 'auto';
-  document.getElementById('send-btn').disabled = true;
-
   messageCount++;
-  localStorage.setItem('msgCount_' + clientId, messageCount);
+  localStorage.setItem('msgCount_'+clientId,messageCount);
   updateCounter();
+  appendBubble('user',text);
+  conversationHistory.push({role:'user',content:text});
+  saveMsg('user',text);
 
-  appendBubble('user', text);
-  conversationHistory.push({ role: 'user', content: text });
-
-  // FIX #1 : saveMsg hors du bloc try/catch principal
-  saveMsg('user', text);
-
-  if (messageCount >= MSG_LIMIT) { showBlocked(); return; }
-  if (messageCount === MSG_TEASE && !localStorage.getItem(MSG_UPSELL_SHOWN + '_' + clientId)) {
-    localStorage.setItem(MSG_UPSELL_SHOWN + '_' + clientId, '1');
-    enqueueModal(() => {
-      document.getElementById('upsell-count').textContent = messageCount;
-      showModal('modal-upsell');
-    });
+  if(messageCount>=MSG_LIMIT){isBlocked=true;document.getElementById('input-area').style.display='none';return;}
+  if(messageCount===MSG_TEASE&&!localStorage.getItem('upsellShown_'+clientId)){
+    localStorage.setItem('upsellShown_'+clientId,'1');
+    enqueueModal(()=>{document.getElementById('upsell-count').textContent=messageCount;showModal('modal-upsell');});
   }
 
   showTyping();
-  const reply = await callChatWithRetry(text);
+  const reply=await callChatWithRetry(text);
   hideTyping();
-
-  if (reply) {
-    appendBubble('bot', reply);
-    conversationHistory.push({ role: 'assistant', content: reply });
-    saveMsg('assistant', reply); // FIX #1 : hors try/catch
+  if(reply){
+    appendBubble('bot',reply);
+    conversationHistory.push({role:'assistant',content:reply});
+    saveMsg('assistant',reply);
     checkBadges();
   }
-
-  document.getElementById('send-btn').disabled = false;
+  document.getElementById('send-btn').disabled=false;
   scrollBottom();
 }
-if(['partager','referral','parrainage','lien','mon lien'].some(k => text.toLowerCase().includes(k))) {
-  ta.value='';ta.style.height='auto';showReferralModal();return;
-}
-// ══════════════════════════════════════════
-// CHAT API — FIX #7 : timeout 15s + retry 1x
-//             FIX #8 : règle agenda + formule supérieure
-//             FIX #9 : 0 hallucination
-//             FIX #10 : hist limité à 6 messages
-// ══════════════════════════════════════════
-async function callChatWithRetry(text) {
-  const result = await callChat(text);
-  if (result !== null) return result;
 
-  // Retry 1x
-  showRetryIndicator();
-  await delay(2000);
-  hideRetryIndicator();
+async function callChatWithRetry(text){
+  const r=await callChat(text);
+  if(r!==null)return r;
+  showRetryIndicator();await delay(2000);hideRetryIndicator();
   return await callChat(text);
 }
 
-async function callChat(text) {
-  // FIX #10 : limiter à HIST_MAX messages
-  // Le system prompt est construit par le script Apps Script depuis le Sheet
-  const histSlice = conversationHistory.slice(-HIST_MAX).map(m => ({ role: m.role, content: m.content }));
-
-  const payload = {
-    action: 'chat',
-    id: clientId,
-    msg: text,
-    hist: JSON.stringify(histSlice)
-  };
-
-  const urlParams = new URLSearchParams(payload);
-  const url = `${SURL}?${urlParams.toString()}`;
-
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000); // FIX #7 : 15s
-
-    const r = await fetch(url, {
-      method: 'GET',
-      headers: { 'Content-Type': 'text/plain' },
-      signal: controller.signal
-    });
-    clearTimeout(timeout);
-
-    const d = await r.json();
-    if (d && d.reply) return d.reply;
+async function callChat(text){
+  const hist=conversationHistory.slice(-HIST_MAX).map(m=>({role:m.role,content:m.content}));
+  const url=SURL+'?'+new URLSearchParams({action:'chat',id:clientId,msg:text,hist:JSON.stringify(hist)}).toString();
+  try{
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),15000);
+    const r=await fetch(url,{method:'GET',signal:ctrl.signal});
+    clearTimeout(t);
+    const d=await r.json();
+    if(d&&d.reply)return d.reply;
     return null;
-  } catch(e) {
-    return null;
-  }
+  }catch(e){return null;}
 }
 
-// ══════════════════════════════════════════
-// SAVE MESSAGE — FIX #1 : appelé indépendamment
-// ══════════════════════════════════════════
-function saveMsg(role, content) {
-  try {
-    fetch(SURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'saveMessage', id: clientId, role: role, content: content })
-    }).catch(() => {});
-  } catch(e) { /* silencieux */ }
+function saveMsg(role,content){
+  try{
+    const url=SURL+'?action=saveMessage&id='+encodeURIComponent(clientId)+'&role='+encodeURIComponent(role)+'&message='+encodeURIComponent(content);
+    fetch(url,{method:'GET'}).catch(()=>{});
+  }catch(e){}
 }
 
-// ══════════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════════
-function appendBubble(role, text, animate = true) {
-  const area = document.getElementById('chat-area');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg ' + role;
-  if (!animate) wrap.style.animation = 'none';
+function enqueueModal(fn){modalQueue.push(fn);if(!modalActive)processModalQueue();}
+function processModalQueue(){if(modalQueue.length===0){modalActive=false;return;}modalActive=true;const fn=modalQueue.shift();fn();}
+function showModal(id){document.getElementById(id).classList.add('active');}
+function closeModal(id){closeModalSilent(id);processModalQueue();}
+function closeModalSilent(id){const el=document.getElementById(id);if(el)el.classList.remove('active');}
 
-  const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-
-  if (role === 'bot') {
-    wrap.innerHTML = `<div class="bot-icon">⚡</div><div class="bubble">${formatted}</div>`;
-  } else {
-    wrap.innerHTML = `<div class="bubble">${formatted}</div>`;
-  }
+function appendBubble(role,text,animate=true){
+  const area=document.getElementById('chat-area');
+  const wrap=document.createElement('div');
+  wrap.className='msg '+role;
+  if(!animate)wrap.style.animation='none';
+  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
+  if(role==='bot')wrap.innerHTML='<div class="bot-icon">⚡</div><div class="bubble">'+fmt+'</div>';
+  else wrap.innerHTML='<div class="bubble">'+fmt+'</div>';
   area.appendChild(wrap);
-  if (animate) scrollBottom();
+  if(animate)scrollBottom();
 }
 
-let typingEl = null;
-function showTyping() {
-  isBotTyping = true;
-  const area = document.getElementById('chat-area');
-  typingEl = document.createElement('div');
-  typingEl.className = 'msg bot';
-  typingEl.id = 'typing-bubble';
-  typingEl.innerHTML = `<div class="bot-icon">⚡</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
-  area.appendChild(typingEl);
-  scrollBottom();
-}
-function hideTyping() {
-  isBotTyping = false;
-  if (typingEl) { typingEl.remove(); typingEl = null; }
-}
+let typingEl=null;
+function showTyping(){isBotTyping=true;const a=document.getElementById('chat-area');typingEl=document.createElement('div');typingEl.className='msg bot';typingEl.innerHTML='<div class="bot-icon">⚡</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';a.appendChild(typingEl);scrollBottom();}
+function hideTyping(){isBotTyping=false;if(typingEl){typingEl.remove();typingEl=null;}}
+function showRetryIndicator(){document.getElementById('retry-indicator').style.display='block';}
+function hideRetryIndicator(){document.getElementById('retry-indicator').style.display='none';}
+function scrollBottom(){const a=document.getElementById('chat-area');setTimeout(()=>a.scrollTo({top:a.scrollHeight,behavior:'smooth'}),50);}
+function updateCounter(){const el=document.getElementById('msg-counter');const r=MSG_LIMIT-messageCount;el.textContent=messageCount+' / '+MSG_LIMIT;el.style.color=r<=50?'var(--red)':r<=100?'#ffaa00':'var(--muted)';}
+function showError(msg){appendBubble('bot','⚠️ '+msg,false);}
+function openWhatsApp(){window.open('https://wa.me/'+WA_NUMBER+'?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question%20sur%20mon%20assistant%20Attractor.','_blank');}
 
-function showRetryIndicator() {
-  document.getElementById('retry-indicator').style.display = 'block';
-}
-function hideRetryIndicator() {
-  document.getElementById('retry-indicator').style.display = 'none';
-}
-
-function scrollBottom() {
-  const area = document.getElementById('chat-area');
-  setTimeout(() => area.scrollTo({ top: area.scrollHeight, behavior: 'smooth' }), 50);
-}
-
-function updateCounter() {
-  const el = document.getElementById('msg-counter');
-  const remaining = MSG_LIMIT - messageCount;
-  el.textContent = `${messageCount} / ${MSG_LIMIT}`;
-  el.style.color = remaining <= 50 ? '#ff6b6b' : remaining <= 100 ? '#ffaa00' : 'var(--text-muted)';
-}
-
-function showBlocked() {
-  isBlocked = true;
-  document.getElementById('input-area').style.display = 'none';
-  document.getElementById('blocked-bar').style.display = 'block';
-}
-
-function showError(msg) {
-  appendBubble('bot', '⚠️ ' + msg, false);
-}
-
-function openWhatsApp() {
-  window.open(`https://wa.me/${WA_NUMBER}?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question%20sur%20mon%20assistant%20Attractor.`, '_blank');
-}
-
-// ══════════════════════════════════════════
-// BADGES — FIX #3 : via queue, jamais deux simultanés
-// ══════════════════════════════════════════
-const BADGES = [
-  { count: 1, label: '🌱 Premier message envoyé !' },
-  { count: 10, label: '🔥 10 échanges — tu es lancé !' },
-  { count: 50, label: '⚡ 50 messages — tu cartonne !' },
-  { count: 100, label: '🏆 100 messages — entrepreneur engagé !' },
-  { count: 200, label: '🚀 200 messages — niveau Expert !' },
+const BADGES=[
+  {count:1,label:'🌱 Premier message — bienvenue !'},
+  {count:10,label:'🔥 10 échanges — tu es lancé !'},
+  {count:50,label:'⚡ 50 messages — tu cartones !'},
+  {count:100,label:'🏆 100 messages — entrepreneur engagé !'},
+  {count:200,label:'🚀 200 messages — niveau Expert !'},
 ];
-
-function checkBadges() {
-  BADGES.forEach(b => {
-    const key = 'badge_' + clientId + '_' + b.count;
-    if (messageCount >= b.count && !localStorage.getItem(key)) {
-      localStorage.setItem(key, '1');
-      enqueueModal(() => showBadgeToast(b.label));
-    }
-  });
-}
-
-function showBadgeToast(label) {
-  const container = document.getElementById('badge-container');
-  const el = document.createElement('div');
-  el.className = 'badge-toast';
-  el.textContent = label;
-  container.appendChild(el);
-  setTimeout(() => {
-    el.style.transition = 'opacity .4s';
-    el.style.opacity = '0';
-    setTimeout(() => { el.remove(); processModalQueue(); }, 400);
-  }, 2800);
-}
-
-// ══════════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════════
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+function checkBadges(){BADGES.forEach(b=>{const k='badge_'+clientId+'_'+b.count;if(messageCount>=b.count&&!localStorage.getItem(k)){localStorage.setItem(k,'1');enqueueModal(()=>showBadgeToast(b.label));}});}
+function showBadgeToast(label){const c=document.getElementById('badge-container');const el=document.createElement('div');el.className='badge-toast';el.textContent=label;c.appendChild(el);setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>{el.remove();processModalQueue();},400);},2800);}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 </script>
 </body>
 </html>
