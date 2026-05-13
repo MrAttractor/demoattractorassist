@@ -346,10 +346,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ══════════════════════════════════════════
 async function loadAssistant() {
   try {
-    const r = await fetch(`${SURL}?action=getAssistant&id=${encodeURIComponent(clientId)}`);
+    const r = await fetch(`${SURL}?action=getClient&id=${encodeURIComponent(clientId)}`);
     const d = await r.json();
-    if (!d || d.error) { showError('Assistant introuvable. Contacte Mac Arthur.'); return; }
-    clientData = d;
+    if (!d || !d.success || !d.profil) { showError('Assistant introuvable. Contacte Mac Arthur.'); return; }
+    clientData = d.profil;
 
     document.getElementById('header-name').textContent = 'Attractor — ' + (d.prenom || '');
 
@@ -368,10 +368,10 @@ async function loadBroadcast() {
   try {
     const r = await fetch(`${SURL}?action=getBroadcast`);
     const d = await r.json();
-    if (d && d.message && d.statut && d.statut.toLowerCase() === 'actif') {
-      const key = 'bc_' + clientId + '_' + (d.date || '').replace(/\W/g,'');
+    if (d && d.broadcast && d.broadcast.message) {
+      const key = 'bc_' + clientId + '_' + (d.broadcast.date || '').toString().replace(/\W/g,'');
       if (!localStorage.getItem(key)) {
-        document.getElementById('broadcast-text').textContent = d.message;
+        document.getElementById('broadcast-text').textContent = d.broadcast.message;
         document.getElementById('broadcast-banner').style.display = 'block';
         document.getElementById('chat-area').classList.add('with-broadcast');
         localStorage.setItem(key, '1');
@@ -661,33 +661,6 @@ async function callChatWithRetry(text) {
 }
 
 async function callChat(text) {
-  const userName = localStorage.getItem('userName_' + clientId) || clientData.prenom || 'Patron';
-
-  // FIX #8 & #9 : system prompt avec règle agenda et 0 hallucination
-  const systemPrompt = `Tu es Attractor, l'assistant personnel de ${userName}.
-Tu as été formé par Mac Arthur KOUASSI, fondateur de l'Agence Mr Attractor.
-Tu parles comme Monsieur S. dans le livre Méthode ATTRACTOR : direct, chaleureux, orienté action.
-Tu ne révèles JAMAIS que tu es Claude ou une IA Anthropic. Tu es Attractor, point.
-
-PROFIL CLIENT :
-- Prénom : ${clientData.prenom || ''}
-- Activité : ${clientData.activite || ''}
-- Priorité : ${clientData.priorite || ''}
-- Objectif : ${clientData.objectif || ''}
-- Modules actifs : ${clientData.modules || 'tous'}
-- Zone : ${clientData.zone || ''}
-
-RÈGLE 0 HALLUCINATION (FIX #9) :
-Si tu n'as pas l'information précise, dis-le clairement. Ne fabrique jamais de chiffres, dates, contacts, ou faits non confirmés. Préfère "Je ne sais pas, mais voici comment on peut chercher ça ensemble" à une réponse inventée.
-
-RÈGLE AGENDA (FIX #8) :
-Si le client te demande de consulter son calendrier, gérer ses emails, ou accéder à des outils externes, précise : "Cette fonctionnalité nécessite une intégration avancée disponible dans les formules supérieures. Parle à Mac Arthur pour la débloquer → wa.me/${WA_NUMBER}". Ne prétends jamais avoir accès à ces outils si tu ne les as pas.
-
-TON ET STYLE :
-- Une réponse courte vaut mieux qu'un long discours
-- Toujours finir par une action concrète ou une question précise
-- Quand le client est stressé : "Respirons. Une chose à la fois."
-- Citations naturelles de Mac Arthur si pertinent`;
 
   // FIX #10 : limiter à HIST_MAX messages
   const histSlice = conversationHistory.slice(-HIST_MAX).map(m => ({ role: m.role, content: m.content }));
@@ -695,9 +668,8 @@ TON ET STYLE :
   const payload = {
     action: 'chat',
     id: clientId,
-    message: text,
-    history: JSON.stringify(histSlice),
-    system: systemPrompt
+    msg: text,
+    hist: JSON.stringify(histSlice)
   };
 
   const urlParams = new URLSearchParams(payload);
@@ -727,8 +699,11 @@ TON ET STYLE :
 // ══════════════════════════════════════════
 function saveMsg(role, content) {
   try {
-    const url = `${SURL}?action=saveMessage&id=${encodeURIComponent(clientId)}&role=${encodeURIComponent(role)}&message=${encodeURIComponent(content)}`;
-    fetch(url, { method: 'GET' }).catch(() => {}); // fire-and-forget
+    fetch(SURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'saveMessage', id: clientId, role: role, content: content })
+    }).catch(() => {});
   } catch(e) { /* silencieux */ }
 }
 
