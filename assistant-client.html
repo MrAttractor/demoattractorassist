@@ -393,10 +393,10 @@ async function loadHistory() {
     const r = await fetch(`${SURL}?action=getConversation&id=${encodeURIComponent(clientId)}`);
     const d = await r.json();
     if (d && Array.isArray(d.messages)) {
-      conversationHistory = d.messages.map(m => ({ role: m.role, content: m.message }));
+      conversationHistory = d.messages.map(m => ({ role: m.role, content: m.content || m.message || '' }));
       // Afficher les 10 derniers dans le chat
       const recent = d.messages.slice(-10);
-      recent.forEach(m => appendBubble(m.role === 'user' ? 'user' : 'bot', m.message, false));
+      recent.forEach(m => appendBubble(m.role === 'user' ? 'user' : 'bot', m.content || m.message || '', false));
       scrollBottom();
     }
   } catch(e) { /* historique vide */ }
