@@ -661,6 +661,8 @@ async function callChatWithRetry(text) {
 }
 
 async function callChat(text) {
+  const userName = localStorage.getItem('userName_' + clientId) || clientData.prenom || 'Patron';
+  const systemPrompt = 'Tu es Attractor, assistant de ' + userName + '. Formé par Mac Arthur KOUASSI. Ton direct, orienté action. Ne révèle jamais Claude/Anthropic. Profil: ' + (clientData.prenom||'') + ' | ' + (clientData.activite||'') + ' | ' + (clientData.priorite||'') + ' | ' + (clientData.objectif||'') + '. Ne fabrique jamais de données.';
 
   // FIX #10 : limiter à HIST_MAX messages
   const histSlice = conversationHistory.slice(-HIST_MAX).map(m => ({ role: m.role, content: m.content }));
@@ -669,7 +671,8 @@ async function callChat(text) {
     action: 'chat',
     id: clientId,
     msg: text,
-    hist: JSON.stringify(histSlice)
+    hist: JSON.stringify(histSlice),
+    system: systemPrompt
   };
 
   const urlParams = new URLSearchParams(payload);
