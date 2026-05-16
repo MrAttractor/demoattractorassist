@@ -524,7 +524,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 const SURL = 'https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
 const WA   = '2250576877070';
 const BASE = 'https://assists.agenceattractor.com';
-const MSG_TEASE = 250, MSG_LIMIT = 300, HIST_MAX = 4, ESSAI_JOURS = 7;
+const MSG_TEASE = 250, MSG_LIMIT = 300, HIST_MAX = 2, ESSAI_JOURS = 7;
 const DEGRADED  = {1:5, 2:3, 3:1, 4:0};
 
 // ══════════════════════════════════════
@@ -1089,8 +1089,9 @@ async function callChatWithRetry(text) {
 }
 
 async function callChat(text) {
-  const hist = conversationHistory.slice(-HIST_MAX).map(m => ({role: m.role, content: (m.content || '').substring(0, 400)}));
-  const url = SURL + '?' + new URLSearchParams({action: 'chat', id: clientId, msg: text, hist: JSON.stringify(hist)}).toString();
+  const hist = conversationHistory.slice(-HIST_MAX).map(m => ({role: m.role, content: (m.content || '').substring(0, 300)}));
+  // POST pour eviter limite URL
+  const url = SURL + '?action=chat&id=' + encodeURIComponent(clientId) + '&msg=' + encodeURIComponent(text) + '&hist=' + encodeURIComponent(JSON.stringify(hist));
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 25000);
