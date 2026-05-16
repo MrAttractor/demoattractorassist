@@ -221,13 +221,38 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div id="retry-indicator">🔄 Reconnexion…</div>
 </div>
 
-<!-- ZONE #1DANSMONCOULOIR -->
+<!-- ZONE #1DANSMONCOULOIR — AUTONOME -->
 <div id="zone-couloir" class="tab-zone">
-  <div class="couloir-header">
-    <div class="couloir-titre">#1dansmoncouloir</div>
-    <div class="couloir-sub">Trouve ta zone de génie. Un parcours inspiré de l'Ikigai — apaisant, personnel, révélateur.</div>
+  <div style="padding:16px;">
+    <div style="text-align:center;padding:10px 0 16px;">
+      <div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:4px;">#1dansmoncouloir</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;max-width:260px;margin:0 auto;">Trouve ta zone de génie · Inspiré de l'Ikigai</div>
+    </div>
+    <!-- Progression -->
+    <div id="couloir-progress-wrap" style="display:none;margin-bottom:16px;">
+      <div style="height:5px;background:var(--dark4);border-radius:100px;overflow:hidden;">
+        <div id="couloir-progress-fill" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:100px;transition:width .4s;width:0%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px;">
+        <span id="couloir-progress-label">Étape 0 / 22</span>
+        <span id="couloir-progress-pct">0%</span>
+      </div>
+    </div>
+    <!-- Contenu dynamique -->
+    <div id="couloir-content"></div>
+    <!-- Zone conversation couloir -->
+    <div id="couloir-conv" style="margin-top:12px;"></div>
+    <!-- Input couloir -->
+    <div id="couloir-input-wrap" style="display:none;margin-top:12px;position:sticky;bottom:10px;">
+      <div style="display:flex;gap:8px;align-items:flex-end;">
+        <textarea id="couloir-input" placeholder="Ta réponse..." rows="2"
+          style="flex:1;background:var(--dark3);border:1px solid #333;border-radius:16px;padding:10px 14px;color:var(--text);font-size:14px;resize:none;outline:none;font-family:inherit;line-height:1.4;"></textarea>
+        <button onclick="envoyerReponseCouloir()" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a87830);border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
   </div>
-  <div id="couloir-content"></div>
 </div>
 
 <!-- ZONE INFO -->
@@ -799,89 +824,184 @@ function switchTab(tab) {
 // ══════════════════════════════════════
 // ZONE COULOIR
 // ══════════════════════════════════════
+// ══ COULOIR — INTERFACE AUTONOME ══
+let couloirEtape = 0, couloirTotal = 22, couloirTermine = false;
+
 async function loadCouloirZone() {
-  const container = document.getElementById('couloir-content');
-  container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">Chargement...</div>';
+  const contDiv = document.getElementById('couloir-content');
+  const convDiv = document.getElementById('couloir-conv');
+  contDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Chargement...</div>';
+  convDiv.innerHTML = '';
+  document.getElementById('couloir-input-wrap').style.display = 'none';
+  document.getElementById('couloir-progress-wrap').style.display = 'none';
+
   try {
-    const r = await fetch(SURL + '?action=getParcours&id=' + encodeURIComponent(clientId));
+    const r = await fetch(SURL + '?action=getParcoursCourant&id=' + encodeURIComponent(clientId));
     const d = await r.json();
-    if (!d.success) { container.innerHTML = renderCouloirStart(); return; }
-    if (d.termine) {
-      const r2 = await fetch(SURL + '?action=calculerCouloir&id=' + encodeURIComponent(clientId));
-      const d2 = await r2.json();
-      container.innerHTML = (d2.success && d2.result) ? renderCouloirResult(d2.result) : renderCouloirStart();
-    } else if (d.etape === 0) {
-      container.innerHTML = renderCouloirStart();
-    } else {
-      container.innerHTML = renderCouloirEnCours(d.etape, d.question);
+    if (!d.success) { contDiv.innerHTML = ''; renderCouloirStart(); return; }
+
+    couloirEtape   = d.etape || 0;
+    couloirTotal   = d.total || 22;
+    couloirTermine = d.termine || false;
+
+    if (d.historique && d.historique.length > 0) {
+      d.historique.forEach(m => appendCouloirBubble(m.role === 'user' ? 'user' : 'bot', m.content));
     }
-  } catch(e) { container.innerHTML = renderCouloirStart(); }
+
+    contDiv.innerHTML = '';
+    if (couloirTermine) {
+      renderCouloirResultat();
+    } else if (couloirEtape === 0) {
+      renderCouloirStart();
+    } else {
+      updateCouloirProgress();
+      if (!d.historique || d.historique.length === 0) {
+        appendCouloirBubble('bot', d.question ? d.question.question : 'On continue ?');
+      }
+      document.getElementById('couloir-progress-wrap').style.display = 'block';
+      document.getElementById('couloir-input-wrap').style.display = 'block';
+    }
+  } catch(e) { renderCouloirStart(); }
 }
 
 function renderCouloirStart() {
-  return '<div class="couloir-card" style="text-align:center;">' +
-    '<div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">22 questions pour révéler ta zone de génie.<br>Inspiré de l\'Ikigai — apaisant et révélateur.</div>' +
-    '<button class="btn-primary" onclick="demarrerCouloir()">🎯 Démarrer #1dansmoncouloir</button>' +
+  document.getElementById('couloir-content').innerHTML =
+    '<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;text-align:center;">' +
+    '<div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">22 questions · Inspiré de l\'Ikigai<br>Apaisant, personnel, révélateur.</div>' +
+    '<button onclick="demarrerCouloir()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Démarrer #1dansmoncouloir 🎯</button>' +
     '</div>';
 }
 
-function renderCouloirEnCours(etape, question) {
-  const pct = Math.round((etape / 22) * 100);
-  return '<div class="couloir-card">' +
-    '<div class="couloir-progress-wrap">' +
-    '<div class="couloir-progress-bar"><div class="couloir-progress-fill" style="width:' + pct + '%"></div></div>' +
-    '<div class="couloir-progress-label"><span>Étape ' + etape + ' / 22</span><span>' + pct + '%</span></div>' +
-    '</div>' +
-    '<div style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px;">Ton parcours est en cours. Continue dans le chat.</div>' +
-    '<button class="btn-primary" onclick="continuerCouloir()">▶ Continuer le parcours</button>' +
-    '</div>';
+async function demarrerCouloir() {
+  document.getElementById('couloir-content').innerHTML = '';
+  document.getElementById('couloir-conv').innerHTML = '';
+  try {
+    const r = await fetch(SURL + '?action=getParcoursCourant&id=' + encodeURIComponent(clientId));
+    const d = await r.json();
+    if (d.success && d.question) {
+      appendCouloirBubble('bot', d.question.question);
+      if (d.question.type === 'STORY') {
+        await fetch(SURL + '?action=reponseCouloir&id=' + encodeURIComponent(clientId) + '&reponse=compris');
+        const r2 = await fetch(SURL + '?action=getParcoursCourant&id=' + encodeURIComponent(clientId));
+        const d2 = await r2.json();
+        if (d2.success && d2.question) {
+          setTimeout(() => {
+            appendCouloirBubble('bot', d2.question.question);
+            couloirEtape = d2.etape;
+            updateCouloirProgress();
+            document.getElementById('couloir-progress-wrap').style.display = 'block';
+            document.getElementById('couloir-input-wrap').style.display = 'block';
+          }, 800);
+        }
+      } else {
+        couloirEtape = d.etape;
+        updateCouloirProgress();
+        document.getElementById('couloir-progress-wrap').style.display = 'block';
+        document.getElementById('couloir-input-wrap').style.display = 'block';
+      }
+    }
+  } catch(e) { renderCouloirStart(); }
 }
 
-function renderCouloirResult(result) {
-  const s = result.scores;
-  const comb = (result.combinaisons || []).join(' · ');
-  return '<div class="profil-badge">' +
-    '<div class="profil-badge-name">' + result.profil + '</div>' +
-    '<div class="profil-badge-lecture">' + result.lecture + '</div>' +
-    '</div>' +
-    '<div class="score-grid">' +
-    renderScoreItem('❤️ LOVE', s.love) + renderScoreItem('🧠 SKILL', s.skill) +
-    renderScoreItem('🌍 NEED', s.need) + renderScoreItem('💰 MONEY', s.money) +
-    '</div>' +
-    (comb ? '<div style="font-size:12px;color:var(--gold);margin-bottom:14px;text-align:center;">✨ ' + comb + '</div>' : '') +
-    '<div class="defi-card">' +
-    '<div class="defi-title">🎯 Ton prochain défi</div>' +
-    '<div class="defi-action">' + result.suggestion + '</div>' +
-    '</div>' +
-    '<button class="btn-share" onclick="shareResultatCouloir(\'' + result.profil + '\')">🚀 Partager mon profil</button>' +
-    '<button class="btn-secondary" style="margin-top:10px;" onclick="switchTab(\'chat\')">Continuer avec Attractor</button>';
+async function envoyerReponseCouloir() {
+  const input = document.getElementById('couloir-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  appendCouloirBubble('user', text);
+
+  const typingId = 'ct-' + Date.now();
+  const typingEl = document.createElement('div');
+  typingEl.id = typingId;
+  typingEl.style.cssText = 'display:flex;gap:8px;margin-bottom:12px;';
+  typingEl.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">⚡</div>' +
+    '<div style="background:var(--dark3);border-radius:18px;border-bottom-left-radius:4px;padding:10px 14px;"><div class="typing"><span></span><span></span><span></span></div></div>';
+  document.getElementById('couloir-conv').appendChild(typingEl);
+  scrollCouloir();
+
+  try {
+    const r = await fetch(SURL + '?action=reponseCouloir&id=' + encodeURIComponent(clientId) + '&reponse=' + encodeURIComponent(text));
+    const d = await r.json();
+    const te = document.getElementById(typingId);
+    if (te) te.remove();
+
+    if (d.success) {
+      if (d.reply) appendCouloirBubble('bot', d.reply);
+      couloirEtape   = d.etape || couloirEtape;
+      couloirTermine = d.termine || false;
+      updateCouloirProgress();
+      if (couloirTermine) {
+        document.getElementById('couloir-input-wrap').style.display = 'none';
+        setTimeout(() => renderCouloirResultat(), 1000);
+      }
+    }
+  } catch(e) {
+    const te = document.getElementById(typingId);
+    if (te) te.remove();
+    appendCouloirBubble('bot', 'Probleme de connexion — reessaie.');
+  }
+}
+
+async function renderCouloirResultat() {
+  try {
+    const r = await fetch(SURL + '?action=calculerCouloir&id=' + encodeURIComponent(clientId));
+    const d = await r.json();
+    if (!d.success || !d.result) return;
+    const res = d.result; const s = res.scores;
+    document.getElementById('couloir-content').innerHTML =
+      '<div style="background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid rgba(201,168,76,0.35);border-radius:16px;padding:20px;margin-top:16px;text-align:center;">' +
+      '<div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:8px;">' + res.profil + '</div>' +
+      '<div style="font-size:13px;color:var(--muted);font-style:italic;line-height:1.6;margin-bottom:16px;">' + res.lecture + '</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0;">' +
+      renderScoreItem('LOVE', s.love) + renderScoreItem('SKILL', s.skill) +
+      renderScoreItem('NEED', s.need) + renderScoreItem('MONEY', s.money) + '</div>' +
+      '<div style="font-size:12px;color:var(--text);background:var(--dark3);border-radius:12px;padding:12px;margin-bottom:14px;">→ ' + res.suggestion + '</div>' +
+      '<button onclick="shareResultatCouloir(\'' + res.profil + '\')" style="width:100%;padding:12px;background:#25D366;color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;">Partager mon profil 🚀</button>' +
+      '<button onclick="switchTab(\'chat\')" style="width:100%;padding:12px;background:var(--dark4);color:var(--text);border:1px solid #333;border-radius:12px;font-size:14px;cursor:pointer;font-family:inherit;">Continuer avec Attractor</button>';
+  } catch(e) {}
+}
+
+function appendCouloirBubble(role, text) {
+  const conv = document.getElementById('couloir-conv');
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:8px;margin-bottom:12px;' + (role === 'user' ? 'flex-direction:row-reverse;' : '');
+  const fmt = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
+  if (role === 'bot') {
+    wrap.innerHTML = '<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;align-self:flex-end;">&#9889;</div>' +
+      '<div style="max-width:82%;padding:10px 14px;border-radius:18px;border-bottom-left-radius:4px;background:var(--dark3);font-size:14px;line-height:1.55;word-break:break-word;">' + fmt + '</div>';
+  } else {
+    wrap.innerHTML = '<div style="max-width:82%;padding:10px 14px;border-radius:18px;border-bottom-right-radius:4px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;font-weight:500;font-size:14px;line-height:1.55;word-break:break-word;">' + fmt + '</div>';
+  }
+  conv.appendChild(wrap);
+  scrollCouloir();
+}
+
+function updateCouloirProgress() {
+  const pct = couloirTotal > 0 ? Math.round((couloirEtape / couloirTotal) * 100) : 0;
+  const fill = document.getElementById('couloir-progress-fill');
+  const lbl  = document.getElementById('couloir-progress-label');
+  const pctEl = document.getElementById('couloir-progress-pct');
+  if (fill)  fill.style.width  = pct + '%';
+  if (lbl)   lbl.textContent   = 'Etape ' + couloirEtape + ' / ' + couloirTotal;
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+function scrollCouloir() {
+  const zone = document.getElementById('zone-couloir');
+  setTimeout(() => zone.scrollTo({top: zone.scrollHeight, behavior: 'smooth'}), 50);
 }
 
 function renderScoreItem(label, val) {
-  return '<div class="score-item"><div class="score-label">' + label + '</div><div class="score-val ' + (val >= 6 ? 'high' : 'low') + '">' + val + '/10</div></div>';
-}
-
-function demarrerCouloir() {
-  switchTab('chat');
-  setTimeout(() => {
-    const msg = 'Lance le parcours #1dansmoncouloir depuis le début';
-    appendBubble('user', msg, true);
-    sendToAssistant(msg);
-  }, 300);
-}
-
-function continuerCouloir() {
-  switchTab('chat');
-  setTimeout(() => {
-    const msg = 'Reprends le parcours #1dansmoncouloir là où on en était — ne recommence pas depuis le début';
-    appendBubble('user', msg, true);
-    sendToAssistant(msg);
-  }, 300);
+  return '<div style="background:var(--dark4);border-radius:10px;padding:10px;text-align:center;">' +
+    '<div style="font-size:11px;color:var(--muted);margin-bottom:3px;">' + label + '</div>' +
+    '<div style="font-size:20px;font-weight:700;color:' + (val >= 6 ? 'var(--gold)' : 'var(--muted)') + ';">' + val + '/10</div></div>';
 }
 
 function shareResultatCouloir(profil) {
-  const msg = 'Je viens de découvrir mon profil #1dansmoncouloir avec Attractor : **' + profil + '** 🎯\n\nTu peux tester gratuitement ici :\n' + getRefLink() + '\n\n#1dansmoncouloir #Attractor';
-  if (navigator.share) { navigator.share({title: 'Mon profil #1dansmoncouloir', text: msg, url: getRefLink()}).catch(() => {}); }
+  const msg = 'Je viens de decouvrir mon profil #1dansmoncouloir avec Attractor : ' + profil + ' - Tu peux tester gratuitement ici : ' + getRefLink() + ' #1dansmoncouloir #Attractor';
+  if (navigator.share) { navigator.share({title:'Mon profil #1dansmoncouloir', text:msg, url:getRefLink()}).catch(()=>{}); }
   else { window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); }
 }
 
