@@ -900,7 +900,7 @@ async function saveProfilUpdate() {
     await fetch(SURL + '?action=updateProfil&id=' + encodeURIComponent(clientId) + '&profil_situation=' + encodeURIComponent(profilUpdateSelectionne));
     clientData.profil_situation = profilUpdateSelectionne;
     showBadgeToast('✅ Profil mis à jour !');
-    appendBubble('bot', 'Noté. J'ai mis à jour ton profil. Mon ton va s'adapter à ta nouvelle situation. On continue ?');
+    appendBubble('bot', 'Noté. J\'ai mis à jour ton profil. Mon ton va s\'adapter à ta nouvelle situation. On continue ?');
   } catch(e) {
     showBadgeToast('Erreur — réessaie');
   }
