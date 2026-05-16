@@ -165,7 +165,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="journey-day" data-day="6"></div>
     <div class="journey-day" data-day="7"></div>
   </div>
-  <div id="journey-label">Chargement...</div>
+  <div id="journey-label"></div>
 </div>
 
 <div id="broadcast-banner">
@@ -481,8 +481,6 @@ async function loadAssistant(){
 
 function calculerJourEssai(){
   try {
-    // Le Sheet stocke la date dans joursRestants (col S = index 18)
-    // joursRestants = jours restants sur 7 => jourEssai = 7 - joursRestants + 1
     const jr = parseInt(clientData.joursRestants);
     if (!isNaN(jr) && jr >= 0) {
       if (jr > 0) {
@@ -490,7 +488,7 @@ function calculerJourEssai(){
         joursDepasses = 0;
       } else {
         jourEssai = ESSAI_JOURS;
-        joursDepasses = 1; // expired
+        joursDepasses = Math.abs(jr) + 1;
         const k = Math.min(joursDepasses, 4);
         msgLimitToday = DEGRADED_LIMITS[k] !== undefined ? DEGRADED_LIMITS[k] : 0;
       }
@@ -733,6 +731,7 @@ function showReferralModal(){
 }
 
 function startChat(){
+  document.getElementById('chat-area').style.display='block';
   document.getElementById('input-area').style.display='flex';
   const ta=document.getElementById('user-input');
   ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
