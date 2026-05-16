@@ -111,6 +111,40 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .pwa-step-text{font-size:13px;color:#ccc;line-height:1.5;padding-top:3px;}
 
 #retry-indicator{display:none;text-align:center;font-size:12px;color:var(--muted);padding:6px;}
+
+/* NAV BAR */
+#nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:110;background:var(--dark2);border-top:1px solid #222;display:flex;height:58px;padding-bottom:env(safe-area-inset-bottom);}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:10px;font-family:inherit;transition:color .2s;}
+.nav-tab.active{color:var(--gold);}
+.nav-tab svg{width:20px;height:20px;fill:currentColor;}
+#input-area{bottom:58px;padding-bottom:10px;}
+#degraded-bar{bottom:58px;}
+#chat-area{bottom:116px;}
+
+/* ONGLET COMMENT CA MARCHE */
+#tab-info{display:none;position:fixed;top:110px;bottom:58px;left:0;right:0;overflow-y:auto;padding:16px;background:var(--dark);}
+#tab-info.active{display:block;}
+.info-section{margin-bottom:24px;}
+.info-title{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.info-card{background:var(--dark3);border:1px solid #333;border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.info-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.info-card-price{font-size:12px;color:var(--gold);font-weight:600;margin-bottom:8px;}
+.info-card-avantages{font-size:12px;color:var(--muted);line-height:1.8;}
+.info-card-avantages li{list-style:none;padding-left:0;}
+.info-card-avantages li::before{content:"✓ ";color:var(--green);}
+.info-badge{display:inline-block;background:var(--gold);color:#0a0a0a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px;}
+.info-commande{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #222;font-size:13px;}
+.info-commande:last-child{border-bottom:none;}
+.info-commande-key{background:var(--dark4);border:1px solid #333;border-radius:8px;padding:4px 10px;font-size:12px;color:var(--gold);font-weight:600;white-space:nowrap;}
+.info-commande-desc{color:var(--muted);font-size:12px;}
+.info-wa-btn{display:block;background:#25D366;color:white;padding:14px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;text-align:center;margin-top:12px;}
+
+/* MODAL PROFIL UPDATE */
+.profil-update-item{display:flex;align-items:center;gap:12px;background:var(--dark3);border:2px solid #333;border-radius:12px;padding:13px 16px;cursor:pointer;margin-bottom:10px;transition:all .15s;}
+.profil-update-item.selected{background:var(--gold-dim);border-color:rgba(201,168,76,0.4);}
+.profil-update-icon{font-size:20px;flex-shrink:0;}
+.profil-update-label{font-size:14px;font-weight:600;color:var(--text);}
+.profil-update-item.selected .profil-update-label{color:var(--gold);}
 </style>
 </head>
 <body>
@@ -278,6 +312,133 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
       </div>
     </div>
     <button class="modal-btn secondary" style="margin-top:16px;" onclick="closeModal('referral-modal')">Fermer</button>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<div id="nav-bar">
+  <button class="nav-tab active" id="nav-chat" onclick="switchTab('chat')">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    Chat
+  </button>
+  <button class="nav-tab" id="nav-couloir" onclick="switchTab('couloir')">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+    Couloir
+  </button>
+  <button class="nav-tab" id="nav-info" onclick="switchTab('info')">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+    Info
+  </button>
+</div>
+
+<!-- ONGLET COMMENT CA MARCHE -->
+<div id="tab-info">
+  <div class="info-section">
+    <div class="info-title">⚡ Comment ça marche</div>
+    <div class="info-card">
+      <div class="info-card-title">🎁 Essai gratuit — 7 jours</div>
+      <ul class="info-card-avantages">
+        <li>Assistant configuré pour toi dès le départ</li>
+        <li>300 messages inclus</li>
+        <li>Parcours "Trouver mon couloir" disponible</li>
+        <li>Historique conservé même après l'essai</li>
+        <li>Aucune carte bancaire requise</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">💼 Formules — Côte d'Ivoire</div>
+    <div class="info-card">
+      <div class="info-card-title">Le Bras Droit Personnel</div>
+      <div class="info-card-price">25 000 FCFA setup + 10 000 FCFA/mois</div>
+      <ul class="info-card-avantages">
+        <li>1 500 messages/mois</li>
+        <li>Suivi quotidien intelligent</li>
+        <li>Structuration de tes procédures</li>
+        <li>Accès canal privé Attractor</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Le Bras Droit Organisé</div>
+      <div class="info-card-price">50 000 FCFA setup + 25 000 FCFA/mois</div>
+      <ul class="info-card-avantages">
+        <li>3 000 messages/mois</li>
+        <li>Synchronisation Google Agenda</li>
+        <li>Gestion intelligente des mails</li>
+        <li>Tout Bras Droit Personnel +</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Le Bras Droit Pro <span class="info-badge">POPULAIRE</span></div>
+      <div class="info-card-price">75 000 FCFA setup + 45 000 FCFA/mois</div>
+      <ul class="info-card-avantages">
+        <li>6 000 messages/mois</li>
+        <li>Pilotage WhatsApp Business</li>
+        <li>Relances et réponses intelligentes</li>
+        <li>Tout Bras Droit Organisé +</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">🌍 Formules — Europe</div>
+    <div class="info-card">
+      <div class="info-card-title">Bras Droit Personnel</div>
+      <div class="info-card-price">37€ setup + 15€/mois · 1 500 messages</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Bras Droit Organisé</div>
+      <div class="info-card-price">77€ setup + 37€/mois · 3 000 messages</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Bras Droit Pro <span class="info-badge">POPULAIRE</span></div>
+      <div class="info-card-price">147€ setup + 67€/mois · 6 000 messages</div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">⌨️ Commandes rapides</div>
+    <div class="info-card">
+      <div class="info-commande"><span class="info-commande-key">Briefing du jour</span><span class="info-commande-desc">Agenda + priorités + alertes</span></div>
+      <div class="info-commande"><span class="info-commande-key">couloir</span><span class="info-commande-desc">Lance le parcours Ikigai</span></div>
+      <div class="info-commande"><span class="info-commande-key">partager</span><span class="info-commande-desc">Ton lien referral + récompenses</span></div>
+      <div class="info-commande"><span class="info-commande-key">bilan</span><span class="info-commande-desc">Résumé de tes 7 jours</span></div>
+      <div class="info-commande"><span class="info-commande-key">ma situation a changé</span><span class="info-commande-desc">Mettre à jour ton profil</span></div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">🎁 Programme referral</div>
+    <div class="info-card">
+      <ul class="info-card-avantages">
+        <li>1 ami inscrit → +1 jour gratuit</li>
+        <li>3 amis inscrits → +1 semaine</li>
+        <li>5 amis inscrits → +1 mois</li>
+        <li>10 amis inscrits → +2 mois</li>
+        <li>30 amis inscrits → +3 mois</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question%20sur%20Attractor%20Assists" target="_blank" class="info-wa-btn">💬 Contacter Mac Arthur</a>
+  </div>
+</div>
+
+<!-- MODAL MISE A JOUR PROFIL -->
+<div id="modal-profil-update" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🔄 Ta situation a changé ?</div>
+    <div class="modal-text">Dis-moi où tu en es — je m'adapte immédiatement.</div>
+    <div id="profil-update-grid">
+      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="salarie"><div class="profil-update-icon">💼</div><div class="profil-update-label">Salarié uniquement</div></div>
+      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="salarie_side"><div class="profil-update-icon">⚡</div><div class="profil-update-label">Salarié + activité en parallèle</div></div>
+      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="entrepreneur"><div class="profil-update-icon">🚀</div><div class="profil-update-label">Entrepreneur à 100%</div></div>
+      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="quotidien"><div class="profil-update-icon">🌟</div><div class="profil-update-label">Compagnon du quotidien</div></div>
+    </div>
+    <button class="modal-btn primary" style="margin-top:16px;" onclick="saveProfilUpdate()">Mettre à jour →</button>
+    <button class="modal-btn secondary" onclick="closeModal('modal-profil-update')">Annuler</button>
   </div>
 </div>
 
@@ -586,6 +747,7 @@ async function sendMessage(){
   const text=ta.value.trim();
   if(!text)return;
   if(['partager','referral','parrainage'].includes(text.toLowerCase())){ta.value='';ta.style.height='auto';showReferralModal();return;}
+  if(text.toLowerCase().includes('situation a changé')||text.toLowerCase().includes('situation a change')){ta.value='';ta.style.height='auto';showModal('modal-profil-update');return;}
   if(text.toLowerCase()==='bilan'){ta.value='';ta.style.height='auto';showBilan();return;}
   ta.value='';ta.style.height='auto';
   document.getElementById('send-btn').disabled=true;
@@ -689,6 +851,63 @@ const BADGES=[
 function checkBadges(){BADGES.forEach(b=>{const k='badge_'+clientId+'_'+b.count;if(messageCount>=b.count&&!localStorage.getItem(k)){localStorage.setItem(k,'1');enqueueModal(()=>showBadgeToast(b.label));}});}
 function showBadgeToast(label){const c=document.getElementById('badge-container');const el=document.createElement('div');el.className='badge-toast';el.textContent=label;c.appendChild(el);setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>{el.remove();processModalQueue();},400);},2800);}
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ══ NAVIGATION TABS ══
+let currentTab = 'chat';
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('nav-' + tab).classList.add('active');
+
+  // Chat
+  const chatArea = document.getElementById('chat-area');
+  const inputArea = document.getElementById('input-area');
+  const tabInfo = document.getElementById('tab-info');
+
+  if (tab === 'chat') {
+    chatArea.style.display = 'block';
+    inputArea.style.display = 'flex';
+    tabInfo.classList.remove('active');
+  } else if (tab === 'info') {
+    chatArea.style.display = 'none';
+    inputArea.style.display = 'none';
+    tabInfo.classList.add('active');
+  } else if (tab === 'couloir') {
+    // Revenir au chat et lancer le parcours
+    chatArea.style.display = 'block';
+    inputArea.style.display = 'flex';
+    tabInfo.classList.remove('active');
+    document.getElementById('nav-chat').classList.add('active');
+    document.getElementById('nav-couloir').classList.remove('active');
+    currentTab = 'chat';
+    // Simuler message couloir
+    const ta = document.getElementById('user-input');
+    ta.value = 'couloir';
+    sendMessage();
+  }
+}
+
+// ══ MISE À JOUR PROFIL ══
+let profilUpdateSelectionne = '';
+
+function selectProfilUpdate(el) {
+  document.querySelectorAll('.profil-update-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  profilUpdateSelectionne = el.getAttribute('data-val');
+}
+
+async function saveProfilUpdate() {
+  if (!profilUpdateSelectionne) { showBadgeToast('Sélectionne ta nouvelle situation'); return; }
+  closeModal('modal-profil-update');
+  try {
+    await fetch(SURL + '?action=updateProfil&id=' + encodeURIComponent(clientId) + '&profil_situation=' + encodeURIComponent(profilUpdateSelectionne));
+    clientData.profil_situation = profilUpdateSelectionne;
+    showBadgeToast('✅ Profil mis à jour !');
+    appendBubble('bot', 'Noté. J'ai mis à jour ton profil. Mon ton va s'adapter à ta nouvelle situation. On continue ?');
+  } catch(e) {
+    showBadgeToast('Erreur — réessaie');
+  }
+}
 </script>
 </body>
 </html>
