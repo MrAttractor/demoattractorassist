@@ -755,8 +755,16 @@ function showReferralModal(){
 }
 
 function startChat(){
+  // S assurer que les bons elements sont visibles
   document.getElementById('chat-area').style.display='block';
   document.getElementById('input-area').style.display='flex';
+  document.getElementById('tab-info').classList.remove('active');
+  const tc = document.getElementById('tab-couloir');
+  if(tc) tc.style.display='none';
+  // Nav tab chat actif
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  const navChat = document.getElementById('nav-chat');
+  if(navChat) navChat.classList.add('active');
   const ta=document.getElementById('user-input');
   ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
@@ -942,19 +950,19 @@ async function loadCouloirState() {
 }
 
 function renderCouloirStart() {
-  return \`<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;text-align:center;">
+  return `<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;text-align:center;">
     <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">
       22 questions pour révéler ta zone de génie.<br>Inspiré de l'Ikigai — apaisant et révélateur.
     </div>
     <button onclick="demarrerCouloir()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
       🎯 Démarrer #1dansmoncouloir
     </button>
-  </div>\`;
+  </div>`;
 }
 
 function renderCouloirEnCours(etape, question) {
   const pct = Math.round((etape / 22) * 100);
-  return \`<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;">
+  return `<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;">
     <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px;">
       <span>Étape \${etape} sur 22</span><span>\${pct}%</span>
     </div>
@@ -965,13 +973,13 @@ function renderCouloirEnCours(etape, question) {
     <button onclick="switchTab('chat')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
       ▶ Continuer le parcours
     </button>
-  </div>\`;
+  </div>`;
 }
 
 function renderCouloirResult(result) {
   const scores = result.scores;
   const combinaisons = result.combinaisons || [];
-  return \`<div style="background:var(--dark3);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px;">
+  return `<div style="background:var(--dark3);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px;">
     <div style="text-align:center;margin-bottom:16px;">
       <div style="font-size:22px;font-weight:700;color:var(--gold);">\${result.profil}</div>
     </div>
@@ -988,14 +996,14 @@ function renderCouloirResult(result) {
       <button onclick="shareNative()" style="flex:1;padding:12px;background:#25D366;color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Partager mon profil</button>
       <button onclick="switchTab('chat')" style="flex:1;padding:12px;background:var(--dark4);color:var(--text);border:1px solid #333;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Continuer</button>
     </div>
-  </div>\`;
+  </div>`;
 }
 
 function renderScore(label, val) {
-  return \`<div style="background:var(--dark4);border-radius:10px;padding:10px;text-align:center;">
+  return `<div style="background:var(--dark4);border-radius:10px;padding:10px;text-align:center;">
     <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">\${label}</div>
     <div style="font-size:20px;font-weight:700;color:\${val >= 6 ? 'var(--gold)' : 'var(--muted)'};">\${val}/10</div>
-  </div>\`;
+  </div>`;
 }
 
 function demarrerCouloir() {
