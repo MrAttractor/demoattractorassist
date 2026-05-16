@@ -377,15 +377,9 @@ async function soumettre(){
     if(result.success){afficherSucces(data.prenom,result.url);}
     else{btn.disabled=false;btn.textContent='Activer mon assistant gratuit →';toast('Erreur : '+(result.error||'Réessaie dans un instant'));}
   }catch(err){
-    try{
-      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-      var id='AA-'+data.prenom+'-'+Math.random().toString(36).substr(2,5).toUpperCase();
-      var url='https://assists.agenceattractor.com/assistant-client.html?id='+id;
-      afficherSucces(data.prenom,url);
-    }catch(err2){
-      btn.disabled=false;btn.textContent='Activer mon assistant gratuit →';
-      toast('Problème de connexion — vérifie internet et réessaie');
-    }
+    btn.disabled=false;
+    btn.textContent='Activer mon assistant gratuit →';
+    toast('Problème de connexion — vérifie ta connexion et réessaie dans 30 secondes');
   }
 }
 
