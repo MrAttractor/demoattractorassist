@@ -48,6 +48,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* ── ZONES DE CONTENU ── */
 .tab-zone{position:fixed;top:var(--header-h);bottom:var(--nav-h);left:0;right:0;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#zone-chat{bottom:calc(var(--nav-h) + 102px) !important;}
 .tab-zone.active{display:block;}
 
 /* ── CHAT ── */
@@ -862,12 +863,20 @@ function renderScoreItem(label, val) {
 
 function demarrerCouloir() {
   switchTab('chat');
-  setTimeout(() => { appendBubble('user', '#1dansmoncouloir', true); sendToAssistant('#1dansmoncouloir'); }, 300);
+  setTimeout(() => {
+    const msg = 'Lance le parcours #1dansmoncouloir depuis le début';
+    appendBubble('user', msg, true);
+    sendToAssistant(msg);
+  }, 300);
 }
 
 function continuerCouloir() {
   switchTab('chat');
-  setTimeout(() => { appendBubble('user', 'On reprend le parcours', true); sendToAssistant('On reprend le parcours #1dansmoncouloir là où on en était'); }, 300);
+  setTimeout(() => {
+    const msg = 'Reprends le parcours #1dansmoncouloir là où on en était — ne recommence pas depuis le début';
+    appendBubble('user', msg, true);
+    sendToAssistant(msg);
+  }, 300);
 }
 
 function shareResultatCouloir(profil) {
