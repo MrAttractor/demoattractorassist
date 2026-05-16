@@ -7,41 +7,52 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Attractor">
-<link rel="manifest" href="manifest.json">
 <title>Attractor — Ton Assistant</title>
 <style>
-:root {
+:root{
   --gold:#C9A84C;--gold2:#E8C97A;--gold-dim:rgba(201,168,76,0.12);
   --dark:#0a0a0a;--dark2:#111;--dark3:#1a1a1a;--dark4:#222;
-  --text:#f0ede8;--muted:#888;--muted2:rgba(240,237,232,0.4);
-  --green:#3DC98A;--red:#E85858;--radius:16px;--radius-sm:10px;
+  --text:#f0ede8;--muted:#888;--green:#3DC98A;--red:#E85858;
+  --nav-h:58px;--header-h:108px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--dark);color:var(--text);}
 
-#header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,#0a0a0af0 80%,transparent);padding:12px 16px 8px;}
+/* ── HEADER ── */
+#header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,#0a0a0af5 85%,transparent);padding:12px 16px 8px;}
 #header-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
 #avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 0 0 2px #C9A84C44;}
 #header-info{flex:1;min-width:0;}
 #header-name{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #header-status{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;}
 #header-status::before{content:'';width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;}
-#msg-counter{font-size:11px;color:var(--muted);background:var(--dark3);border:1px solid #333;padding:3px 8px;border-radius:20px;white-space:nowrap;}
-
-#journey-bar{display:flex;align-items:center;gap:4px;padding:0 2px;}
-.journey-day{flex:1;height:4px;border-radius:100px;background:var(--dark4);transition:background 0.4s;}
+#msg-counter{font-size:11px;color:var(--muted);background:var(--dark3);border:1px solid #333;padding:3px 8px;border-radius:20px;white-space:nowrap;cursor:default;}
+#journey-bar{display:flex;align-items:center;gap:4px;}
+.journey-day{flex:1;height:3px;border-radius:100px;background:var(--dark4);transition:background .4s;}
 .journey-day.done{background:linear-gradient(90deg,var(--gold),var(--gold2));}
-.journey-day.today{background:linear-gradient(90deg,var(--gold),var(--gold2));box-shadow:0 0 6px var(--gold);}
-#journey-label{font-size:10px;color:var(--muted);text-align:right;margin-top:4px;letter-spacing:0.3px;}
+.journey-day.today{background:linear-gradient(90deg,var(--gold),var(--gold2));box-shadow:0 0 5px var(--gold);}
+#journey-label{font-size:10px;color:var(--muted);text-align:right;margin-top:3px;}
 
-#broadcast-banner{display:none;position:fixed;top:112px;left:12px;right:12px;z-index:99;background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;line-height:1.5;animation:slideDown .3s ease;}
+/* ── BROADCAST ── */
+#broadcast-banner{display:none;position:fixed;top:112px;left:12px;right:12px;z-index:99;background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.5;}
 #broadcast-banner strong{color:var(--gold);}
-#broadcast-close{float:right;cursor:pointer;color:var(--muted);font-size:16px;margin-left:8px;}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+#bc-close{float:right;cursor:pointer;color:var(--muted);font-size:16px;margin-left:8px;}
 
-#chat-area{position:fixed;top:110px;bottom:116px;left:0;right:0;overflow-y:auto;padding:12px 14px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
-#chat-area.with-broadcast{top:180px;}
+/* ── NAV BAR ── */
+#nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--dark2);border-top:1px solid #2a2a2a;display:flex;height:var(--nav-h);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;color:var(--muted);font-size:10px;font-family:inherit;cursor:pointer;transition:color .2s;padding:6px 0;}
+.nav-btn.active{color:var(--gold);}
+.nav-btn svg{width:20px;height:20px;fill:currentColor;}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);display:none;margin-top:1px;}
+.nav-btn.has-notif .nav-dot{display:block;}
 
+/* ── ZONES DE CONTENU ── */
+.tab-zone{position:fixed;top:var(--header-h);bottom:var(--nav-h);left:0;right:0;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.tab-zone.active{display:block;}
+
+/* ── CHAT ── */
+#zone-chat{padding:12px 14px;}
+#zone-chat.with-broadcast{top:182px;}
 .msg{display:flex;gap:8px;margin-bottom:14px;animation:fadeUp .25s ease;}
 .msg.user{flex-direction:row-reverse;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
@@ -49,15 +60,22 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .msg.bot .bubble{background:var(--dark3);border-bottom-left-radius:4px;}
 .msg.user .bubble{background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;font-weight:500;border-bottom-right-radius:4px;}
 .bot-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;align-self:flex-end;}
-
 .typing{display:flex;align-items:center;gap:5px;padding:12px 16px;}
 .typing span{width:7px;height:7px;background:var(--gold);border-radius:50%;animation:bounce .9s infinite;}
 .typing span:nth-child(2){animation-delay:.15s;}
 .typing span:nth-child(3){animation-delay:.3s;}
 @keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+#retry-indicator{display:none;text-align:center;font-size:12px;color:var(--muted);padding:6px;}
 
-#input-area{position:fixed;bottom:58px;left:0;right:0;z-index:100;background:var(--dark2);border-top:1px solid #222;padding:10px 12px 10px;display:flex;gap:10px;align-items:flex-end;}
-#user-input{flex:1;background:var(--dark3);border:1px solid #333;border-radius:22px;padding:10px 16px;color:var(--text);font-size:15px;resize:none;max-height:120px;line-height:1.4;outline:none;font-family:inherit;}
+/* ── COMMANDES RAPIDES ── */
+#quick-commands{position:fixed;bottom:var(--nav-h);left:0;right:0;z-index:101;background:var(--dark2);border-top:1px solid #1e1e1e;padding:8px 12px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
+#quick-commands::-webkit-scrollbar{display:none;}
+.qcmd{background:var(--dark3);border:1px solid #333;border-radius:20px;padding:6px 12px;font-size:12px;color:var(--muted);white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .15s;font-family:inherit;}
+.qcmd:active,.qcmd:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── INPUT CHAT ── */
+#input-wrap{position:fixed;bottom:calc(var(--nav-h) + 40px);left:0;right:0;z-index:100;background:var(--dark2);padding:8px 12px 8px;display:flex;gap:10px;align-items:flex-end;border-top:1px solid #1a1a1a;}
+#user-input{flex:1;background:var(--dark3);border:1px solid #333;border-radius:22px;padding:10px 16px;color:var(--text);font-size:15px;resize:none;max-height:100px;line-height:1.4;outline:none;font-family:inherit;}
 #user-input::placeholder{color:var(--muted);}
 #user-input:focus{border-color:var(--gold);}
 #send-btn{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#a87830);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,opacity .15s;}
@@ -65,16 +83,77 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #send-btn:disabled{opacity:.4;cursor:not-allowed;}
 #send-btn svg{width:20px;height:20px;fill:#0a0a0a;}
 
-#degraded-bar{display:none;position:fixed;bottom:58px;left:0;right:0;z-index:150;background:var(--dark2);border-top:2px solid var(--gold);padding:14px 16px 16px;}
+/* ── MODE DÉGRADÉ ── */
+#degraded-bar{display:none;position:fixed;bottom:var(--nav-h);left:0;right:0;z-index:150;background:var(--dark2);border-top:2px solid var(--gold);padding:12px 16px 14px;}
 .deg-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;}
 .deg-msgs{font-size:12px;color:var(--muted);margin-bottom:10px;}
 .deg-tarifs{display:flex;gap:8px;margin-bottom:12px;}
 .tarif-box{flex:1;background:var(--dark3);border:1px solid #333;border-radius:10px;padding:10px;text-align:center;}
-.tarif-box .t-name{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.tarif-box .t-name{font-size:11px;color:var(--gold);font-weight:700;margin-bottom:3px;}
 .tarif-box .t-price{font-size:11px;color:var(--text);line-height:1.5;}
-#degraded-bar a{display:block;background:#25D366;color:white;padding:12px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;text-align:center;}
+#degraded-bar a{display:block;background:#25D366;color:white;padding:11px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;text-align:center;}
 
-.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;}
+/* ── ONGLET #1DANSMONCOULOIR ── */
+#zone-couloir{padding:16px;}
+.couloir-header{text-align:center;padding:10px 0 20px;}
+.couloir-titre{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.couloir-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:280px;margin:0 auto;}
+.couloir-card{background:var(--dark3);border:1px solid #333;border-radius:16px;padding:18px;margin-bottom:14px;}
+.couloir-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.couloir-progress-wrap{margin-bottom:16px;}
+.couloir-progress-bar{height:6px;background:var(--dark4);border-radius:100px;overflow:hidden;}
+.couloir-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:100px;transition:width .4s;}
+.couloir-progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px;}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.score-item{background:var(--dark4);border-radius:10px;padding:10px;text-align:center;}
+.score-label{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.score-val{font-size:20px;font-weight:700;}
+.score-val.high{color:var(--gold);}
+.score-val.low{color:var(--muted);}
+.profil-badge{text-align:center;background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid rgba(201,168,76,0.35);border-radius:14px;padding:16px;margin-bottom:14px;}
+.profil-badge-name{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.profil-badge-lecture{font-size:13px;color:var(--muted);line-height:1.6;font-style:italic;}
+.defi-card{background:linear-gradient(135deg,#0a1a0a,#0d200d);border:1px solid rgba(61,201,138,0.25);border-radius:14px;padding:16px;margin-bottom:14px;}
+.defi-title{font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px;}
+.defi-action{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px;}
+.streak-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.streak-fire{font-size:16px;}
+.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;}
+.btn-secondary{width:100%;padding:12px;background:var(--dark4);color:var(--text);border:1px solid #333;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:10px;}
+.btn-share{width:100%;padding:12px;background:#25D366;color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* ── ONGLET INFO ── */
+#zone-info{padding:16px;}
+.info-section{margin-bottom:22px;}
+.info-title{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.info-card{background:var(--dark3);border:1px solid #333;border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.info-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.info-card-price{font-size:12px;color:var(--gold);font-weight:600;margin-bottom:8px;}
+.info-avantages{font-size:12px;color:var(--muted);line-height:1.9;}
+.info-avantages li{list-style:none;}
+.info-avantages li::before{content:"✓ ";color:var(--green);}
+.info-badge{display:inline-block;background:var(--gold);color:#0a0a0a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle;}
+.info-cmd-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #222;font-size:13px;}
+.info-cmd-row:last-child{border-bottom:none;}
+.info-cmd-key{background:var(--dark4);border:1px solid #333;border-radius:8px;padding:4px 10px;font-size:12px;color:var(--gold);font-weight:600;white-space:nowrap;}
+.info-cmd-desc{color:var(--muted);font-size:12px;}
+.info-paiement{background:var(--dark3);border:1px solid #333;border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.info-paiement-zone{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.info-paiement-ligne{font-size:12px;color:var(--muted);margin-bottom:4px;line-height:1.6;}
+.info-ref-card{background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:16px;margin-bottom:10px;}
+.info-ref-motto{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;}
+.info-ref-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;}
+.info-ref-btns{display:flex;gap:8px;margin-bottom:10px;}
+.info-ref-btn{flex:1;padding:10px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.info-ref-btn.wa{background:#25D366;color:white;}
+.info-ref-btn.share{background:var(--dark4);color:var(--text);border:1px solid #333;}
+.info-ref-btn.copy{background:var(--dark4);color:var(--muted);border:1px solid #333;}
+.info-ref-count{font-size:11px;color:var(--muted);text-align:center;}
+.info-wa-btn{display:block;background:#25D366;color:white;padding:14px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;text-align:center;margin-bottom:10px;}
+.info-cgv-btn{display:block;background:var(--dark3);color:var(--muted);padding:12px;border-radius:14px;font-size:13px;text-decoration:none;text-align:center;border:1px solid #333;}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;}
 .modal-overlay.active{display:flex;}
 .modal-box{background:var(--dark2);border:1px solid #333;border-radius:20px 20px 0 0;padding:28px 22px 40px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease;}
 @keyframes slideUp{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -84,69 +163,31 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .modal-btn.primary{background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;}
 .modal-btn.secondary{background:var(--dark3);color:var(--text);border:1px solid #333;}
 .modal-btn:active{opacity:.8;}
-
 .cgv-box{background:var(--dark3);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.6;color:#bbb;}
 .cgv-box strong{color:var(--gold);}
 
-#badge-container{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:150;pointer-events:none;}
+/* ── ONBOARDING PROFIL ── */
+.profil-item{display:flex;align-items:center;gap:12px;background:var(--dark3);border:2px solid #333;border-radius:12px;padding:14px 16px;cursor:pointer;margin-bottom:10px;transition:all .15s;}
+.profil-item.selected{background:var(--gold-dim);border-color:rgba(201,168,76,0.4);}
+.profil-icon{font-size:22px;flex-shrink:0;}
+.profil-label{font-size:14px;font-weight:600;color:var(--text);}
+.profil-desc{font-size:12px;color:var(--muted);margin-top:2px;}
+.profil-item.selected .profil-label{color:var(--gold);}
+
+/* ── BADGES ── */
+#badge-container{position:fixed;bottom:calc(var(--nav-h) + 80px);left:50%;transform:translateX(-50%);z-index:250;pointer-events:none;}
 .badge-toast{background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:20px;padding:8px 16px;font-size:13px;color:var(--gold);white-space:nowrap;animation:badgeIn .4s ease forwards;margin-bottom:8px;display:block;}
 @keyframes badgeIn{from{opacity:0;transform:translateY(10px) scale(.9);}to{opacity:1;transform:translateY(0) scale(1);}}
 
-.ref-card{background:linear-gradient(135deg,#1a1200,#2a1e00);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:14px 16px;margin-top:10px;}
-.ref-title{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;}
-.ref-score{font-size:26px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.ref-sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
-.ref-btns{display:flex;gap:8px;}
-.ref-btn{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;}
-.ref-btn.wa{background:#25D366;color:white;}
-.ref-btn.share{background:var(--dark3);color:var(--text);border:1px solid #333;}
-.ref-btn.copy{background:var(--dark3);color:var(--muted);border:1px solid #333;}
-
-.bilan-stat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #222;font-size:14px;}
-.bilan-stat:last-child{border-bottom:none;}
-.bilan-val{font-weight:700;color:var(--gold);}
-
+/* ── PWA MODAL ── */
 .pwa-step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
 .pwa-step-num{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
 .pwa-step-text{font-size:13px;color:#ccc;line-height:1.5;padding-top:3px;}
-
-#retry-indicator{display:none;text-align:center;font-size:12px;color:var(--muted);padding:6px;}
-
-/* NAV BAR */
-#nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:110;background:var(--dark2);border-top:1px solid #222;display:flex;height:58px;padding-bottom:env(safe-area-inset-bottom);}
-.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:10px;font-family:inherit;transition:color .2s;}
-.nav-tab.active{color:var(--gold);}
-.nav-tab svg{width:20px;height:20px;fill:currentColor;}
-
-
-/* ONGLET COMMENT CA MARCHE */
-#tab-info{display:none;position:fixed;top:110px;bottom:58px;left:0;right:0;overflow-y:auto;padding:16px;background:var(--dark);}
-#tab-info.active{display:block;}
-.info-section{margin-bottom:24px;}
-.info-title{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.info-card{background:var(--dark3);border:1px solid #333;border-radius:14px;padding:14px 16px;margin-bottom:10px;}
-.info-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.info-card-price{font-size:12px;color:var(--gold);font-weight:600;margin-bottom:8px;}
-.info-card-avantages{font-size:12px;color:var(--muted);line-height:1.8;}
-.info-card-avantages li{list-style:none;padding-left:0;}
-.info-card-avantages li::before{content:"✓ ";color:var(--green);}
-.info-badge{display:inline-block;background:var(--gold);color:#0a0a0a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px;}
-.info-commande{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #222;font-size:13px;}
-.info-commande:last-child{border-bottom:none;}
-.info-commande-key{background:var(--dark4);border:1px solid #333;border-radius:8px;padding:4px 10px;font-size:12px;color:var(--gold);font-weight:600;white-space:nowrap;}
-.info-commande-desc{color:var(--muted);font-size:12px;}
-.info-wa-btn{display:block;background:#25D366;color:white;padding:14px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;text-align:center;margin-top:12px;}
-
-/* MODAL PROFIL UPDATE */
-.profil-update-item{display:flex;align-items:center;gap:12px;background:var(--dark3);border:2px solid #333;border-radius:12px;padding:13px 16px;cursor:pointer;margin-bottom:10px;transition:all .15s;}
-.profil-update-item.selected{background:var(--gold-dim);border-color:rgba(201,168,76,0.4);}
-.profil-update-icon{font-size:20px;flex-shrink:0;}
-.profil-update-label{font-size:14px;font-weight:600;color:var(--text);}
-.profil-update-item.selected .profil-update-label{color:var(--gold);}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div id="header">
   <div id="header-top">
     <div id="avatar">⚡</div>
@@ -168,248 +209,43 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <div id="journey-label"></div>
 </div>
 
+<!-- BROADCAST -->
 <div id="broadcast-banner">
-  <span id="broadcast-close" onclick="closeBroadcast()">✕</span>
-  <strong>📢 Message de Mac Arthur :</strong>
-  <span id="broadcast-text"></span>
+  <span id="bc-close" onclick="closeBroadcast()">✕</span>
+  <strong>📢 Mac Arthur :</strong> <span id="bc-text"></span>
 </div>
 
-<div id="chat-area">
-  <div id="retry-indicator">🔄 Reconnexion en cours…</div>
+<!-- ZONE CHAT -->
+<div id="zone-chat" class="tab-zone active">
+  <div id="retry-indicator">🔄 Reconnexion…</div>
 </div>
 
-<div id="input-area">
-  <textarea id="user-input" placeholder="Écris ton message…" rows="1"></textarea>
-  <button id="send-btn" onclick="sendMessage()">
-    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-  </button>
-</div>
-
-<div id="degraded-bar">
-  <div class="deg-title">⚡ Essai terminé</div>
-  <div class="deg-msgs" id="deg-msgs-left"></div>
-  <div class="deg-tarifs" id="deg-tarifs"></div>
-  <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20je%20veux%20continuer%20avec%20Attractor%20!" target="_blank">💬 Continuer avec Mac Arthur</a>
-</div>
-
-<div id="badge-container"></div>
-
-<!-- MODAL WELCOME -->
-<div id="modal-welcome" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">⚡ Je t'attendais.</div>
-    <div class="modal-text" id="welcome-text"></div>
-    <button class="modal-btn primary" onclick="nextOnboarding(1)">Je suis prêt →</button>
+<!-- ZONE #1DANSMONCOULOIR -->
+<div id="zone-couloir" class="tab-zone">
+  <div class="couloir-header">
+    <div class="couloir-titre">#1dansmoncouloir</div>
+    <div class="couloir-sub">Trouve ta zone de génie. Un parcours inspiré de l'Ikigai — apaisant, personnel, révélateur.</div>
   </div>
+  <div id="couloir-content"></div>
 </div>
 
-<!-- MODAL NOM -->
-<div id="modal-name" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">Comment tu veux que je t'appelle ?</div>
-    <div class="modal-text">Patron ? Boss ? Ton prénom ? C'est toi qui décides.</div>
-    <input id="name-input" type="text" placeholder="Patron / Boss / Mon prénom…" style="width:100%;padding:12px 16px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:15px;margin-bottom:16px;outline:none;">
-    <button class="modal-btn primary" onclick="saveName()">C'est parti →</button>
-  </div>
-</div>
+<!-- ZONE INFO -->
+<div id="zone-info" class="tab-zone">
 
-<!-- MODAL UNIQUE -->
-<div id="modal-unique" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">🎯 Je ne suis pas comme les autres.</div>
-    <div class="modal-text">Je suis chargé de te décharger mentalement. Tu penses à quelque chose — tu me le dis. Tu veux une info précise sur tes tâches ? Tu veux des idées de posts ? Je suis disponible 24h/24.<br><br><strong style="color:var(--gold)">"Ce qui reste dans ta tête t'enchaîne. Ce qui est écrit te libère."</strong></div>
-    <button class="modal-btn primary" onclick="nextOnboarding(3)">Je comprends →</button>
-  </div>
-</div>
-
-<!-- MODAL CGV -->
-<div id="modal-cgv" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">📋 Conditions d'utilisation</div>
-    <div class="cgv-box" id="cgv-content"></div>
-    <div class="modal-text" style="font-size:12px;color:var(--muted);">En continuant, tu acceptes ces conditions.</div>
-    <button class="modal-btn primary" onclick="nextOnboarding(4)">J'accepte et je continue →</button>
-    <button class="modal-btn secondary" onclick="openWhatsApp()">💬 Une question à Mac Arthur</button>
-  </div>
-</div>
-
-<!-- MODAL PRIORITÉ -->
-<div id="modal-priority" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">🎯 Ta première mission.</div>
-    <div class="modal-text">Qu'est-ce que tu aurais dû faire cette semaine et que tu n'as pas encore fait ?<br><br>Sois honnête. Je ne juge pas — j'agis.</div>
-    <textarea id="priority-input" placeholder="Ex: Appeler 3 prospects chauds, finir ma présentation client…" style="width:100%;padding:12px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:14px;resize:none;height:90px;margin-bottom:16px;outline:none;font-family:inherit;"></textarea>
-    <button class="modal-btn primary" onclick="savePriority()">Noté. On y va →</button>
-  </div>
-</div>
-
-<!-- MODAL PWA -->
-<div id="pwa-modal" class="modal-overlay" style="align-items:center;">
-  <div class="modal-box" style="border-radius:20px;margin:20px;max-height:80vh;overflow-y:auto;">
-    <div class="modal-title">📲 Installe Attractor sur ton téléphone</div>
-    <div class="modal-text">Accède à ton assistant en 1 tap — comme une vraie appli.</div>
-    <div id="pwa-steps"></div>
-    <button class="modal-btn primary" style="margin-top:8px;" onclick="closePwaModal()">C'est fait ✓</button>
-    <button class="modal-btn secondary" onclick="closePwaModal()">Plus tard</button>
-  </div>
-</div>
-
-<!-- MODAL UPSELL -->
-<div id="modal-upsell" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">🔥 Tu cartones.</div>
-    <div class="modal-text">Tu approches de ta limite (<strong id="upsell-count"></strong> messages utilisés).<br><br>Passe à la formule supérieure pour continuer sans interruption.</div>
-    <button class="modal-btn primary" onclick="openWhatsApp();closeModal('modal-upsell');">💬 Parler à Mac Arthur</button>
-    <button class="modal-btn secondary" onclick="closeModal('modal-upsell')">Continuer pour l'instant</button>
-  </div>
-</div>
-
-<!-- MODAL BILAN J7 -->
-<div id="bilan-modal" class="modal-overlay" style="align-items:center;">
-  <div class="modal-box" style="border-radius:20px;margin:20px;max-height:85vh;overflow-y:auto;">
-    <div class="modal-title">🏆 7 jours accomplis !</div>
-    <div class="modal-text" id="bilan-objectif" style="font-style:italic;font-size:13px;color:var(--muted);"></div>
-    <div id="bilan-stats" style="margin:16px 0;"></div>
-    <div id="bilan-ref-bonus" style="display:none;background:var(--dark3);border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--gold);"></div>
-    <div style="margin-bottom:16px;">
-      <div class="ref-card">
-        <div class="ref-title">Partage et gagne des jours gratuits</div>
-        <div class="ref-sub" id="bilan-ref-next"></div>
-        <div class="ref-btns">
-          <button class="ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
-          <button class="ref-btn share" onclick="shareNative()">Partager</button>
-          <button class="ref-btn copy" onclick="copyRefLink()">Copier lien</button>
-        </div>
+  <div class="info-section">
+    <div class="info-title">🔗 Partager Attractor</div>
+    <div class="info-ref-card">
+      <div class="info-ref-motto">"Tout ce qui se partage se multiplie"</div>
+      <div class="info-ref-sub">Partage avec 3 personnes qui en ont besoin. Tu gagnes des jours gratuits, elles découvrent leur bras droit.</div>
+      <div class="info-ref-btns">
+        <button class="info-ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
+        <button class="info-ref-btn share" onclick="shareNative()">Partager</button>
+        <button class="info-ref-btn copy" onclick="copyRefLink()">Copier</button>
       </div>
+      <div class="info-ref-count" id="info-ref-count"></div>
     </div>
-    <button class="modal-btn primary" onclick="openWhatsApp();closeModal('bilan-modal');">💬 Continuer avec Mac Arthur</button>
-    <button class="modal-btn secondary" onclick="closeModal('bilan-modal')">Fermer</button>
-  </div>
-</div>
-
-<!-- MODAL REFERRAL -->
-<div id="referral-modal" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-title">🎁 Partage et gagne</div>
-    <div class="modal-text">Pour chaque ami qui s'inscrit via ton lien :<br><br>
-      <strong style="color:var(--gold)">1</strong> parrainage → +1 jour gratuit<br>
-      <strong style="color:var(--gold)">3</strong> parrainages → +1 semaine<br>
-      <strong style="color:var(--gold)">5</strong> parrainages → +1 mois<br>
-      <strong style="color:var(--gold)">10</strong> parrainages → +2 mois<br>
-      <strong style="color:var(--gold)">20</strong> parrainages → +2 mois supplémentaires<br>
-      <strong style="color:var(--gold)">30+</strong> parrainages → +3 mois gratuits
-    </div>
-    <div class="ref-card">
-      <div class="ref-title">Tes parrainages validés</div>
-      <div class="ref-score" id="ref-count-display">0</div>
-      <div class="ref-sub" id="ref-next-level"></div>
-      <div class="ref-btns">
-        <button class="ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
-        <button class="ref-btn share" onclick="shareNative()">Partager</button>
-        <button class="ref-btn copy" onclick="copyRefLink()">Copier</button>
-      </div>
-    </div>
-    <button class="modal-btn secondary" style="margin-top:16px;" onclick="closeModal('referral-modal')">Fermer</button>
-  </div>
-</div>
-
-<!-- NAV BAR -->
-<div id="nav-bar">
-  <button class="nav-tab active" id="nav-chat" onclick="switchTab('chat')">
-    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-    Chat
-  </button>
-  <button class="nav-tab" id="nav-couloir" onclick="switchTab('couloir')">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-    #1couloir
-  </button>
-  <button class="nav-tab" id="nav-info" onclick="switchTab('info')">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-    Info
-  </button>
-</div>
-
-<!-- ONGLET COMMENT CA MARCHE -->
-<div id="tab-info">
-  <div class="info-section">
-    <div class="info-title">⚡ Comment ça marche</div>
-    <div class="info-card">
-      <div class="info-card-title">🎁 Essai gratuit — 7 jours</div>
-      <ul class="info-card-avantages">
-        <li>Assistant configuré pour toi dès le départ</li>
-        <li>300 messages inclus</li>
-        <li>Parcours "Trouver mon couloir" disponible</li>
-        <li>Historique conservé même après l'essai</li>
-        <li>Aucune carte bancaire requise</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="info-section">
-    <div class="info-title">💼 Formules — Côte d'Ivoire</div>
-    <div class="info-card">
-      <div class="info-card-title">Le Bras Droit Personnel</div>
-      <div class="info-card-price">25 000 FCFA setup + 10 000 FCFA/mois</div>
-      <ul class="info-card-avantages">
-        <li>1 500 messages/mois</li>
-        <li>Suivi quotidien intelligent</li>
-        <li>Structuration de tes procédures</li>
-        <li>Accès canal privé Attractor</li>
-      </ul>
-    </div>
-    <div class="info-card">
-      <div class="info-card-title">Le Bras Droit Organisé</div>
-      <div class="info-card-price">50 000 FCFA setup + 25 000 FCFA/mois</div>
-      <ul class="info-card-avantages">
-        <li>3 000 messages/mois</li>
-        <li>Synchronisation Google Agenda</li>
-        <li>Gestion intelligente des mails</li>
-        <li>Tout Bras Droit Personnel +</li>
-      </ul>
-    </div>
-    <div class="info-card">
-      <div class="info-card-title">Le Bras Droit Pro <span class="info-badge">POPULAIRE</span></div>
-      <div class="info-card-price">75 000 FCFA setup + 45 000 FCFA/mois</div>
-      <ul class="info-card-avantages">
-        <li>6 000 messages/mois</li>
-        <li>Pilotage WhatsApp Business</li>
-        <li>Relances et réponses intelligentes</li>
-        <li>Tout Bras Droit Organisé +</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="info-section">
-    <div class="info-title">🌍 Formules — Europe</div>
-    <div class="info-card">
-      <div class="info-card-title">Bras Droit Personnel</div>
-      <div class="info-card-price">37€ setup + 15€/mois · 1 500 messages</div>
-    </div>
-    <div class="info-card">
-      <div class="info-card-title">Bras Droit Organisé</div>
-      <div class="info-card-price">77€ setup + 37€/mois · 3 000 messages</div>
-    </div>
-    <div class="info-card">
-      <div class="info-card-title">Bras Droit Pro <span class="info-badge">POPULAIRE</span></div>
-      <div class="info-card-price">147€ setup + 67€/mois · 6 000 messages</div>
-    </div>
-  </div>
-
-  <div class="info-section">
-    <div class="info-title">⌨️ Commandes rapides</div>
-    <div class="info-card">
-      <div class="info-commande"><span class="info-commande-key">Briefing du jour</span><span class="info-commande-desc">Agenda + priorités + alertes</span></div>
-      <div class="info-commande"><span class="info-commande-key">couloir</span><span class="info-commande-desc">Lance le parcours Ikigai</span></div>
-      <div class="info-commande"><span class="info-commande-key">partager</span><span class="info-commande-desc">Ton lien referral + récompenses</span></div>
-      <div class="info-commande"><span class="info-commande-key">bilan</span><span class="info-commande-desc">Résumé de tes 7 jours</span></div>
-      <div class="info-commande"><span class="info-commande-key">ma situation a changé</span><span class="info-commande-desc">Mettre à jour ton profil</span></div>
-    </div>
-  </div>
-
-  <div class="info-section">
-    <div class="info-title">🎁 Programme referral</div>
-    <div class="info-card">
-      <ul class="info-card-avantages">
+    <div class="info-card" style="font-size:12px;color:var(--muted);line-height:1.8;">
+      <ul class="info-avantages">
         <li>1 ami inscrit → +1 jour gratuit</li>
         <li>3 amis inscrits → +1 semaine</li>
         <li>5 amis inscrits → +1 mois</li>
@@ -420,622 +256,898 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   </div>
 
   <div class="info-section">
-    <div class="info-title">🔗 Partager Attractor</div>
-    <div class="info-card" style="background:linear-gradient(135deg,#1a1200,#2a1e00);border-color:rgba(201,168,76,0.3);">
-      <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:6px;">"Tout ce qui se partage se multiplie"</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Partage Attractor avec 3 personnes qui en ont besoin. Tu gagnes des jours gratuits, elles découvrent leur bras droit.</div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="shareWhatsApp()" style="flex:1;padding:10px;background:#25D366;color:white;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">WhatsApp</button>
-        <button onclick="shareNative()" style="flex:1;padding:10px;background:var(--dark4);color:var(--text);border:1px solid #333;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;">Partager</button>
-        <button onclick="copyRefLink()" style="flex:1;padding:10px;background:var(--dark4);color:var(--muted);border:1px solid #333;border-radius:10px;font-size:11px;font-weight:600;cursor:pointer;">Copier</button>
-      </div>
-      <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center;" id="info-ref-count"></div>
+    <div class="info-title">⚡ Essai gratuit — 7 jours</div>
+    <div class="info-card">
+      <ul class="info-avantages">
+        <li>Assistant configuré pour toi dès le départ</li>
+        <li>300 messages inclus</li>
+        <li>Parcours #1dansmoncouloir disponible</li>
+        <li>Historique conservé même après l'essai</li>
+        <li>Aucune carte bancaire requise</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">💼 Formules & Tarifs</div>
+    <div class="info-card">
+      <div class="info-card-title">Le Bras Droit Personnel</div>
+      <div class="info-card-price" id="prix-offre1"></div>
+      <ul class="info-avantages"><li>1 500 messages/mois</li><li>Suivi quotidien intelligent</li><li>Accès canal privé Attractor</li></ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Le Bras Droit Organisé</div>
+      <div class="info-card-price" id="prix-offre2"></div>
+      <ul class="info-avantages"><li>3 000 messages/mois</li><li>Synchronisation Google Agenda</li><li>Tout Bras Droit Personnel +</li></ul>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Le Bras Droit Pro <span class="info-badge">POPULAIRE</span></div>
+      <div class="info-card-price" id="prix-offre3"></div>
+      <ul class="info-avantages"><li>6 000 messages/mois</li><li>Pilotage WhatsApp Business</li><li>Tout Bras Droit Organisé +</li></ul>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">💳 Paiement & Activation</div>
+    <div class="info-paiement" id="info-paiement-ci" style="display:none;">
+      <div class="info-paiement-zone">🇨🇮 Côte d'Ivoire</div>
+      <div class="info-paiement-ligne">Wave / Djamo / MTN / Orange Money</div>
+      <div class="info-paiement-ligne">📱 +225 05 76 87 70 70</div>
+      <div class="info-paiement-ligne" style="margin-top:8px;color:var(--text);">Procédure : Effectue ton paiement → Envoie la capture WhatsApp en mentionnant ton ID client → Activation sous 24h</div>
+    </div>
+    <div class="info-paiement" id="info-paiement-eu" style="display:none;">
+      <div class="info-paiement-zone">🇪🇺 Europe</div>
+      <div class="info-paiement-ligne">PayPal : @Myattractor</div>
+      <div class="info-paiement-ligne">Wero / Revolut : +33 7 53 90 23 23</div>
+      <div class="info-paiement-ligne" style="margin-top:8px;color:var(--text);">Procédure : Effectue ton paiement → Envoie la capture WhatsApp en mentionnant ton ID client → Activation sous 24h</div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-title">⌨️ Commandes rapides</div>
+    <div class="info-card">
+      <div class="info-cmd-row"><span class="info-cmd-key">Briefing du jour</span><span class="info-cmd-desc">Agenda + priorités + alertes</span></div>
+      <div class="info-cmd-row"><span class="info-cmd-key">#1dansmoncouloir</span><span class="info-cmd-desc">Lance le parcours Ikigai</span></div>
+      <div class="info-cmd-row"><span class="info-cmd-key">partager</span><span class="info-cmd-desc">Ton lien referral</span></div>
+      <div class="info-cmd-row"><span class="info-cmd-key">bilan</span><span class="info-cmd-desc">Résumé de tes 7 jours</span></div>
+      <div class="info-cmd-row"><span class="info-cmd-key">ma situation a changé</span><span class="info-cmd-desc">Mettre à jour ton profil</span></div>
     </div>
   </div>
 
   <div class="info-section">
     <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question%20sur%20Attractor%20Assists" target="_blank" class="info-wa-btn">💬 Contacter Mac Arthur</a>
+    <a href="https://agenceattractor.com/cgv" target="_blank" class="info-cgv-btn">📄 Conditions Générales de Vente</a>
+  </div>
+
+</div>
+
+<!-- INPUT CHAT -->
+<div id="input-wrap">
+  <textarea id="user-input" placeholder="Écris ton message…" rows="1"></textarea>
+  <button id="send-btn" onclick="sendMessage()">
+    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+  </button>
+</div>
+
+<!-- COMMANDES RAPIDES -->
+<div id="quick-commands">
+  <div class="qcmd" onclick="sendQuick('Briefing du jour')">📅 Briefing du jour</div>
+  <div class="qcmd" onclick="switchTab('couloir')">#1dansmoncouloir</div>
+  <div class="qcmd" onclick="sendQuick('partager')">🔗 Partager</div>
+  <div class="qcmd" onclick="sendQuick('bilan')">📊 Bilan</div>
+  <div class="qcmd" onclick="showModal('modal-profil-update')">🔄 Ma situation</div>
+</div>
+
+<!-- DEGRADED BAR -->
+<div id="degraded-bar">
+  <div class="deg-title">⚡ Essai terminé</div>
+  <div class="deg-msgs" id="deg-msgs"></div>
+  <div class="deg-tarifs" id="deg-tarifs"></div>
+  <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20je%20veux%20continuer%20avec%20Attractor%20!" target="_blank">💬 Continuer avec Mac Arthur</a>
+</div>
+
+<!-- NAV BAR -->
+<div id="nav-bar">
+  <button class="nav-btn active" id="nav-chat" onclick="switchTab('chat')">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    Chat
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-couloir" onclick="switchTab('couloir')">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    #1couloir
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" id="nav-info" onclick="switchTab('info')">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+    Info
+    <div class="nav-dot"></div>
+  </button>
+</div>
+
+<!-- BADGES -->
+<div id="badge-container"></div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- ONBOARDING 1 -->
+<div id="modal-welcome" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">⚡ Je t'attendais.</div>
+    <div class="modal-text" id="welcome-text"></div>
+    <button class="modal-btn primary" onclick="nextOnboarding(1)">Je suis prêt →</button>
   </div>
 </div>
 
-<!-- ONGLET COULOIR -->
-<div id="tab-couloir" style="display:none;position:fixed;top:110px;bottom:58px;left:0;right:0;overflow-y:auto;padding:16px;background:var(--dark);">
-  <div style="text-align:center;padding:20px 0 10px;">
-    <div style="font-size:28px;margin-bottom:8px;">🎯</div>
-    <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px;">#1dansmoncouloir</div>
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;max-width:280px;margin:0 auto;">Découvre ta zone de génie. Un parcours inspiré de l'Ikigai — apaisant, personnel, révélateur.</div>
+<!-- ONBOARDING 2 NOM -->
+<div id="modal-name" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">Comment tu veux que je t'appelle ?</div>
+    <div class="modal-text">Patron ? Boss ? Ton prénom ? C'est toi qui décides.</div>
+    <input id="name-input" type="text" placeholder="Patron / Boss / Mon prénom…" style="width:100%;padding:12px 16px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:15px;margin-bottom:16px;outline:none;">
+    <button class="modal-btn primary" onclick="saveName()">C'est parti →</button>
   </div>
-  <div id="couloir-state-container" style="margin-top:16px;"></div>
 </div>
 
-<!-- MODAL MISE A JOUR PROFIL -->
+<!-- ONBOARDING 3 UNIQUE -->
+<div id="modal-unique" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎯 Je suis chargé de te décharger.</div>
+    <div class="modal-text">Tu penses à quelque chose — tu me le dis. Tu veux une info sur tes tâches ? Des idées de posts ? Je suis là 24h/24.<br><br><strong style="color:var(--gold)">"Ce qui reste dans ta tête t'enchaîne. Ce qui est écrit te libère."</strong></div>
+    <button class="modal-btn primary" onclick="nextOnboarding(3)">Je comprends →</button>
+  </div>
+</div>
+
+<!-- ONBOARDING 4 CGV -->
+<div id="modal-cgv" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">📋 Conditions d'utilisation</div>
+    <div class="cgv-box" id="cgv-content"></div>
+    <div class="modal-text" style="font-size:12px;color:var(--muted);">En continuant, tu acceptes ces conditions.</div>
+    <button class="modal-btn primary" onclick="nextOnboarding(4)">J'accepte et je continue →</button>
+    <button class="modal-btn secondary" onclick="openWhatsApp()">💬 Une question à Mac Arthur</button>
+  </div>
+</div>
+
+<!-- ONBOARDING 5 PRIORITÉ -->
+<div id="modal-priority" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎯 Ta première mission.</div>
+    <div class="modal-text">Qu'est-ce que tu aurais dû faire cette semaine et que tu n'as pas encore fait ?</div>
+    <textarea id="priority-input" placeholder="Ex: Appeler 3 prospects chauds…" style="width:100%;padding:12px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:14px;resize:none;height:90px;margin-bottom:16px;outline:none;font-family:inherit;"></textarea>
+    <button class="modal-btn primary" onclick="savePriority()">Noté. On y va →</button>
+  </div>
+</div>
+
+<!-- ONBOARDING 6 PWA -->
+<div id="modal-pwa" class="modal-overlay" style="align-items:center;">
+  <div class="modal-box" style="border-radius:20px;margin:20px;max-height:80vh;overflow-y:auto;">
+    <div class="modal-title">📲 Installe Attractor</div>
+    <div class="modal-text">Accède à ton assistant en 1 tap — comme une vraie appli.</div>
+    <div id="pwa-steps"></div>
+    <button class="modal-btn primary" style="margin-top:8px;" onclick="closePwaModal()">C'est fait ✓</button>
+    <button class="modal-btn secondary" onclick="closePwaModal()">Plus tard</button>
+  </div>
+</div>
+
+<!-- UPSELL -->
+<div id="modal-upsell" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🔥 Tu cartones.</div>
+    <div class="modal-text">Tu approches de ta limite (<strong id="upsell-count"></strong> messages utilisés).<br><br>Passe à la formule supérieure pour continuer sans interruption.<br><br><strong style="color:var(--gold)">"Tout ce qui se partage se multiplie" — partage aussi !</strong></div>
+    <button class="modal-btn primary" onclick="openWhatsApp();closeModal('modal-upsell');">💬 Parler à Mac Arthur</button>
+    <button class="modal-btn secondary" onclick="shareWhatsApp();closeModal('modal-upsell');">🔗 Partager à 3 amis d'abord</button>
+  </div>
+</div>
+
+<!-- BILAN J7 -->
+<div id="modal-bilan" class="modal-overlay" style="align-items:center;">
+  <div class="modal-box" style="border-radius:20px;margin:20px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-title">🏆 7 jours accomplis !</div>
+    <div class="modal-text" id="bilan-objectif" style="font-style:italic;font-size:13px;color:var(--muted);"></div>
+    <div id="bilan-stats" style="margin:16px 0;"></div>
+    <div id="bilan-ref-bonus" style="display:none;background:var(--dark3);border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--gold);"></div>
+    <div class="info-ref-card" style="margin-bottom:16px;">
+      <div class="info-ref-motto">Partage ton expérience 🚀</div>
+      <div class="info-ref-sub" id="bilan-ref-next"></div>
+      <div class="info-ref-btns">
+        <button class="info-ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
+        <button class="info-ref-btn share" onclick="shareNative()">Partager</button>
+        <button class="info-ref-btn copy" onclick="copyRefLink()">Copier</button>
+      </div>
+    </div>
+    <button class="modal-btn primary" onclick="openWhatsApp();closeModal('modal-bilan');">💬 Continuer avec Mac Arthur</button>
+    <button class="modal-btn secondary" onclick="closeModal('modal-bilan')">Fermer</button>
+  </div>
+</div>
+
+<!-- REFERRAL -->
+<div id="modal-referral" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🎁 Partage & Gagne</div>
+    <div class="modal-text">"Tout ce qui se partage se multiplie"<br><br>Pour chaque ami inscrit via ton lien :<br><strong style="color:var(--gold)">1</strong> → +1 jour · <strong style="color:var(--gold)">3</strong> → +1 semaine · <strong style="color:var(--gold)">5</strong> → +1 mois · <strong style="color:var(--gold)">10</strong> → +2 mois · <strong style="color:var(--gold)">30</strong> → +3 mois</div>
+    <div class="info-ref-card">
+      <div class="info-ref-motto">Tes parrainages validés</div>
+      <div style="font-size:28px;font-weight:700;color:var(--text);margin-bottom:4px;" id="ref-count-big">0</div>
+      <div class="info-ref-sub" id="ref-next-palier"></div>
+      <div class="info-ref-btns">
+        <button class="info-ref-btn wa" onclick="shareWhatsApp()">WhatsApp</button>
+        <button class="info-ref-btn share" onclick="shareNative()">Partager</button>
+        <button class="info-ref-btn copy" onclick="copyRefLink()">Copier</button>
+      </div>
+    </div>
+    <button class="modal-btn secondary" style="margin-top:16px;" onclick="closeModal('modal-referral')">Fermer</button>
+  </div>
+</div>
+
+<!-- MISE À JOUR PROFIL -->
 <div id="modal-profil-update" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">🔄 Ta situation a changé ?</div>
     <div class="modal-text">Dis-moi où tu en es — je m'adapte immédiatement.</div>
-    <div id="profil-update-grid">
-      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="salarie"><div class="profil-update-icon">💼</div><div class="profil-update-label">Salarié uniquement</div></div>
-      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="salarie_side"><div class="profil-update-icon">⚡</div><div class="profil-update-label">Salarié + activité en parallèle</div></div>
-      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="entrepreneur"><div class="profil-update-icon">🚀</div><div class="profil-update-label">Entrepreneur à 100%</div></div>
-      <div class="profil-update-item" onclick="selectProfilUpdate(this)" data-val="quotidien"><div class="profil-update-icon">🌟</div><div class="profil-update-label">Compagnon du quotidien</div></div>
-    </div>
+    <div id="profil-update-grid"></div>
     <button class="modal-btn primary" style="margin-top:16px;" onclick="saveProfilUpdate()">Mettre à jour →</button>
     <button class="modal-btn secondary" onclick="closeModal('modal-profil-update')">Annuler</button>
   </div>
 </div>
 
 <script>
-const SURL='https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
-const WA_NUMBER='2250576877070';
-const BASE_URL='https://assists.agenceattractor.com';
-const MSG_TEASE=250,MSG_LIMIT=300,HIST_MAX=4,ESSAI_JOURS=7;
-const DEGRADED_LIMITS={1:5,2:3,3:1,4:0};
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+const SURL = 'https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
+const WA   = '2250576877070';
+const BASE = 'https://assists.agenceattractor.com';
+const MSG_TEASE = 250, MSG_LIMIT = 300, HIST_MAX = 4, ESSAI_JOURS = 7;
+const DEGRADED  = {1:5, 2:3, 3:1, 4:0};
 
-let clientId='',clientData={},conversationHistory=[];
-let messageCount=0,isBlocked=false,isBotTyping=false;
-let modalQueue=[],modalActive=false;
-let jourEssai=1,joursDepasses=0,msgLimitToday=999,refCount=0;
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let clientId = '', clientData = {}, conversationHistory = [];
+let messageCount = 0, isBlocked = false, isBotTyping = false;
+let modalQueue = [], modalActive = false;
+let jourEssai = 1, joursDepasses = 0, msgLimitToday = 999, refCount = 0;
+let currentTab = 'chat', profilUpdateSel = '';
 
-document.addEventListener('DOMContentLoaded',async()=>{
-  const params=new URLSearchParams(window.location.search);
-  clientId=params.get('id')||'';
-  if(!clientId){showError('Lien invalide. Contacte Mac Arthur.');return;}
-  const ref=params.get('ref');
-  if(ref&&ref!==clientId)localStorage.setItem('ref_source_'+clientId,ref);
-  messageCount=parseInt(localStorage.getItem('msgCount_'+clientId)||'0');
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  const p = new URLSearchParams(window.location.search);
+  clientId = p.get('id') || '';
+  if (!clientId) { showError('⏳ Ton assistant se prépare... Actualise la page dans 15 secondes.'); return; }
+  const ref = p.get('ref');
+  if (ref && ref !== clientId) localStorage.setItem('ref_source_' + clientId, ref);
+  messageCount = parseInt(localStorage.getItem('msgCount_' + clientId) || '0');
   updateCounter();
   await loadAssistant();
 });
 
-async function loadAssistant(){
-  try{
-    const r=await fetch(SURL+'?action=getAssistant&id='+encodeURIComponent(clientId));
-    const d=await r.json();
-    if(!d||!d.success||!d.profil){showError('⏳ Ton assistant se prépare... Actualise la page dans 15 secondes et c\'est ok !');return;}
-    clientData=d.profil;
-    refCount=parseInt(clientData.ref_count||0);
-    document.getElementById('header-name').textContent='Attractor — '+(clientData.prenom||'');
+// ══════════════════════════════════════
+// LOAD
+// ══════════════════════════════════════
+async function loadAssistant() {
+  try {
+    const r = await fetch(SURL + '?action=getAssistant&id=' + encodeURIComponent(clientId));
+    const d = await r.json();
+    if (!d || !d.success || !d.profil) { showError('⏳ Ton assistant se prépare... Actualise dans 15 secondes.'); return; }
+    clientData = d.profil;
+    refCount = parseInt(clientData.ref_count || 0);
+    document.getElementById('header-name').textContent = 'Attractor — ' + (clientData.prenom || '');
     calculerJourEssai();
     updateJourneyBar();
+    updateInfoZone();
     await loadBroadcast();
     await loadHistory();
     checkOnboardingState();
-  }catch(e){showError('⏳ Ton assistant se prépare... Actualise la page dans 15 secondes et c\'est ok !');}
+  } catch(e) {
+    showError('⏳ Ton assistant se prépare... Actualise dans 15 secondes.');
+  }
 }
 
-function calculerJourEssai(){
+// ══════════════════════════════════════
+// JOUR ESSAI
+// ══════════════════════════════════════
+function calculerJourEssai() {
   try {
     const jr = parseInt(clientData.joursRestants);
-    if (!isNaN(jr) && jr >= 0) {
-      if (jr > 0) {
-        jourEssai = Math.max(1, ESSAI_JOURS - jr + 1);
-        joursDepasses = 0;
-      } else {
-        jourEssai = ESSAI_JOURS;
-        joursDepasses = Math.abs(jr) + 1;
-        const k = Math.min(joursDepasses, 4);
-        msgLimitToday = DEGRADED_LIMITS[k] !== undefined ? DEGRADED_LIMITS[k] : 0;
-      }
-    } else {
-      jourEssai = 1; joursDepasses = 0;
-    }
+    if (!isNaN(jr)) {
+      if (jr > 0) { jourEssai = Math.max(1, ESSAI_JOURS - jr + 1); joursDepasses = 0; }
+      else { jourEssai = ESSAI_JOURS; joursDepasses = Math.abs(jr) + 1; const k = Math.min(joursDepasses, 4); msgLimitToday = DEGRADED[k] !== undefined ? DEGRADED[k] : 0; }
+    } else { jourEssai = 1; joursDepasses = 0; }
   } catch(e) { jourEssai = 1; joursDepasses = 0; }
 }
 
-function updateJourneyBar(){
-  document.querySelectorAll('.journey-day').forEach((d,i)=>{
-    const day=i+1;
-    d.classList.remove('done','today');
-    if(day<jourEssai)d.classList.add('done');
-    else if(day===jourEssai&&joursDepasses===0)d.classList.add('today');
+function updateJourneyBar() {
+  document.querySelectorAll('.journey-day').forEach((d, i) => {
+    const day = i + 1;
+    d.classList.remove('done', 'today');
+    if (day < jourEssai) d.classList.add('done');
+    else if (day === jourEssai && joursDepasses === 0) d.classList.add('today');
   });
-  const lbl=document.getElementById('journey-label');
-  if(joursDepasses===0){
-    lbl.textContent='Jour '+jourEssai+' sur '+ESSAI_JOURS;
-    lbl.style.color='var(--muted)';
-  }else{
-    lbl.textContent='Essai terminé — '+msgLimitToday+' message(s) aujourd\'hui';
-    lbl.style.color='var(--gold)';
-    showDegradedBar();
-  }
-  if(jourEssai===ESSAI_JOURS&&joursDepasses===0&&!localStorage.getItem('bilan_shown_'+clientId)){
-    setTimeout(()=>enqueueModal(()=>showBilan()),2500);
+  const lbl = document.getElementById('journey-label');
+  if (joursDepasses === 0) { lbl.textContent = 'Jour ' + jourEssai + ' sur ' + ESSAI_JOURS; lbl.style.color = 'var(--muted)'; }
+  else { lbl.textContent = 'Essai terminé — ' + msgLimitToday + ' msg/jour'; lbl.style.color = 'var(--gold)'; showDegradedBar(); }
+  if (jourEssai === ESSAI_JOURS && joursDepasses === 0 && !localStorage.getItem('bilan_shown_' + clientId)) {
+    setTimeout(() => enqueueModal(() => showBilan()), 2500);
   }
 }
 
-function showDegradedBar(){
-  const zone=(clientData.zone||'').toLowerCase();
-  const isCI=zone==='ci'||zone.includes('ivoire');
-  document.getElementById('deg-tarifs').innerHTML=isCI
-    ?'<div class="tarif-box"><div class="t-name">Starter</div><div class="t-price">25 000 FCFA<br>+ 10 000/mois</div></div><div class="tarif-box"><div class="t-name">Pro</div><div class="t-price">50 000 FCFA<br>+ 25 000/mois</div></div>'
-    :'<div class="tarif-box"><div class="t-name">Starter</div><div class="t-price">37€<br>+ 15€/mois</div></div><div class="tarif-box"><div class="t-name">Pro</div><div class="t-price">77€<br>+ 37€/mois</div></div>';
-  if(msgLimitToday===0){
-    document.getElementById('deg-msgs-left').textContent='Plus de messages aujourd\'hui. Reviens demain ou contacte Mac Arthur.';
-    document.getElementById('input-area').style.display='none';
-    isBlocked=true;
-  }else{
-    const key='msgToday_'+clientId+'_'+todayKey();
-    const used=parseInt(localStorage.getItem(key)||'0');
-    const rem=Math.max(0,msgLimitToday-used);
-    document.getElementById('deg-msgs-left').textContent=rem+' message(s) restant(s) aujourd\'hui.';
-    if(rem===0){document.getElementById('input-area').style.display='none';isBlocked=true;}
+// ══════════════════════════════════════
+// INFO ZONE — tarifs selon zone
+// ══════════════════════════════════════
+function updateInfoZone() {
+  const zone = (clientData.zone || '').toLowerCase();
+  const isCI = zone === 'ci' || zone.includes('ivoire');
+  if (isCI) {
+    document.getElementById('prix-offre1').textContent = '25 000 FCFA setup + 10 000 FCFA/mois';
+    document.getElementById('prix-offre2').textContent = '50 000 FCFA setup + 25 000 FCFA/mois';
+    document.getElementById('prix-offre3').textContent = '75 000 FCFA setup + 45 000 FCFA/mois';
+    document.getElementById('info-paiement-ci').style.display = 'block';
+  } else {
+    document.getElementById('prix-offre1').textContent = '37€ setup + 15€/mois';
+    document.getElementById('prix-offre2').textContent = '77€ setup + 37€/mois';
+    document.getElementById('prix-offre3').textContent = '147€ setup + 67€/mois';
+    document.getElementById('info-paiement-eu').style.display = 'block';
   }
-  document.getElementById('degraded-bar').style.display='block';
+  document.getElementById('info-ref-count').textContent = refCount + ' parrainage(s) · ' + getNextPalier(refCount);
 }
 
-function todayKey(){return new Date().toISOString().split('T')[0];}
-
-function showBilan(){
-  localStorage.setItem('bilan_shown_'+clientId,'1');
-  const obj=clientData.objectif||'';
-  document.getElementById('bilan-objectif').innerHTML='<em>"'+obj+'"</em>';
-  document.getElementById('bilan-stats').innerHTML=
-    '<div class="bilan-stat"><span>Messages échangés</span><span class="bilan-val">'+messageCount+'</span></div>'+
-    '<div class="bilan-stat"><span>Jours d\'essai</span><span class="bilan-val">'+jourEssai+' / 7</span></div>'+
-    '<div class="bilan-stat"><span>Amis parrainés</span><span class="bilan-val">'+refCount+'</span></div>';
-  if(refCount>0){
-    const bonus=calculerBonusJours(refCount);
-    document.getElementById('bilan-ref-bonus').style.display='block';
-    document.getElementById('bilan-ref-bonus').textContent='🎁 Tu as gagné '+bonus+' jour(s) bonus grâce à tes parrainages !';
-  }
-  document.getElementById('bilan-ref-next').textContent=getNextPalier(refCount);
-  showModal('bilan-modal');
+// ══════════════════════════════════════
+// DÉGRADÉ
+// ══════════════════════════════════════
+function showDegradedBar() {
+  const zone = (clientData.zone || '').toLowerCase();
+  const isCI = zone === 'ci' || zone.includes('ivoire');
+  document.getElementById('deg-tarifs').innerHTML = isCI
+    ? '<div class="tarif-box"><div class="t-name">Personnel</div><div class="t-price">25 000 FCFA<br>+ 10 000/mois</div></div><div class="tarif-box"><div class="t-name">Pro</div><div class="t-price">75 000 FCFA<br>+ 45 000/mois</div></div>'
+    : '<div class="tarif-box"><div class="t-name">Personnel</div><div class="t-price">37€<br>+ 15€/mois</div></div><div class="tarif-box"><div class="t-name">Pro</div><div class="t-price">147€<br>+ 67€/mois</div></div>';
+  const key = 'msgToday_' + clientId + '_' + todayKey();
+  const used = parseInt(localStorage.getItem(key) || '0');
+  const rem = Math.max(0, msgLimitToday - used);
+  document.getElementById('deg-msgs').textContent = rem + ' message(s) restant(s) aujourd\'hui.';
+  document.getElementById('degraded-bar').style.display = 'block';
+  document.getElementById('input-wrap').style.display = 'none';
+  document.getElementById('quick-commands').style.display = 'none';
+  if (rem === 0) isBlocked = true;
 }
 
-function calculerBonusJours(c){
-  if(c>=30)return 90;if(c>=20)return 60;if(c>=10)return 30;if(c>=5)return 30;if(c>=3)return 7;return c;
-}
+function todayKey() { return new Date().toISOString().split('T')[0]; }
 
-async function loadBroadcast(){
-  try{
-    const r=await fetch(SURL+'?action=getBroadcast');
-    const d=await r.json();
-    if(d&&d.broadcast&&d.broadcast.message){
-      const key='bc_'+clientId+'_'+(d.broadcast.date||'').toString().replace(/\W/g,'');
-      if(!localStorage.getItem(key)){
-        document.getElementById('broadcast-text').textContent=d.broadcast.message;
-        document.getElementById('broadcast-banner').style.display='block';
-        document.getElementById('chat-area').classList.add('with-broadcast');
-        localStorage.setItem(key,'1');
+// ══════════════════════════════════════
+// BROADCAST
+// ══════════════════════════════════════
+async function loadBroadcast() {
+  try {
+    const r = await fetch(SURL + '?action=getBroadcast');
+    const d = await r.json();
+    if (d && d.broadcast && d.broadcast.message) {
+      const key = 'bc_' + clientId + '_' + (d.broadcast.date || '').toString().replace(/\W/g, '');
+      if (!localStorage.getItem(key)) {
+        document.getElementById('bc-text').textContent = d.broadcast.message;
+        document.getElementById('broadcast-banner').style.display = 'block';
+        document.getElementById('zone-chat').classList.add('with-broadcast');
+        localStorage.setItem(key, '1');
       }
     }
-  }catch(e){}
+  } catch(e) {}
 }
-function closeBroadcast(){
-  document.getElementById('broadcast-banner').style.display='none';
-  document.getElementById('chat-area').classList.remove('with-broadcast');
+function closeBroadcast() {
+  document.getElementById('broadcast-banner').style.display = 'none';
+  document.getElementById('zone-chat').classList.remove('with-broadcast');
 }
 
-async function loadHistory(){
-  try{
-    const r=await fetch(SURL+'?action=getConversation&id='+encodeURIComponent(clientId));
-    const d=await r.json();
-    if(d&&Array.isArray(d.messages)){
-      conversationHistory=d.messages.map(m=>({role:m.role,content:m.content||m.message||''}));
-      d.messages.slice(-10).forEach(m=>appendBubble(m.role==='user'?'user':'bot',m.content||m.message||'',false));
+// ══════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════
+async function loadHistory() {
+  try {
+    const r = await fetch(SURL + '?action=getConversation&id=' + encodeURIComponent(clientId));
+    const d = await r.json();
+    if (d && Array.isArray(d.messages)) {
+      conversationHistory = d.messages.map(m => ({role: m.role, content: m.content || m.message || ''}));
+      d.messages.slice(-10).forEach(m => appendBubble(m.role === 'user' ? 'user' : 'bot', m.content || m.message || '', false));
       scrollBottom();
     }
-  }catch(e){}
+  } catch(e) {}
 }
 
-function checkOnboardingState(){
-  const done=localStorage.getItem('onb_done_'+clientId);
-  const step=parseInt(localStorage.getItem('onb_step_'+clientId)||'0');
-  if(done==='1'){
-    if(!localStorage.getItem('pwa_shown_'+clientId))enqueueModal(()=>showPwaModal());
+// ══════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════
+function checkOnboardingState() {
+  const done = localStorage.getItem('onb_done_' + clientId);
+  const step = parseInt(localStorage.getItem('onb_step_' + clientId) || '0');
+  if (done === '1') {
+    if (!localStorage.getItem('pwa_shown_' + clientId)) enqueueModal(() => showPwaModal());
     startChat();
-    if(conversationHistory.length===0)setTimeout(()=>triggerJourMessage(),800);
+    if (conversationHistory.length === 0) setTimeout(() => triggerJourMessage(), 800);
     return;
   }
-  if(conversationHistory.length>4&&step<3){
-    localStorage.setItem('onb_done_'+clientId,'1');
-    if(!localStorage.getItem('pwa_shown_'+clientId))enqueueModal(()=>showPwaModal());
-    startChat();return;
+  if (conversationHistory.length > 4 && step < 3) {
+    localStorage.setItem('onb_done_' + clientId, '1');
+    if (!localStorage.getItem('pwa_shown_' + clientId)) enqueueModal(() => showPwaModal());
+    startChat(); return;
   }
-  if(step>=1&&step<=6)runOnboardingStep(step);
-  else{localStorage.setItem('onb_step_'+clientId,'1');buildWelcome();showModal('modal-welcome');}
+  if (step >= 1 && step <= 6) runOnboardingStep(step);
+  else { localStorage.setItem('onb_step_' + clientId, '1'); buildWelcome(); showModal('modal-welcome'); }
 }
 
-function buildWelcome(){
-  document.getElementById('welcome-text').innerHTML=
-    'Mac Arthur m\'a parlé de toi avant que tu arrives. Il m\'a expliqué brièvement que tu gères <strong style="color:var(--gold)">'+(clientData.activite||'ton activité')+'</strong> '+
-    'et que ta priorité c\'est <strong style="color:var(--gold)">'+(clientData.priorite||'ta croissance')+'</strong>.<br><br>'+
-    'Je suis <strong style="color:var(--gold)">Attractor Assist</strong> — ton bras droit. 😊<br><br>'+
-    'Permets-moi de te tutoyer stp.';
+function buildWelcome() {
+  document.getElementById('welcome-text').innerHTML =
+    'Mac Arthur m\'a parlé de toi avant que tu arrives. Il m\'a expliqué brièvement que tu gères <strong style="color:var(--gold)">' + (clientData.activite || 'ton activité') + '</strong> et que ta priorité c\'est <strong style="color:var(--gold)">' + (clientData.priorite || 'ta croissance') + '</strong>.<br><br>' +
+    'Je suis <strong style="color:var(--gold)">Attractor Assist</strong> — ton bras droit. 😊<br><br>Permets-moi de te tutoyer stp.';
 }
 
-function runOnboardingStep(step){
-  switch(step){
-    case 1:buildWelcome();showModal('modal-welcome');break;
-    case 2:showModal('modal-name');break;
-    case 3:showModal('modal-unique');break;
-    case 4:showCGV();break;
-    case 5:showModal('modal-priority');break;
-    case 6:showPwaModal();break;
+function runOnboardingStep(step) {
+  switch(step) {
+    case 1: buildWelcome(); showModal('modal-welcome'); break;
+    case 2: showModal('modal-name'); break;
+    case 3: showModal('modal-unique'); break;
+    case 4: showCGV(); break;
+    case 5: showModal('modal-priority'); break;
+    case 6: showPwaModal(); break;
   }
 }
 
-function nextOnboarding(cur){
-  ['modal-welcome','modal-name','modal-unique','modal-cgv','modal-priority','pwa-modal'].forEach(id=>closeModalSilent(id));
-  const next=cur+1;
-  localStorage.setItem('onb_step_'+clientId,next);
-  if(next>6){finishOnboarding();return;}
+function nextOnboarding(cur) {
+  ['modal-welcome','modal-name','modal-unique','modal-cgv','modal-priority','modal-pwa'].forEach(id => closeModalSilent(id));
+  const next = cur + 1;
+  localStorage.setItem('onb_step_' + clientId, next);
+  if (next > 6) { finishOnboarding(); return; }
   runOnboardingStep(next);
 }
 
-function finishOnboarding(){
-  localStorage.setItem('onb_done_'+clientId,'1');
-  localStorage.setItem('onb_step_'+clientId,'7');
+function finishOnboarding() {
+  localStorage.setItem('onb_done_' + clientId, '1');
+  localStorage.setItem('onb_step_' + clientId, '7');
   startChat();
-  setTimeout(()=>triggerJourMessage(),600);
+  setTimeout(() => triggerJourMessage(), 600);
 }
 
-function triggerJourMessage(){
-  if(conversationHistory.length>0)return;
-  const u=localStorage.getItem('userName_'+clientId)||clientData.prenom||'';
-  const a=clientData.activite||'ton activité';
-  const p=clientData.priorite||'tes priorités';
-  const o=clientData.objectif||'ton objectif';
-  const msgs={
-    1:u+', je suis là. Mac Arthur m\'a tout dit sur toi.\n\nTu gères **'+a+'**. Ta priorité : **'+p+'**.\n\nUne seule question pour commencer :\n\n**Quelle est la tâche que tu répètes le plus chaque semaine et qui te prend le plus de temps ?**',
-    2:'Jour 2. On va plus loin aujourd\'hui.\n\n**Décris-moi une semaine type dans ton activité — du lundi au vendredi. Ce qui se passe vraiment.**',
-    3:'Jour 3, **'+u+'**. Aujourd\'hui on passe à l\'action.\n\nJ\'ai une question directe pour toi :\n\n**Quels sont tes 3 prospects les plus chauds en ce moment ? Et quand les as-tu contactés pour la dernière fois ?**',
-    4:'Jour 4. Tu tiens — c\'est déjà beaucoup.\n\n**La tâche qu\'on a ciblée hier — tu l\'as faite ? Oui ou non.**\n\nPas de jugement. Juste la vérité.',
-    5:'Jour 5. On entre dans la profondeur.\n\n*"'+o+'"*\n\nC\'est ce que tu m\'as dit au départ.\n\n**Dans ta tête en ce moment — qu\'est-ce qui te retient vraiment ? Pas les raisons pratiques. Les vraies.**',
-    6:'Jour 6, **'+u+'**. Demain c\'est le dernier jour de ton essai.\n\nTu peux faire progresser quelqu\'un d\'autre en même temps que toi.\n\nTape **"partager"** pour voir ton lien referral et gagner des jours gratuits.',
-    7:'Jour 7. On a construit quelque chose ensemble cette semaine.\n\n*"'+o+'"*\n\nDemain je serai encore là — si tu choisis de continuer.\n\nTape **"bilan"** pour voir ce qu\'on a accompli ensemble.'
-  };
-  const msg=msgs[jourEssai]||msgs[1];
-  appendBubble('bot',msg);
-}
-
-function showCGV(){
-  const zone=(clientData.zone||'').toLowerCase();
-  const isCI=zone==='ci'||zone.includes('ivoire');
-  document.getElementById('cgv-content').innerHTML=isCI
-    ?'<strong>Formule Starter CI</strong><br>Setup : <strong>25 000 FCFA</strong> | Abonnement : <strong>10 000 FCFA/mois</strong><br><br>Paiement via Wave / Djamo / MTN / Orange (+225 05 76 87 70 70).<br><br>Sans renouvellement, accès suspendu. Aucun remboursement après activation.'
-    :'<strong>Formule Starter EU</strong><br>Setup : <strong>37 €</strong> | Abonnement : <strong>15 €/mois</strong><br><br>Paiement via PayPal @Myattractor · Wero/Revolut +33753902323.<br><br>Sans renouvellement, accès suspendu. Aucun remboursement après activation.';
+function showCGV() {
+  const zone = (clientData.zone || '').toLowerCase();
+  const isCI = zone === 'ci' || zone.includes('ivoire');
+  document.getElementById('cgv-content').innerHTML = isCI
+    ? '<strong>Formule Starter CI</strong><br>Setup : <strong>25 000 FCFA</strong> | Abonnement : <strong>10 000 FCFA/mois</strong><br><br>Paiement via Wave / Djamo / MTN / Orange (+225 05 76 87 70 70).<br><br>Sans renouvellement, accès suspendu. Données conservées 90 jours.'
+    : '<strong>Formule Starter EU</strong><br>Setup : <strong>37 €</strong> | Abonnement : <strong>15 €/mois</strong><br><br>Paiement via PayPal @Myattractor · Wero/Revolut +33753902323.<br><br>Sans renouvellement, accès suspendu. Données conservées 90 jours.';
   showModal('modal-cgv');
 }
 
-function saveName(){
-  const v=document.getElementById('name-input').value.trim();
-  if(v)localStorage.setItem('userName_'+clientId,v);
+function saveName() {
+  const v = document.getElementById('name-input').value.trim();
+  if (v) localStorage.setItem('userName_' + clientId, v);
   nextOnboarding(2);
 }
-function savePriority(){
-  const v=document.getElementById('priority-input').value.trim();
-  if(v)saveMsg('user',v);
+
+function savePriority() {
+  const v = document.getElementById('priority-input').value.trim();
+  if (v) saveMsg('user', v);
   nextOnboarding(5);
 }
 
-function showPwaModal(){
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isAndroid=/android/i.test(navigator.userAgent);
-  let h='';
-  if(isIOS)h='<div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre dans <strong>Safari</strong>.</div></div><div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text">Icône <strong>Partager</strong> en bas.</div></div><div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text">Sélectionne <strong>"Sur l\'écran d\'accueil"</strong>.</div></div>';
-  else if(isAndroid)h='<div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre dans <strong>Chrome</strong>.</div></div><div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text"><strong>3 points</strong> en haut à droite.</div></div><div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text"><strong>"Ajouter à l\'écran d\'accueil"</strong>.</div></div>';
-  else h='<div class="pwa-step"><div class="pwa-step-num">💡</div><div class="pwa-step-text">Utilise "Ajouter à l\'écran d\'accueil" depuis ton navigateur mobile.</div></div>';
-  document.getElementById('pwa-steps').innerHTML=h;
-  showModal('pwa-modal');
-  localStorage.setItem('pwa_shown_'+clientId,'1');
-}
-function closePwaModal(){
-  closeModalSilent('pwa-modal');
-  const step=parseInt(localStorage.getItem('onb_step_'+clientId)||'0');
-  if(step===6)finishOnboarding();else processModalQueue();
+function showPwaModal() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  let h = '';
+  if (isIOS) h = '<div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre dans <strong>Safari</strong>.</div></div><div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text">Icône <strong>Partager</strong> en bas.</div></div><div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text">Sélectionne <strong>"Sur l\'écran d\'accueil"</strong>.</div></div>';
+  else if (isAndroid) h = '<div class="pwa-step"><div class="pwa-step-num">1</div><div class="pwa-step-text">Ouvre dans <strong>Chrome</strong>.</div></div><div class="pwa-step"><div class="pwa-step-num">2</div><div class="pwa-step-text"><strong>3 points</strong> en haut à droite.</div></div><div class="pwa-step"><div class="pwa-step-num">3</div><div class="pwa-step-text"><strong>"Ajouter à l\'écran d\'accueil"</strong>.</div></div>';
+  else h = '<div class="pwa-step"><div class="pwa-step-num">💡</div><div class="pwa-step-text">Utilise "Ajouter à l\'écran d\'accueil" depuis ton navigateur mobile.</div></div>';
+  document.getElementById('pwa-steps').innerHTML = h;
+  showModal('modal-pwa');
+  localStorage.setItem('pwa_shown_' + clientId, '1');
 }
 
-function getRefLink(){return BASE_URL+'/?ref='+encodeURIComponent(clientId);}
-function getRefMessage(){
-  const u=localStorage.getItem('userName_'+clientId)||clientData.prenom||'';
-  return 'J\'utilise Attractor depuis '+jourEssai+' jours et ça change vraiment ma façon de travailler.\n\nTu peux tester 7 jours gratuitement ici :\n'+getRefLink()+'\n\nC\'est un assistant configuré pour TOI — pas un chatbot générique.';
-}
-function shareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(getRefMessage()),'_blank');}
-function shareNative(){
-  if(navigator.share){navigator.share({title:'Attractor — Ton assistant personnel',text:getRefMessage(),url:getRefLink()}).catch(()=>{});}
-  else shareWhatsApp();
-}
-function copyRefLink(){
-  navigator.clipboard.writeText(getRefLink()).then(()=>showBadgeToast('🔗 Lien copié !')).catch(()=>shareWhatsApp());
-}
-function getNextPalier(c){
-  if(c<1)return 'Encore '+(1-c)+' parrainage pour +1 jour';
-  if(c<3)return 'Encore '+(3-c)+' pour +1 semaine';
-  if(c<5)return 'Encore '+(5-c)+' pour +1 mois';
-  if(c<10)return 'Encore '+(10-c)+' pour +2 mois';
-  if(c<20)return 'Encore '+(20-c)+' pour +2 mois supplémentaires';
-  if(c<30)return 'Encore '+(30-c)+' pour +3 mois gratuits';
-  return '🏆 Maximum atteint !';
-}
-function showReferralModal(){
-  document.getElementById('ref-count-display').textContent=refCount;
-  document.getElementById('ref-next-level').textContent=getNextPalier(refCount);
-  showModal('referral-modal');
+function closePwaModal() {
+  closeModalSilent('modal-pwa');
+  const step = parseInt(localStorage.getItem('onb_step_' + clientId) || '0');
+  if (step === 6) finishOnboarding(); else processModalQueue();
 }
 
-function startChat(){
-  // S assurer que les bons elements sont visibles
-  document.getElementById('chat-area').style.display='block';
-  document.getElementById('input-area').style.display='flex';
-  document.getElementById('tab-info').classList.remove('active');
-  const tc = document.getElementById('tab-couloir');
-  if(tc) tc.style.display='none';
-  // Nav tab chat actif
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  const navChat = document.getElementById('nav-chat');
-  if(navChat) navChat.classList.add('active');
-  const ta=document.getElementById('user-input');
-  ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
-  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+// ══════════════════════════════════════
+// MESSAGE AUTO PAR JOUR
+// ══════════════════════════════════════
+function triggerJourMessage() {
+  if (conversationHistory.length > 0) return;
+  const u = localStorage.getItem('userName_' + clientId) || clientData.prenom || '';
+  const a = clientData.activite || 'ton activité';
+  const p = clientData.priorite || 'tes priorités';
+  const o = clientData.objectif || 'ton objectif';
+  const msgs = {
+    1: u + ', je suis là. Mac Arthur m\'a tout dit sur toi.\n\nTu gères **' + a + '**. Ta priorité : **' + p + '**.\n\nUne question pour commencer :\n\n**Quelle tâche tu répètes le plus chaque semaine et qui te prend le plus de temps ?**',
+    2: 'Jour 2. On va plus loin.\n\n**Décris-moi une semaine type dans ton activité — ce qui se passe vraiment.**',
+    3: 'Jour 3, **' + u + '**. Aujourd\'hui on passe à l\'action.\n\n**Quels sont tes 3 prospects les plus chauds ? Quand les as-tu contactés pour la dernière fois ?**',
+    4: 'Jour 4. Tu tiens.\n\n**La tâche qu\'on a ciblée hier — tu l\'as faite ? Oui ou non.**',
+    5: 'Jour 5.\n\n*"' + o + '"*\n\n**Qu\'est-ce qui te retient vraiment d\'avancer ? Pas les raisons pratiques. Les vraies.**',
+    6: 'Jour 6, **' + u + '**. Demain c\'est le dernier jour de ton essai.\n\nTu peux faire progresser quelqu\'un d\'autre.\n\nTape **"partager"** pour voir ton lien et gagner des jours gratuits.\n\n*"Tout ce qui se partage se multiplie"* 🚀',
+    7: 'Jour 7. On a construit quelque chose ensemble.\n\n*"' + o + '"*\n\nTape **"bilan"** pour voir ce qu\'on a accompli. Et demain — si tu choisis de continuer, je suis là.'
+  };
+  appendBubble('bot', msgs[jourEssai] || msgs[1]);
 }
 
-async function sendMessage(){
-  if(isBlocked||isBotTyping)return;
-  const ta=document.getElementById('user-input');
-  const text=ta.value.trim();
-  if(!text)return;
-  if(['partager','referral','parrainage'].includes(text.toLowerCase())){ta.value='';ta.style.height='auto';showReferralModal();return;}
-  if(text.toLowerCase().includes('situation a changé')||text.toLowerCase().includes('situation a change')){ta.value='';ta.style.height='auto';showModal('modal-profil-update');return;}
-  if(text.toLowerCase()==='bilan'){ta.value='';ta.style.height='auto';showBilan();return;}
-  ta.value='';ta.style.height='auto';
-  document.getElementById('send-btn').disabled=true;
-
-  if(joursDepasses>0){
-    const key='msgToday_'+clientId+'_'+todayKey();
-    const used=parseInt(localStorage.getItem(key)||'0')+1;
-    localStorage.setItem(key,used);
-    if(used>msgLimitToday){showError('Plus de messages disponibles aujourd\'hui.');document.getElementById('send-btn').disabled=false;return;}
-  }
-
-  messageCount++;
-  localStorage.setItem('msgCount_'+clientId,messageCount);
-  updateCounter();
-  appendBubble('user',text);
-  conversationHistory.push({role:'user',content:text});
-  saveMsg('user',text);
-
-  if(messageCount>=MSG_LIMIT){isBlocked=true;document.getElementById('input-area').style.display='none';return;}
-  if(messageCount===MSG_TEASE&&!localStorage.getItem('upsellShown_'+clientId)){
-    localStorage.setItem('upsellShown_'+clientId,'1');
-    enqueueModal(()=>{document.getElementById('upsell-count').textContent=messageCount;showModal('modal-upsell');});
-  }
-
-  showTyping();
-  const reply=await callChatWithRetry(text);
-  hideTyping();
-  if(reply){
-    appendBubble('bot',reply);
-    conversationHistory.push({role:'assistant',content:reply});
-    saveMsg('assistant',reply);
-    checkBadges();
-  }
-  document.getElementById('send-btn').disabled=false;
-  scrollBottom();
-}
-
-async function callChatWithRetry(text){
-  const r=await callChat(text);
-  if(r!==null)return r;
-  showRetryIndicator();await delay(2000);hideRetryIndicator();
-  return await callChat(text);
-}
-
-async function callChat(text){
-  const hist=conversationHistory.slice(-HIST_MAX).map(m=>({role:m.role,content:(m.content||"").substring(0,400)}));
-  const url=SURL+'?'+new URLSearchParams({action:'chat',id:clientId,msg:text,hist:JSON.stringify(hist)}).toString();
-  try{
-    const ctrl=new AbortController();
-    const t=setTimeout(()=>ctrl.abort(),25000);
-    const r=await fetch(url,{method:'GET',signal:ctrl.signal});
-    clearTimeout(t);
-    const d=await r.json();
-    if(d&&d.reply)return d.reply;
-    return null;
-  }catch(e){return null;}
-}
-
-function saveMsg(role,content){
-  try{
-    const url=SURL+'?action=saveMessage&id='+encodeURIComponent(clientId)+'&role='+encodeURIComponent(role)+'&message='+encodeURIComponent(content);
-    fetch(url,{method:'GET'}).catch(()=>{});
-  }catch(e){}
-}
-
-function enqueueModal(fn){modalQueue.push(fn);if(!modalActive)processModalQueue();}
-function processModalQueue(){if(modalQueue.length===0){modalActive=false;return;}modalActive=true;const fn=modalQueue.shift();fn();}
-function showModal(id){document.getElementById(id).classList.add('active');}
-function closeModal(id){closeModalSilent(id);processModalQueue();}
-function closeModalSilent(id){const el=document.getElementById(id);if(el)el.classList.remove('active');}
-
-function appendBubble(role,text,animate=true){
-  const area=document.getElementById('chat-area');
-  const wrap=document.createElement('div');
-  wrap.className='msg '+role;
-  if(!animate)wrap.style.animation='none';
-  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
-  if(role==='bot')wrap.innerHTML='<div class="bot-icon">⚡</div><div class="bubble">'+fmt+'</div>';
-  else wrap.innerHTML='<div class="bubble">'+fmt+'</div>';
-  area.appendChild(wrap);
-  if(animate)scrollBottom();
-}
-
-let typingEl=null;
-function showTyping(){isBotTyping=true;const a=document.getElementById('chat-area');typingEl=document.createElement('div');typingEl.className='msg bot';typingEl.innerHTML='<div class="bot-icon">⚡</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';a.appendChild(typingEl);scrollBottom();}
-function hideTyping(){isBotTyping=false;if(typingEl){typingEl.remove();typingEl=null;}}
-function showRetryIndicator(){document.getElementById('retry-indicator').style.display='block';}
-function hideRetryIndicator(){document.getElementById('retry-indicator').style.display='none';}
-function scrollBottom(){const a=document.getElementById('chat-area');setTimeout(()=>a.scrollTo({top:a.scrollHeight,behavior:'smooth'}),50);}
-function updateCounter(){const el=document.getElementById('msg-counter');const r=MSG_LIMIT-messageCount;el.textContent=messageCount+' / '+MSG_LIMIT;el.style.color=r<=50?'var(--red)':r<=100?'#ffaa00':'var(--muted)';}
-function showError(msg){appendBubble('bot','⚠️ '+msg,false);}
-function openWhatsApp(){window.open('https://wa.me/'+WA_NUMBER+'?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question%20sur%20mon%20assistant%20Attractor.','_blank');}
-
-const BADGES=[
-  {count:1,label:'🌱 Premier message — bienvenue !'},
-  {count:10,label:'🔥 10 échanges — tu es lancé !'},
-  {count:50,label:'⚡ 50 messages — tu cartones !'},
-  {count:100,label:'🏆 100 messages — entrepreneur engagé !'},
-  {count:200,label:'🚀 200 messages — niveau Expert !'},
-];
-function checkBadges(){BADGES.forEach(b=>{const k='badge_'+clientId+'_'+b.count;if(messageCount>=b.count&&!localStorage.getItem(k)){localStorage.setItem(k,'1');enqueueModal(()=>showBadgeToast(b.label));}});}
-function showBadgeToast(label){const c=document.getElementById('badge-container');const el=document.createElement('div');el.className='badge-toast';el.textContent=label;c.appendChild(el);setTimeout(()=>{el.style.transition='opacity .4s';el.style.opacity='0';setTimeout(()=>{el.remove();processModalQueue();},400);},2800);}
-function delay(ms){return new Promise(r=>setTimeout(r,ms));}
-
-// ══ NAVIGATION TABS ══
-let currentTab = 'chat';
+// ══════════════════════════════════════
+// NAVIGATION TABS
+// ══════════════════════════════════════
 function switchTab(tab) {
   currentTab = tab;
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('nav-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-zone').forEach(z => z.classList.remove('active'));
 
-  const chatArea  = document.getElementById('chat-area');
-  const inputArea = document.getElementById('input-area');
-  const tabInfo   = document.getElementById('tab-info');
-  const tabCouloir = document.getElementById('tab-couloir');
-
-  // Cacher tout
-  chatArea.style.display  = 'none';
-  inputArea.style.display = 'none';
-  tabInfo.classList.remove('active');
-  tabCouloir.style.display = 'none';
+  const inputWrap = document.getElementById('input-wrap');
+  const quickCmds = document.getElementById('quick-commands');
 
   if (tab === 'chat') {
-    chatArea.style.display  = 'block';
-    inputArea.style.display = 'flex';
-  } else if (tab === 'info') {
-    tabInfo.classList.add('active');
-    // Mettre à jour le compteur referral
-    const refEl = document.getElementById('info-ref-count');
-    if (refEl) refEl.textContent = refCount + ' parrainage(s) validé(s) · ' + getNextPalier(refCount);
+    document.getElementById('zone-chat').classList.add('active');
+    if (!isBlocked) { inputWrap.style.display = 'flex'; quickCmds.style.display = 'flex'; }
+    scrollBottom();
   } else if (tab === 'couloir') {
-    tabCouloir.style.display = 'block';
-    loadCouloirState();
+    document.getElementById('zone-couloir').classList.add('active');
+    inputWrap.style.display = 'none';
+    quickCmds.style.display = 'none';
+    loadCouloirZone();
+  } else if (tab === 'info') {
+    document.getElementById('zone-info').classList.add('active');
+    inputWrap.style.display = 'none';
+    quickCmds.style.display = 'none';
+    document.getElementById('info-ref-count').textContent = refCount + ' parrainage(s) · ' + getNextPalier(refCount);
   }
 }
 
-async function loadCouloirState() {
-  const container = document.getElementById('couloir-state-container');
-  container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Chargement...</div>';
-
+// ══════════════════════════════════════
+// ZONE COULOIR
+// ══════════════════════════════════════
+async function loadCouloirZone() {
+  const container = document.getElementById('couloir-content');
+  container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">Chargement...</div>';
   try {
     const r = await fetch(SURL + '?action=getParcours&id=' + encodeURIComponent(clientId));
     const d = await r.json();
-
-    if (!d.success) {
-      container.innerHTML = renderCouloirStart();
-      return;
-    }
-
+    if (!d.success) { container.innerHTML = renderCouloirStart(); return; }
     if (d.termine) {
-      // Parcours terminé — charger le résultat
       const r2 = await fetch(SURL + '?action=calculerCouloir&id=' + encodeURIComponent(clientId));
       const d2 = await r2.json();
-      if (d2.success && d2.result) {
-        container.innerHTML = renderCouloirResult(d2.result);
-      } else {
-        container.innerHTML = renderCouloirStart();
-      }
-      return;
-    }
-
-    if (d.etape === 0) {
+      container.innerHTML = (d2.success && d2.result) ? renderCouloirResult(d2.result) : renderCouloirStart();
+    } else if (d.etape === 0) {
       container.innerHTML = renderCouloirStart();
     } else {
       container.innerHTML = renderCouloirEnCours(d.etape, d.question);
     }
-
-  } catch(e) {
-    container.innerHTML = renderCouloirStart();
-  }
+  } catch(e) { container.innerHTML = renderCouloirStart(); }
 }
 
 function renderCouloirStart() {
-  return `<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;text-align:center;">
-    <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">
-      22 questions pour révéler ta zone de génie.<br>Inspiré de l'Ikigai — apaisant et révélateur.
-    </div>
-    <button onclick="demarrerCouloir()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
-      🎯 Démarrer #1dansmoncouloir
-    </button>
-  </div>`;
+  return '<div class="couloir-card" style="text-align:center;">' +
+    '<div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;">22 questions pour révéler ta zone de génie.<br>Inspiré de l\'Ikigai — apaisant et révélateur.</div>' +
+    '<button class="btn-primary" onclick="demarrerCouloir()">🎯 Démarrer #1dansmoncouloir</button>' +
+    '</div>';
 }
 
 function renderCouloirEnCours(etape, question) {
   const pct = Math.round((etape / 22) * 100);
-  return `<div style="background:var(--dark3);border:1px solid #333;border-radius:16px;padding:20px;">
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px;">
-      <span>Étape \${etape} sur 22</span><span>\${pct}%</span>
-    </div>
-    <div style="height:4px;background:var(--dark4);border-radius:100px;margin-bottom:16px;">
-      <div style="height:100%;width:\${pct}%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:100px;"></div>
-    </div>
-    <div style="font-size:14px;color:var(--muted);margin-bottom:16px;">Ton parcours est en cours. Continue depuis le chat.</div>
-    <button onclick="switchTab('chat')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">
-      ▶ Continuer le parcours
-    </button>
-  </div>`;
+  return '<div class="couloir-card">' +
+    '<div class="couloir-progress-wrap">' +
+    '<div class="couloir-progress-bar"><div class="couloir-progress-fill" style="width:' + pct + '%"></div></div>' +
+    '<div class="couloir-progress-label"><span>Étape ' + etape + ' / 22</span><span>' + pct + '%</span></div>' +
+    '</div>' +
+    '<div style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px;">Ton parcours est en cours. Continue dans le chat.</div>' +
+    '<button class="btn-primary" onclick="continuerCouloir()">▶ Continuer le parcours</button>' +
+    '</div>';
 }
 
 function renderCouloirResult(result) {
-  const scores = result.scores;
-  const combinaisons = result.combinaisons || [];
-  return `<div style="background:var(--dark3);border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:20px;">
-    <div style="text-align:center;margin-bottom:16px;">
-      <div style="font-size:22px;font-weight:700;color:var(--gold);">\${result.profil}</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-      \${renderScore('❤️ LOVE', scores.love)}
-      \${renderScore('🧠 SKILL', scores.skill)}
-      \${renderScore('🌍 NEED', scores.need)}
-      \${renderScore('💰 MONEY', scores.money)}
-    </div>
-    \${combinaisons.length > 0 ? '<div style="font-size:12px;color:var(--gold);margin-bottom:8px;">✨ ' + combinaisons.join(' · ') + '</div>' : ''}
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;font-style:italic;">\${result.lecture}</div>
-    <div style="font-size:12px;color:var(--text);margin-bottom:16px;">→ \${result.suggestion}</div>
-    <div style="display:flex;gap:8px;">
-      <button onclick="shareNative()" style="flex:1;padding:12px;background:#25D366;color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Partager mon profil</button>
-      <button onclick="switchTab('chat')" style="flex:1;padding:12px;background:var(--dark4);color:var(--text);border:1px solid #333;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">Continuer</button>
-    </div>
-  </div>`;
+  const s = result.scores;
+  const comb = (result.combinaisons || []).join(' · ');
+  return '<div class="profil-badge">' +
+    '<div class="profil-badge-name">' + result.profil + '</div>' +
+    '<div class="profil-badge-lecture">' + result.lecture + '</div>' +
+    '</div>' +
+    '<div class="score-grid">' +
+    renderScoreItem('❤️ LOVE', s.love) + renderScoreItem('🧠 SKILL', s.skill) +
+    renderScoreItem('🌍 NEED', s.need) + renderScoreItem('💰 MONEY', s.money) +
+    '</div>' +
+    (comb ? '<div style="font-size:12px;color:var(--gold);margin-bottom:14px;text-align:center;">✨ ' + comb + '</div>' : '') +
+    '<div class="defi-card">' +
+    '<div class="defi-title">🎯 Ton prochain défi</div>' +
+    '<div class="defi-action">' + result.suggestion + '</div>' +
+    '</div>' +
+    '<button class="btn-share" onclick="shareResultatCouloir(\'' + result.profil + '\')">🚀 Partager mon profil</button>' +
+    '<button class="btn-secondary" style="margin-top:10px;" onclick="switchTab(\'chat\')">Continuer avec Attractor</button>';
 }
 
-function renderScore(label, val) {
-  return `<div style="background:var(--dark4);border-radius:10px;padding:10px;text-align:center;">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">\${label}</div>
-    <div style="font-size:20px;font-weight:700;color:\${val >= 6 ? 'var(--gold)' : 'var(--muted)'};">\${val}/10</div>
-  </div>`;
+function renderScoreItem(label, val) {
+  return '<div class="score-item"><div class="score-label">' + label + '</div><div class="score-val ' + (val >= 6 ? 'high' : 'low') + '">' + val + '/10</div></div>';
 }
 
 function demarrerCouloir() {
   switchTab('chat');
-  setTimeout(() => {
-    const ta = document.getElementById('user-input');
-    ta.value = 'Je veux découvrir mon couloir';
-    sendMessage();
-  }, 300);
+  setTimeout(() => { appendBubble('user', '#1dansmoncouloir', true); sendToAssistant('#1dansmoncouloir'); }, 300);
 }
 
-// ══ MISE À JOUR PROFIL ══
-let profilUpdateSelectionne = '';
+function continuerCouloir() {
+  switchTab('chat');
+  setTimeout(() => { appendBubble('user', 'On reprend le parcours', true); sendToAssistant('On reprend le parcours #1dansmoncouloir là où on en était'); }, 300);
+}
+
+function shareResultatCouloir(profil) {
+  const msg = 'Je viens de découvrir mon profil #1dansmoncouloir avec Attractor : **' + profil + '** 🎯\n\nTu peux tester gratuitement ici :\n' + getRefLink() + '\n\n#1dansmoncouloir #Attractor';
+  if (navigator.share) { navigator.share({title: 'Mon profil #1dansmoncouloir', text: msg, url: getRefLink()}).catch(() => {}); }
+  else { window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); }
+}
+
+// ══════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════
+function startChat() {
+  document.getElementById('zone-chat').classList.add('active');
+  document.getElementById('input-wrap').style.display = 'flex';
+  document.getElementById('quick-commands').style.display = 'flex';
+  const ta = document.getElementById('user-input');
+  ta.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+}
+
+function sendQuick(text) {
+  document.getElementById('user-input').value = text;
+  sendMessage();
+}
+
+async function sendMessage() {
+  if (isBlocked || isBotTyping) return;
+  const ta = document.getElementById('user-input');
+  const text = ta.value.trim();
+  if (!text) return;
+
+  // Commandes spéciales
+  if (['partager','referral','parrainage'].includes(text.toLowerCase())) { ta.value = ''; ta.style.height = 'auto'; showReferralModal(); return; }
+  if (text.toLowerCase() === 'bilan') { ta.value = ''; ta.style.height = 'auto'; showBilan(); return; }
+  if (text.toLowerCase().includes('situation a chang')) { ta.value = ''; ta.style.height = 'auto'; showProfilUpdate(); return; }
+
+  ta.value = ''; ta.style.height = 'auto';
+  document.getElementById('send-btn').disabled = true;
+
+  // Compteur dégradé
+  if (joursDepasses > 0) {
+    const key = 'msgToday_' + clientId + '_' + todayKey();
+    const used = parseInt(localStorage.getItem(key) || '0') + 1;
+    localStorage.setItem(key, used);
+    if (used > msgLimitToday) { showError('Plus de messages aujourd\'hui. Reviens demain ou contacte Mac Arthur.'); document.getElementById('send-btn').disabled = false; return; }
+  }
+
+  messageCount++;
+  localStorage.setItem('msgCount_' + clientId, messageCount);
+  updateCounter();
+  appendBubble('user', text);
+  conversationHistory.push({role: 'user', content: text});
+  saveMsg('user', text);
+
+  if (messageCount >= MSG_LIMIT) { isBlocked = true; document.getElementById('input-wrap').style.display = 'none'; return; }
+  if (messageCount === MSG_TEASE && !localStorage.getItem('upsellShown_' + clientId)) {
+    localStorage.setItem('upsellShown_' + clientId, '1');
+    enqueueModal(() => { document.getElementById('upsell-count').textContent = messageCount; showModal('modal-upsell'); });
+  }
+
+  // Pousser silencieusement le referral tous les 25 messages
+  if (messageCount % 25 === 0 && refCount < 3) {
+    setTimeout(() => appendBubble('bot', '💡 Au fait — si tu connais quelqu\'un qui aurait besoin d\'un bras droit comme moi, partage-lui ton lien. Tu gagnes des jours gratuits. *"Tout ce qui se partage se multiplie"* 🚀 Tape **"partager"** pour voir ton lien.'), 3000);
+  }
+
+  await sendToAssistant(text);
+  document.getElementById('send-btn').disabled = false;
+}
+
+async function sendToAssistant(text) {
+  showTyping();
+  const reply = await callChatWithRetry(text);
+  hideTyping();
+  if (reply) {
+    appendBubble('bot', reply);
+    conversationHistory.push({role: 'assistant', content: reply});
+    saveMsg('assistant', reply);
+    checkBadges();
+  }
+  scrollBottom();
+}
+
+async function callChatWithRetry(text) {
+  const r = await callChat(text);
+  if (r !== null) return r;
+  showRetryIndicator();
+  await delay(2000);
+  hideRetryIndicator();
+  return await callChat(text);
+}
+
+async function callChat(text) {
+  const hist = conversationHistory.slice(-HIST_MAX).map(m => ({role: m.role, content: (m.content || '').substring(0, 400)}));
+  const url = SURL + '?' + new URLSearchParams({action: 'chat', id: clientId, msg: text, hist: JSON.stringify(hist)}).toString();
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 25000);
+    const r = await fetch(url, {method: 'GET', signal: ctrl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if (d && d.reply) return d.reply;
+    return null;
+  } catch(e) { return null; }
+}
+
+function saveMsg(role, content) {
+  try {
+    const url = SURL + '?action=saveMessage&id=' + encodeURIComponent(clientId) + '&role=' + encodeURIComponent(role) + '&message=' + encodeURIComponent(content);
+    fetch(url, {method: 'GET'}).catch(() => {});
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════
+// REFERRAL
+// ══════════════════════════════════════
+function getRefLink() { return BASE + '/?ref=' + encodeURIComponent(clientId); }
+
+function getRefMessage() {
+  const u = localStorage.getItem('userName_' + clientId) || clientData.prenom || '';
+  return 'Salut ! J\'utilise Attractor depuis ' + jourEssai + ' jours — c\'est un vrai bras droit intelligent.\n\n7 jours gratuits ici :\n' + getRefLink() + '\n\n#1dansmoncouloir #Attractor';
+}
+
+function shareWhatsApp() { window.open('https://wa.me/?text=' + encodeURIComponent(getRefMessage()), '_blank'); }
+function shareNative() {
+  if (navigator.share) { navigator.share({title: 'Attractor — Ton assistant personnel', text: getRefMessage(), url: getRefLink()}).catch(() => {}); }
+  else shareWhatsApp();
+}
+function copyRefLink() { navigator.clipboard.writeText(getRefLink()).then(() => showBadgeToast('🔗 Lien copié !')).catch(() => shareWhatsApp()); }
+
+function getNextPalier(c) {
+  if (c < 1) return 'Partage à 1 ami → +1 jour';
+  if (c < 3) return 'Encore ' + (3 - c) + ' pour +1 semaine';
+  if (c < 5) return 'Encore ' + (5 - c) + ' pour +1 mois';
+  if (c < 10) return 'Encore ' + (10 - c) + ' pour +2 mois';
+  if (c < 30) return 'Encore ' + (30 - c) + ' pour +3 mois';
+  return '🏆 Maximum atteint !';
+}
+
+function showReferralModal() {
+  document.getElementById('ref-count-big').textContent = refCount;
+  document.getElementById('ref-next-palier').textContent = getNextPalier(refCount);
+  showModal('modal-referral');
+}
+
+// ══════════════════════════════════════
+// BILAN J7
+// ══════════════════════════════════════
+function showBilan() {
+  localStorage.setItem('bilan_shown_' + clientId, '1');
+  document.getElementById('bilan-objectif').innerHTML = '<em>"' + (clientData.objectif || '') + '"</em>';
+  document.getElementById('bilan-stats').innerHTML =
+    '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #222;font-size:14px;"><span>Messages échangés</span><span style="font-weight:700;color:var(--gold);">' + messageCount + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #222;font-size:14px;"><span>Jours d\'essai</span><span style="font-weight:700;color:var(--gold);">' + jourEssai + ' / 7</span></div>' +
+    '<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;"><span>Amis parrainés</span><span style="font-weight:700;color:var(--gold);">' + refCount + '</span></div>';
+  if (refCount > 0) {
+    document.getElementById('bilan-ref-bonus').style.display = 'block';
+    document.getElementById('bilan-ref-bonus').textContent = '🎁 ' + refCount + ' parrainage(s) — ' + getNextPalier(refCount);
+  }
+  document.getElementById('bilan-ref-next').textContent = getNextPalier(refCount);
+  showModal('modal-bilan');
+}
+
+// ══════════════════════════════════════
+// PROFIL UPDATE
+// ══════════════════════════════════════
+function showProfilUpdate() {
+  const profils = [
+    {val: 'salarie', icon: '💼', label: 'Salarié uniquement', desc: 'J\'ai un emploi et je cherche à mieux m\'organiser'},
+    {val: 'salarie_side', icon: '⚡', label: 'Salarié + activité en parallèle', desc: 'J\'ai un emploi et je développe quelque chose à côté'},
+    {val: 'entrepreneur', icon: '🚀', label: 'Entrepreneur à 100%', desc: 'Mon activité principale c\'est mon business'},
+    {val: 'quotidien', icon: '🌟', label: 'Compagnon du quotidien', desc: 'Je veux juste m\'organiser et avancer dans ma vie'}
+  ];
+  document.getElementById('profil-update-grid').innerHTML = profils.map(p =>
+    '<div class="profil-item" onclick="selectProfilUpdate(this)" data-val="' + p.val + '">' +
+    '<div class="profil-icon">' + p.icon + '</div>' +
+    '<div><div class="profil-label">' + p.label + '</div><div class="profil-desc">' + p.desc + '</div></div>' +
+    '</div>'
+  ).join('');
+  showModal('modal-profil-update');
+}
 
 function selectProfilUpdate(el) {
-  document.querySelectorAll('.profil-update-item').forEach(i => i.classList.remove('selected'));
+  document.querySelectorAll('.profil-item').forEach(i => i.classList.remove('selected'));
   el.classList.add('selected');
-  profilUpdateSelectionne = el.getAttribute('data-val');
+  profilUpdateSel = el.getAttribute('data-val');
 }
 
 async function saveProfilUpdate() {
-  if (!profilUpdateSelectionne) { showBadgeToast('Sélectionne ta nouvelle situation'); return; }
+  if (!profilUpdateSel) { showBadgeToast('Sélectionne ta nouvelle situation'); return; }
   closeModal('modal-profil-update');
   try {
-    await fetch(SURL + '?action=updateProfil&id=' + encodeURIComponent(clientId) + '&profil_situation=' + encodeURIComponent(profilUpdateSelectionne));
-    clientData.profil_situation = profilUpdateSelectionne;
+    await fetch(SURL + '?action=updateProfil&id=' + encodeURIComponent(clientId) + '&profil_situation=' + encodeURIComponent(profilUpdateSel));
+    clientData.profil_situation = profilUpdateSel;
     showBadgeToast('✅ Profil mis à jour !');
     appendBubble('bot', 'Noté. J\'ai mis à jour ton profil. Mon ton va s\'adapter à ta nouvelle situation. On continue ?');
-  } catch(e) {
-    showBadgeToast('Erreur — réessaie');
+  } catch(e) { showBadgeToast('Erreur — réessaie'); }
+}
+
+// ══════════════════════════════════════
+// MODAL QUEUE
+// ══════════════════════════════════════
+function enqueueModal(fn) { modalQueue.push(fn); if (!modalActive) processModalQueue(); }
+function processModalQueue() { if (modalQueue.length === 0) { modalActive = false; return; } modalActive = true; const fn = modalQueue.shift(); fn(); }
+function showModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { closeModalSilent(id); processModalQueue(); }
+function closeModalSilent(id) { const el = document.getElementById(id); if (el) el.classList.remove('active'); }
+
+// ══════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════
+function appendBubble(role, text, animate = true) {
+  const area = document.getElementById('zone-chat');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  if (!animate) wrap.style.animation = 'none';
+  const fmt = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
+  if (role === 'bot') wrap.innerHTML = '<div class="bot-icon">⚡</div><div class="bubble">' + fmt + '</div>';
+  else wrap.innerHTML = '<div class="bubble">' + fmt + '</div>';
+  area.appendChild(wrap);
+  if (animate) scrollBottom();
+}
+
+let typingEl = null;
+function showTyping() {
+  isBotTyping = true;
+  const area = document.getElementById('zone-chat');
+  typingEl = document.createElement('div');
+  typingEl.className = 'msg bot';
+  typingEl.innerHTML = '<div class="bot-icon">⚡</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  area.appendChild(typingEl); scrollBottom();
+}
+function hideTyping() { isBotTyping = false; if (typingEl) { typingEl.remove(); typingEl = null; } }
+function showRetryIndicator() { document.getElementById('retry-indicator').style.display = 'block'; }
+function hideRetryIndicator() { document.getElementById('retry-indicator').style.display = 'none'; }
+function scrollBottom() { const a = document.getElementById('zone-chat'); setTimeout(() => a.scrollTo({top: a.scrollHeight, behavior: 'smooth'}), 50); }
+
+function updateCounter() {
+  const el = document.getElementById('msg-counter');
+  const r = MSG_LIMIT - messageCount;
+  el.textContent = messageCount + ' / ' + MSG_LIMIT;
+  el.style.color = r <= 50 ? 'var(--red)' : r <= 100 ? '#ffaa00' : 'var(--muted)';
+}
+
+function showError(msg) { appendBubble('bot', '⚠️ ' + msg, false); }
+function openWhatsApp() { window.open('https://wa.me/' + WA + '?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question%20sur%20mon%20assistant%20Attractor.', '_blank'); }
+
+// ══════════════════════════════════════
+// BADGES
+// ══════════════════════════════════════
+const BADGES = [
+  {count: 1,   label: '🌱 Premier message — bienvenue !'},
+  {count: 10,  label: '🔥 10 échanges — tu es lancé !'},
+  {count: 50,  label: '⚡ 50 messages — tu cartones !'},
+  {count: 100, label: '🏆 100 messages — entrepreneur engagé !'},
+  {count: 200, label: '🚀 200 messages — niveau Expert !'},
+];
+
+function checkBadges() {
+  BADGES.forEach(b => {
+    const k = 'badge_' + clientId + '_' + b.count;
+    if (messageCount >= b.count && !localStorage.getItem(k)) {
+      localStorage.setItem(k, '1');
+      enqueueModal(() => showBadgeToast(b.label));
+    }
+  });
+  // Referral nudge tous les 3 badges
+  if (messageCount % 3 === 0 && refCount < 3) {
+    enqueueModal(() => showBadgeToast('💡 Partage à 3 amis → gagne des jours gratuits !'));
   }
 }
+
+function showBadgeToast(label) {
+  const c = document.getElementById('badge-container');
+  const el = document.createElement('div');
+  el.className = 'badge-toast'; el.textContent = label;
+  c.appendChild(el);
+  setTimeout(() => { el.style.transition = 'opacity .4s'; el.style.opacity = '0'; setTimeout(() => { el.remove(); processModalQueue(); }, 400); }, 2800);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
