@@ -468,7 +468,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 const SURL='https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
 const WA_NUMBER='2250576877070';
 const BASE_URL='https://assists.agenceattractor.com';
-const MSG_TEASE=250,MSG_LIMIT=300,HIST_MAX=6,ESSAI_JOURS=7;
+const MSG_TEASE=250,MSG_LIMIT=300,HIST_MAX=4,ESSAI_JOURS=7;
 const DEGRADED_LIMITS={1:5,2:3,3:1,4:0};
 
 let clientId='',clientData={},conversationHistory=[];
@@ -822,11 +822,11 @@ async function callChatWithRetry(text){
 }
 
 async function callChat(text){
-  const hist=conversationHistory.slice(-HIST_MAX).map(m=>({role:m.role,content:m.content}));
+  const hist=conversationHistory.slice(-HIST_MAX).map(m=>({role:m.role,content:(m.content||"").substring(0,400)}));
   const url=SURL+'?'+new URLSearchParams({action:'chat',id:clientId,msg:text,hist:JSON.stringify(hist)}).toString();
   try{
     const ctrl=new AbortController();
-    const t=setTimeout(()=>ctrl.abort(),15000);
+    const t=setTimeout(()=>ctrl.abort(),25000);
     const r=await fetch(url,{method:'GET',signal:ctrl.signal});
     clearTimeout(t);
     const d=await r.json();
