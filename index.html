@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -23,93 +24,94 @@ html,body{background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;
 
 .header{padding:44px 28px 20px;text-align:center;}
 .logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:22px;}
-.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--or),var(--or2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:13px;color:#06060E;box-shadow:0 4px 20px var(--or-glow);}
-.logo-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;}
-.logo-name span{color:var(--or);}
-.header-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;line-height:1.2;margin-bottom:10px;}
-.header-title em{font-style:italic;color:var(--or);}
-.header-sub{font-size:14px;color:var(--txt2);line-height:1.7;max-width:300px;margin:0 auto 8px;}
-.badge-essai{display:inline-flex;align-items:center;gap:6px;background:var(--or-dim);border:1px solid rgba(201,168,76,0.25);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--or);letter-spacing:0.5px;margin-top:10px;}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(–or),var(–or2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:‘Cormorant Garamond’,serif;font-weight:700;font-size:13px;color:#06060E;box-shadow:0 4px 20px var(–or-glow);}
+.logo-name{font-family:‘Cormorant Garamond’,serif;font-size:18px;font-weight:700;}
+.logo-name span{color:var(–or);}
+.header-title{font-family:‘Cormorant Garamond’,serif;font-size:28px;font-weight:700;line-height:1.2;margin-bottom:10px;}
+.header-title em{font-style:italic;color:var(–or);}
+.header-sub{font-size:14px;color:var(–txt2);line-height:1.7;max-width:300px;margin:0 auto 8px;}
+.badge-essai{display:inline-flex;align-items:center;gap:6px;background:var(–or-dim);border:1px solid rgba(201,168,76,0.25);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:600;color:var(–or);letter-spacing:0.5px;margin-top:10px;}
 
 .progress-wrap{padding:8px 28px 16px;}
-.progress-bar{height:2px;background:var(--txt4);border-radius:100px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:100px;transition:width 0.4s ease;}
-.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3);margin-top:7px;letter-spacing:0.5px;}
+.progress-bar{height:2px;background:var(–txt4);border-radius:100px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(–or),var(–or2));border-radius:100px;transition:width 0.4s ease;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(–txt3);margin-top:7px;letter-spacing:0.5px;}
 
 .steps{flex:1;padding:4px 28px 40px;}
 .step{display:none;animation:fadeUp 0.3s ease both;}
 .step.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.step-num{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--or);font-weight:600;margin-bottom:8px;}
-.step-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;line-height:1.2;margin-bottom:6px;}
-.step-sub{font-size:14px;color:var(--txt2);line-height:1.7;margin-bottom:20px;}
+.step-num{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(–or);font-weight:600;margin-bottom:8px;}
+.step-title{font-family:‘Cormorant Garamond’,serif;font-size:24px;font-weight:700;line-height:1.2;margin-bottom:6px;}
+.step-sub{font-size:14px;color:var(–txt2);line-height:1.7;margin-bottom:20px;}
 
 .field{margin-bottom:14px;}
-.field label{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:7px;}
-.inp{width:100%;background:var(--s2);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 18px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;}
+.field label{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(–txt3);font-weight:600;margin-bottom:7px;}
+.inp{width:100%;background:var(–s2);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 18px;color:var(–txt);font-family:‘Outfit’,sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;}
 .inp:focus{border-color:rgba(201,168,76,0.4);}
-.inp::placeholder{color:var(--txt3);}
+.inp::placeholder{color:var(–txt3);}
 textarea.inp{resize:none;min-height:110px;line-height:1.6;}
 
 .prio-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-.prio-item{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px 16px;cursor:pointer;transition:all 0.15s;-webkit-user-select:none;user-select:none;}
-.prio-item.selected{background:var(--or-dim);border-color:rgba(201,168,76,0.35);}
+.prio-item{display:flex;align-items:center;gap:12px;background:var(–s2);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px 16px;cursor:pointer;transition:all 0.15s;-webkit-user-select:none;user-select:none;}
+.prio-item.selected{background:var(–or-dim);border-color:rgba(201,168,76,0.35);}
 .prio-item.disabled{opacity:0.35;cursor:not-allowed;}
 .prio-check{width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.prio-item.selected .prio-check{background:var(--or);border-color:var(--or);}
+.prio-item.selected .prio-check{background:var(–or);border-color:var(–or);}
 .prio-check-icon{font-size:11px;color:#06060E;display:none;}
 .prio-item.selected .prio-check-icon{display:block;}
-.prio-label{font-size:14px;font-weight:500;color:var(--txt);}
-.prio-item.selected .prio-label{color:var(--or);}
-.prio-hint{font-size:12px;color:var(--txt3);margin-bottom:14px;}
+.prio-label{font-size:14px;font-weight:500;color:var(–txt);}
+.prio-item.selected .prio-label{color:var(–or);}
+.prio-hint{font-size:12px;color:var(–txt3);margin-bottom:14px;}
 .autre-wrap{margin-top:4px;}
 
 .bloc-peda{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:20px;margin-bottom:24px;}
-.bp-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--or);font-weight:600;margin-bottom:10px;}
-.bp-text{font-size:13px;color:var(--txt2);line-height:1.8;}
-.bp-text strong{color:var(--txt);}
+.bp-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(–or);font-weight:600;margin-bottom:10px;}
+.bp-text{font-size:13px;color:var(–txt2);line-height:1.8;}
+.bp-text strong{color:var(–txt);}
 
-.cgv-box{background:var(--s2);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;margin-bottom:20px;}
-.cgv-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;margin-bottom:14px;color:var(--or);}
+.cgv-box{background:var(–s2);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;margin-bottom:20px;}
+.cgv-title{font-family:‘Cormorant Garamond’,serif;font-size:18px;font-weight:700;margin-bottom:14px;color:var(–or);}
 .cgv-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
 .cgv-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
-.cgv-text{font-size:13px;color:var(--txt2);line-height:1.6;}
-.cgv-text strong{color:var(--txt);}
-.cgv-accept{display:flex;align-items:center;gap:12px;background:var(--s3);border-radius:12px;padding:14px 16px;cursor:pointer;margin-top:16px;transition:background 0.15s;}
+.cgv-text{font-size:13px;color:var(–txt2);line-height:1.6;}
+.cgv-text strong{color:var(–txt);}
+.cgv-accept{display:flex;align-items:center;gap:12px;background:var(–s3);border-radius:12px;padding:14px 16px;cursor:pointer;margin-top:16px;transition:background 0.15s;}
 .cgv-accept.checked{background:rgba(61,201,138,0.08);border:1px solid rgba(61,201,138,0.2);}
 .cgv-checkbox{width:22px;height:22px;border-radius:7px;border:2px solid rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.cgv-accept.checked .cgv-checkbox{background:var(--green);border-color:var(--green);}
+.cgv-accept.checked .cgv-checkbox{background:var(–green);border-color:var(–green);}
 .cgv-checkbox-icon{font-size:12px;color:#06060E;display:none;}
 .cgv-accept.checked .cgv-checkbox-icon{display:block;}
-.cgv-accept-text{font-size:13px;color:var(--txt2);}
+.cgv-accept-text{font-size:13px;color:var(–txt2);}
 
-.btn-next{width:100%;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:16px;padding:16px;font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:all 0.2s;margin-top:8px;box-shadow:0 8px 32px var(--or-glow);}
+.btn-next{width:100%;background:linear-gradient(135deg,var(–or),var(–or2));color:#06060E;border:none;border-radius:16px;padding:16px;font-family:‘Outfit’,sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:all 0.2s;margin-top:8px;box-shadow:0 8px 32px var(–or-glow);}
 .btn-next:active{transform:scale(0.97);}
 .btn-next:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
-.btn-back{background:none;border:none;color:var(--txt3);font-size:13px;cursor:pointer;padding:12px 0;width:100%;text-align:center;font-family:'Outfit',sans-serif;transition:color 0.15s;}
-.btn-back:hover{color:var(--txt2);}
+.btn-back{background:none;border:none;color:var(–txt3);font-size:13px;cursor:pointer;padding:12px 0;width:100%;text-align:center;font-family:‘Outfit’,sans-serif;transition:color 0.15s;}
+.btn-back:hover{color:var(–txt2);}
 
 .success-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 28px;text-align:center;}
 .success-screen.show{display:flex;}
 .success-icon{font-size:56px;margin-bottom:24px;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
-.success-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;margin-bottom:10px;line-height:1.2;}
-.success-title em{font-style:italic;color:var(--or);}
-.success-sub{font-size:15px;color:var(--txt2);line-height:1.7;max-width:300px;margin-bottom:32px;}
-.success-url{background:var(--s2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 18px;font-size:12px;color:var(--or);word-break:break-all;margin-bottom:24px;text-align:left;line-height:1.6;}
-.btn-go{width:100%;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:16px;padding:16px;font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 8px 32px var(--or-glow);}
+.success-title{font-family:‘Cormorant Garamond’,serif;font-size:30px;font-weight:700;margin-bottom:10px;line-height:1.2;}
+.success-title em{font-style:italic;color:var(–or);}
+.success-sub{font-size:15px;color:var(–txt2);line-height:1.7;max-width:300px;margin-bottom:32px;}
+.success-url{background:var(–s2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 18px;font-size:12px;color:var(–or);word-break:break-all;margin-bottom:24px;text-align:left;line-height:1.6;}
+.btn-go{width:100%;background:linear-gradient(135deg,var(–or),var(–or2));color:#06060E;border:none;border-radius:16px;padding:16px;font-family:‘Outfit’,sans-serif;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 8px 32px var(–or-glow);}
 
-.profil-item{display:flex;align-items:center;gap:14px;background:var(--s2);border:2px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.15s;margin-bottom:10px;-webkit-user-select:none;user-select:none;}
-.profil-item.selected{background:var(--or-dim);border-color:rgba(201,168,76,0.4);}
+.profil-item{display:flex;align-items:center;gap:14px;background:var(–s2);border:2px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.15s;margin-bottom:10px;-webkit-user-select:none;user-select:none;}
+.profil-item.selected{background:var(–or-dim);border-color:rgba(201,168,76,0.4);}
 .profil-icon{font-size:24px;flex-shrink:0;}
 .profil-content{flex:1;}
-.profil-label{font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;}
-.profil-item.selected .profil-label{color:var(--or);}
-.profil-desc{font-size:12px;color:var(--txt3);line-height:1.4;}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--or-dim);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--txt);z-index:999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:toastIn 0.2s ease;}
+.profil-label{font-size:15px;font-weight:600;color:var(–txt);margin-bottom:3px;}
+.profil-item.selected .profil-label{color:var(–or);}
+.profil-desc{font-size:12px;color:var(–txt3);line-height:1.4;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(–s2);border:1px solid var(–or-dim);border-radius:12px;padding:12px 20px;font-size:13px;color:var(–txt);z-index:999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:toastIn 0.2s ease;}
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
+
 </head>
 <body>
 <div class="atmo"></div>
@@ -140,135 +142,137 @@ textarea.inp{resize:none;min-height:110px;line-height:1.6;}
 
   <div class="steps">
 
-    <div class="step active" id="step1">
-      <div class="step-num">Étape 1 sur 7</div>
-      <div class="step-title">Comment tu t'appelles ?</div>
-      <div class="step-sub">Ton assistant va te parler par ton prénom, chaque jour.</div>
-      <div class="field"><input class="inp" id="f-prenom" type="text" placeholder="Aminata" maxlength="40" autocomplete="given-name"></div>
-      <button class="btn-next" onclick="nextStep(1)">Continuer →</button>
-    </div>
+```
+<div class="step active" id="step1">
+  <div class="step-num">Étape 1 sur 7</div>
+  <div class="step-title">Comment tu t'appelles ?</div>
+  <div class="step-sub">Ton assistant va te parler par ton prénom, chaque jour.</div>
+  <div class="field"><input class="inp" id="f-prenom" type="text" placeholder="Aminata" maxlength="40" autocomplete="given-name"></div>
+  <button class="btn-next" onclick="nextStep(1)">Continuer →</button>
+</div>
 
-    <div class="step" id="step2">
-      <div class="step-num">Étape 2 sur 7</div>
-      <div class="step-title">Ton numéro WhatsApp</div>
-      <div class="step-sub">Pour que je puisse te contacter si tu as besoin d'aide pendant ton essai.</div>
-      <div class="field"><input class="inp" id="f-whatsapp" type="tel" placeholder="+225 07 00 00 00 00" autocomplete="tel"></div>
-      <button class="btn-next" onclick="nextStep(2)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(2)">← Retour</button>
-    </div>
+<div class="step" id="step2">
+  <div class="step-num">Étape 2 sur 7</div>
+  <div class="step-title">Ton numéro WhatsApp</div>
+  <div class="step-sub">Pour que je puisse te contacter si tu as besoin d'aide pendant ton essai.</div>
+  <div class="field"><input class="inp" id="f-whatsapp" type="tel" placeholder="+225 07 00 00 00 00" autocomplete="tel"></div>
+  <button class="btn-next" onclick="nextStep(2)">Continuer →</button>
+  <button class="btn-back" onclick="prevStep(2)">← Retour</button>
+</div>
 
-    <div class="step" id="step3">
-      <div class="step-num">Étape 3 sur 7</div>
-      <div class="step-title">Ton adresse email</div>
-      <div class="step-sub">Tu recevras les infos de ton essai ici. Pas de spam — promis.</div>
-      <div class="field"><input class="inp" id="f-email" type="email" placeholder="aminata@example.com" autocomplete="email"></div>
-      <button class="btn-next" onclick="nextStep(3)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(3)">← Retour</button>
-    </div>
+<div class="step" id="step3">
+  <div class="step-num">Étape 3 sur 7</div>
+  <div class="step-title">Ton adresse email</div>
+  <div class="step-sub">Tu recevras les infos de ton essai ici. Pas de spam — promis.</div>
+  <div class="field"><input class="inp" id="f-email" type="email" placeholder="aminata@example.com" autocomplete="email"></div>
+  <button class="btn-next" onclick="nextStep(3)">Continuer →</button>
+  <button class="btn-back" onclick="prevStep(3)">← Retour</button>
+</div>
 
-    <div class="step" id="step4">
-      <div class="step-num">Étape 4 sur 7</div>
-      <div class="step-title">Ton activité en quelques mots</div>
-      <div class="step-sub">Ton assistant va être configuré spécifiquement pour ce que tu fais. Sois précis.</div>
-      <div class="field"><input class="inp" id="f-activite" type="text" placeholder="Ex : Consultante en marketing digital — Paris" maxlength="100"></div>
-      <button class="btn-next" onclick="nextStep(4)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(4)">← Retour</button>
-    </div>
+<div class="step" id="step4">
+  <div class="step-num">Étape 4 sur 7</div>
+  <div class="step-title">Ton activité en quelques mots</div>
+  <div class="step-sub">Ton assistant va être configuré spécifiquement pour ce que tu fais. Sois précis.</div>
+  <div class="field"><input class="inp" id="f-activite" type="text" placeholder="Ex : Consultante en marketing digital — Paris" maxlength="100"></div>
+  <button class="btn-next" onclick="nextStep(4)">Continuer →</button>
+  <button class="btn-back" onclick="prevStep(4)">← Retour</button>
+</div>
 
-    <div class="step" id="step5">
-      <div class="step-num">Étape 5 sur 7</div>
-      <div class="step-title">Tes priorités du moment</div>
-      <div class="step-sub">Choisis jusqu'à 3 domaines sur lesquels ton assistant doit se concentrer.</div>
-      <div class="prio-hint">Sélectionne 1 à 3 choix maximum</div>
-      <div class="prio-grid" id="prioGrid">
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Organiser mon temps"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">⏰ Organiser mon temps</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Gérer mes clients et relances"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">👥 Gérer mes clients et relances</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Suivre mes finances"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">💰 Suivre mes finances</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Créer du contenu"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">✍️ Créer du contenu</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Prospecter"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">🎯 Prospecter</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="M'organiser au quotidien"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">📋 M'organiser au quotidien</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Gérer mon équipe"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">🤝 Gérer mon équipe</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="autre" id="prioAutre"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">➕ Autre</div></div>
+<div class="step" id="step5">
+  <div class="step-num">Étape 5 sur 7</div>
+  <div class="step-title">Tes priorités du moment</div>
+  <div class="step-sub">Choisis jusqu'à 3 domaines sur lesquels ton assistant doit se concentrer.</div>
+  <div class="prio-hint">Sélectionne 1 à 3 choix maximum</div>
+  <div class="prio-grid" id="prioGrid">
+    <div class="prio-item" onclick="togglePrio(this)" data-val="Organiser mon temps"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">⏰ Organiser mon temps</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="Gérer mes clients et relances"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">👥 Gérer mes clients et relances</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="Suivre mes finances"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">💰 Suivre mes finances</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="Créer du contenu"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">✍️ Créer du contenu</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="Prospecter"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">🎯 Prospecter</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="M'organiser au quotidien"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">📋 M'organiser au quotidien</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="Gérer mon équipe"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">🤝 Gérer mon équipe</div></div>
+    <div class="prio-item" onclick="togglePrio(this)" data-val="autre" id="prioAutre"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">➕ Autre</div></div>
+  </div>
+  <div class="autre-wrap" id="autreWrap" style="display:none;margin-bottom:12px;">
+    <input class="inp" id="f-autre" type="text" placeholder="Précise ta priorité..." maxlength="80">
+  </div>
+  <button class="btn-next" onclick="nextStep(5)">Continuer →</button>
+  <button class="btn-back" onclick="prevStep(5)">← Retour</button>
+</div>
+
+<div class="step" id="step6">
+  <div class="step-num">Étape 6 sur 8</div>
+  <div class="step-title">Ton résultat attendu</div>
+  <div class="bloc-peda">
+    <div class="bp-label">📌 Une nuance importante</div>
+    <div class="bp-text">Dans le système Attractor, le <strong>résultat</strong> c'est ta destination. Les <strong>objectifs</strong> sont les paliers pour y arriver.<br><br>Ton assistant est conçu pour toi — plus tu es précis ici, plus il sera utile.</div>
+  </div>
+  <div class="step-sub">Dis-le avec tes propres mots.</div>
+  <div class="field"><textarea class="inp" id="f-resultat" placeholder="Avec mon assistant je veux pouvoir faire ce qui me plait le plus — [écris ici], sans les contraintes que je vis actuellement — [décris ces contraintes]." rows="5"></textarea></div>
+  <button class="btn-next" onclick="nextStep(6)">Continuer →</button>
+  <button class="btn-back" onclick="prevStep(6)">← Retour</button>
+</div>
+
+<div class="step" id="step7">
+  <div class="step-num">Étape 7 sur 8</div>
+  <div class="step-title">Ta situation actuelle</div>
+  <div class="step-sub">Pour que ton assistant parle vraiment ton langage — dis-moi où tu en es.</div>
+  <div class="prio-grid" id="profilGrid">
+    <div class="profil-item" onclick="selectProfil(this)" data-val="salarie">
+      <div class="profil-icon">💼</div>
+      <div class="profil-content">
+        <div class="profil-label">Salarié uniquement</div>
+        <div class="profil-desc">J'ai un emploi et je cherche à mieux m'organiser</div>
       </div>
-      <div class="autre-wrap" id="autreWrap" style="display:none;margin-bottom:12px;">
-        <input class="inp" id="f-autre" type="text" placeholder="Précise ta priorité..." maxlength="80">
-      </div>
-      <button class="btn-next" onclick="nextStep(5)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(5)">← Retour</button>
     </div>
+    <div class="profil-item" onclick="selectProfil(this)" data-val="salarie_side">
+      <div class="profil-icon">⚡</div>
+      <div class="profil-content">
+        <div class="profil-label">Salarié + activité en parallèle</div>
+        <div class="profil-desc">J'ai un emploi et je développe quelque chose à côté</div>
+      </div>
+    </div>
+    <div class="profil-item" onclick="selectProfil(this)" data-val="entrepreneur">
+      <div class="profil-icon">🚀</div>
+      <div class="profil-content">
+        <div class="profil-label">Entrepreneur à 100%</div>
+        <div class="profil-desc">Mon activité principale c'est mon business</div>
+      </div>
+    </div>
+    <div class="profil-item" onclick="selectProfil(this)" data-val="quotidien">
+      <div class="profil-icon">🌟</div>
+      <div class="profil-content">
+        <div class="profil-label">Compagnon du quotidien</div>
+        <div class="profil-desc">Je veux juste m'organiser et avancer dans ma vie</div>
+      </div>
+    </div>
+  </div>
+  <button class="btn-next" onclick="nextStep(7)">Continuer →</button>
+  <button class="btn-back" onclick="prevStep(7)">← Retour</button>
+</div>
 
-    <div class="step" id="step6">
-      <div class="step-num">Étape 6 sur 8</div>
-      <div class="step-title">Ton résultat attendu</div>
-      <div class="bloc-peda">
-        <div class="bp-label">📌 Une nuance importante</div>
-        <div class="bp-text">Dans le système Attractor, le <strong>résultat</strong> c'est ta destination. Les <strong>objectifs</strong> sont les paliers pour y arriver.<br><br>Ton assistant est conçu pour toi — plus tu es précis ici, plus il sera utile.</div>
-      </div>
-      <div class="step-sub">Dis-le avec tes propres mots.</div>
-      <div class="field"><textarea class="inp" id="f-resultat" placeholder="Avec mon assistant je veux pouvoir faire ce qui me plait le plus — [écris ici], sans les contraintes que je vis actuellement — [décris ces contraintes]." rows="5"></textarea></div>
-      <button class="btn-next" onclick="nextStep(6)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(6)">← Retour</button>
+<div class="step" id="step8">
+  <div class="step-num">Étape 8 sur 8</div>
+  <div class="step-title">Avant de commencer</div>
+  <div class="step-sub">Lis ça — c'est court et important.</div>
+  <div class="cgv-box">
+    <div class="cgv-title">Ce que tu t'apprêtes à vivre</div>
+    <div class="cgv-item"><div class="cgv-icon">🎁</div><div class="cgv-text"><strong>7 jours gratuits.</strong> Sans carte bancaire. Sans engagement.</div></div>
+    <div class="cgv-item"><div class="cgv-icon">🤖</div><div class="cgv-text"><strong>Un assistant conçu pour toi.</strong> Configuré selon ce que tu viens de nous dire.</div></div>
+    <div class="cgv-item"><div class="cgv-icon">🔒</div><div class="cgv-text"><strong>Tes données restent privées.</strong> Jamais partagées, jamais vendues.</div></div>
+    <div class="cgv-item"><div class="cgv-icon">📲</div><div class="cgv-text"><strong>Mac Arthur peut te contacter</strong> sur WhatsApp pour s'assurer que tout est bien configuré.</div></div>
+    <div class="cgv-item"><div class="cgv-icon">💬</div><div class="cgv-text"><strong>Après les 7 jours.</strong> Tu reçois une offre pour continuer. Tu choisis. Zéro pression.</div></div>
+    <div class="cgv-accept" id="cgvAccept" onclick="toggleCGV()">
+      <div class="cgv-checkbox"><span class="cgv-checkbox-icon">✓</span></div>
+      <div class="cgv-accept-text">J'ai lu et j'accepte — je commence mon essai gratuit.</div>
     </div>
-
-    <div class="step" id="step7">
-      <div class="step-num">Étape 7 sur 8</div>
-      <div class="step-title">Ta situation actuelle</div>
-      <div class="step-sub">Pour que ton assistant parle vraiment ton langage — dis-moi où tu en es.</div>
-      <div class="prio-grid" id="profilGrid">
-        <div class="profil-item" onclick="selectProfil(this)" data-val="salarie">
-          <div class="profil-icon">💼</div>
-          <div class="profil-content">
-            <div class="profil-label">Salarié uniquement</div>
-            <div class="profil-desc">J'ai un emploi et je cherche à mieux m'organiser</div>
-          </div>
-        </div>
-        <div class="profil-item" onclick="selectProfil(this)" data-val="salarie_side">
-          <div class="profil-icon">⚡</div>
-          <div class="profil-content">
-            <div class="profil-label">Salarié + activité en parallèle</div>
-            <div class="profil-desc">J'ai un emploi et je développe quelque chose à côté</div>
-          </div>
-        </div>
-        <div class="profil-item" onclick="selectProfil(this)" data-val="entrepreneur">
-          <div class="profil-icon">🚀</div>
-          <div class="profil-content">
-            <div class="profil-label">Entrepreneur à 100%</div>
-            <div class="profil-desc">Mon activité principale c'est mon business</div>
-          </div>
-        </div>
-        <div class="profil-item" onclick="selectProfil(this)" data-val="quotidien">
-          <div class="profil-icon">🌟</div>
-          <div class="profil-content">
-            <div class="profil-label">Compagnon du quotidien</div>
-            <div class="profil-desc">Je veux juste m'organiser et avancer dans ma vie</div>
-          </div>
-        </div>
-      </div>
-      <button class="btn-next" onclick="nextStep(7)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(7)">← Retour</button>
-    </div>
-
-    <div class="step" id="step8">
-      <div class="step-num">Étape 8 sur 8</div>
-      <div class="step-title">Avant de commencer</div>
-      <div class="step-sub">Lis ça — c'est court et important.</div>
-      <div class="cgv-box">
-        <div class="cgv-title">Ce que tu t'apprêtes à vivre</div>
-        <div class="cgv-item"><div class="cgv-icon">🎁</div><div class="cgv-text"><strong>7 jours gratuits.</strong> Sans carte bancaire. Sans engagement.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">🤖</div><div class="cgv-text"><strong>Un assistant conçu pour toi.</strong> Configuré selon ce que tu viens de nous dire.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">🔒</div><div class="cgv-text"><strong>Tes données restent privées.</strong> Jamais partagées, jamais vendues.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">📲</div><div class="cgv-text"><strong>Mac Arthur peut te contacter</strong> sur WhatsApp pour s'assurer que tout est bien configuré.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">💬</div><div class="cgv-text"><strong>Après les 7 jours.</strong> Tu reçois une offre pour continuer. Tu choisis. Zéro pression.</div></div>
-        <div class="cgv-accept" id="cgvAccept" onclick="toggleCGV()">
-          <div class="cgv-checkbox"><span class="cgv-checkbox-icon">✓</span></div>
-          <div class="cgv-accept-text">J'ai lu et j'accepte — je commence mon essai gratuit.</div>
-        </div>
-      </div>
-      <div id="submitArea">
-        <button class="btn-next" id="btnSubmit" onclick="soumettre()" disabled>Activer mon assistant gratuit →</button>
-      </div>
-      <button class="btn-back" onclick="prevStep(8)">← Retour</button>
-    </div>
+  </div>
+  <div id="submitArea">
+    <button class="btn-next" id="btnSubmit" onclick="soumettre()" disabled>Activer mon assistant gratuit →</button>
+  </div>
+  <button class="btn-back" onclick="prevStep(8)">← Retour</button>
+</div>
+```
 
   </div>
 </div>
@@ -371,15 +375,45 @@ async function soumettre(){
     ref_source:refSource
   };
 
-  try{
-    var res=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-    var result=await res.json();
-    if(result.success){afficherSucces(data.prenom,result.url);}
-    else{btn.disabled=false;btn.textContent='Activer mon assistant gratuit →';toast('Erreur : '+(result.error||'Réessaie dans un instant'));}
-  }catch(err){
-    btn.disabled=false;
-    btn.textContent='Activer mon assistant gratuit →';
-    toast('Problème de connexion — vérifie ta connexion et réessaie dans 30 secondes');
+  // Retry jusqu'a 3 fois avec timeout 30s
+  var tentative = 0;
+  var succes = false;
+  while (tentative < 3 && !succes) {
+    tentative++;
+    try {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function(){ ctrl.abort(); }, 30000);
+      var res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+        signal: ctrl.signal
+      });
+      clearTimeout(timer);
+      var result = await res.json();
+      if (result.success) {
+        succes = true;
+        afficherSucces(data.prenom, result.url);
+      } else {
+        if (tentative >= 3) {
+          btn.disabled=false;
+          btn.textContent='Activer mon assistant gratuit →';
+          toast('Erreur : ' + (result.error || 'Réessaie dans un instant'));
+        } else {
+          btn.textContent = 'Tentative ' + (tentative+1) + '/3...';
+          await new Promise(function(r){ setTimeout(r, 2000); });
+        }
+      }
+    } catch(err) {
+      if (tentative >= 3) {
+        btn.disabled=false;
+        btn.textContent='Activer mon assistant gratuit →';
+        toast('Connexion lente — réessaie dans quelques secondes');
+      } else {
+        btn.textContent = 'Reconnexion ' + (tentative+1) + '/3...';
+        await new Promise(function(r){ setTimeout(r, 3000); });
+      }
+    }
   }
 }
 
@@ -401,5 +435,6 @@ function toast(msg){
   setTimeout(function(){if(t.parentNode)t.remove();},3500);
 }
 </script>
+
 </body>
 </html>
