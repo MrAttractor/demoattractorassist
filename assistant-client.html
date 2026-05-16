@@ -174,7 +174,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <!-- MODAL NOM -->
 <div id="modal-name" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-title">Comment tu veux qu'on t'appelle ?</div>
+    <div class="modal-title">Comment tu veux que je t'appelle ?</div>
     <div class="modal-text">Patron ? Boss ? Ton prénom ? C'est toi qui décides.</div>
     <input id="name-input" type="text" placeholder="Patron / Boss / Mon prénom…" style="width:100%;padding:12px 16px;border-radius:12px;background:var(--dark3);border:1px solid #333;color:var(--text);font-size:15px;margin-bottom:16px;outline:none;">
     <button class="modal-btn primary" onclick="saveName()">C'est parti →</button>
@@ -185,7 +185,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 <div id="modal-unique" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-title">🎯 Je ne suis pas comme les autres.</div>
-    <div class="modal-text">La plupart des IAs te donnent des réponses génériques. Moi, j'ai été formé par Mac Arthur sur <em>ta</em> situation — ton activité, tes priorités, ton objectif.<br><br><strong style="color:var(--gold)">"Ce qui reste dans ta tête t'enchaîne. Ce qui est écrit te libère."</strong><br><br>Ma mission : être ton bras droit. Pas te répondre — t'avancer.</div>
+    <div class="modal-text">Je suis chargé de te décharger mentalement. Tu penses à quelque chose — tu me le dis. Tu veux une info précise sur tes tâches ? Tu veux des idées de posts ? Je suis disponible 24h/24.<br><br><strong style="color:var(--gold)">"Ce qui reste dans ta tête t'enchaîne. Ce qui est écrit te libère."</strong></div>
     <button class="modal-btn primary" onclick="nextOnboarding(3)">Je comprends →</button>
   </div>
 </div>
@@ -308,7 +308,7 @@ async function loadAssistant(){
   try{
     const r=await fetch(SURL+'?action=getAssistant&id='+encodeURIComponent(clientId));
     const d=await r.json();
-    if(!d||!d.success||!d.profil){showError('Assistant introuvable. Contacte Mac Arthur.');return;}
+    if(!d||!d.success||!d.profil){showError('⏳ Ton assistant se prépare... Actualise la page dans 15 secondes et c\'est ok !');return;}
     clientData=d.profil;
     refCount=parseInt(clientData.ref_count||0);
     document.getElementById('header-name').textContent='Attractor — '+(clientData.prenom||'');
@@ -317,7 +317,7 @@ async function loadAssistant(){
     await loadBroadcast();
     await loadHistory();
     checkOnboardingState();
-  }catch(e){showError('Impossible de charger. Vérifie ta connexion.');}
+  }catch(e){showError('⏳ Ton assistant se prépare... Actualise la page dans 15 secondes et c\'est ok !');}
 }
 
 function calculerJourEssai(){
@@ -457,11 +457,10 @@ function checkOnboardingState(){
 
 function buildWelcome(){
   document.getElementById('welcome-text').innerHTML=
-    'Mac Arthur m\'a parlé de toi avant que tu arrives.<br><br>'+
-    'Il m\'a dit que tu gères <strong style="color:var(--gold)">'+(clientData.activite||'ton activité')+'</strong> '+
+    'Mac Arthur m\'a parlé de toi avant que tu arrives. Il m\'a expliqué brièvement que tu gères <strong style="color:var(--gold)">'+(clientData.activite||'ton activité')+'</strong> '+
     'et que ta priorité c\'est <strong style="color:var(--gold)">'+(clientData.priorite||'ta croissance')+'</strong>.<br><br>'+
-    'Je ne suis pas un chatbot. Je suis <strong style="color:var(--gold)">Attractor</strong> — '+
-    'ton bras droit, formé par Mac Arthur pour une seule mission : te soulager.';
+    'Je suis <strong style="color:var(--gold)">Attractor Assist</strong> — ton bras droit. 😊<br><br>'+
+    'Permets-moi de te tutoyer stp.';
 }
 
 function runOnboardingStep(step){
