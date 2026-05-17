@@ -768,7 +768,7 @@ async function loadCouloir(){
     cc.innerHTML='';
 
     if(cTermine){
-      renderCResult();
+  renderCResult(d.result||null);
     }else if(cEtape===0&&(!d.historique||d.historique.length===0)){
       renderCStart();
     }else{
