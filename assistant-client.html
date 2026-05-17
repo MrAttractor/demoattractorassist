@@ -858,11 +858,15 @@ async function envoiCouloir(){
   }
 }
 
-async function renderCResult(){
+async function renderCResult(resultDirect){
   try{
-    const d=await api('calculerCouloir',{id:cid});
-    if(!d.success||!d.result)return;
-    const r=d.result;const s=r.scores;
+    let res=resultDirect;
+    if(!res){
+      const r=await api('calculerCouloir',{id:cid});
+      if(!r.success||!r.result){appendCB('bot','Ton profil est prêt — reviens sur l\'onglet #1couloir pour le voir.');return;}
+      res=r.result;
+    }
+    const s=res.scores;
     const sv=(v)=>`<div class="sc"><div class="sc-lbl">${v.toUpperCase()}</div><div class="sc-val ${s[v.toLowerCase()]>=6?'hi':'lo'}">${s[v.toLowerCase()]}/10</div></div>`;
     document.getElementById('c-content').innerHTML=`
       <div class="c-result">
