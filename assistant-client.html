@@ -845,7 +845,7 @@ async function envoiCouloir(){
       updateCProg();
       if(cTermine){
         document.getElementById('cinp-wrap').style.display='none';
-        setTimeout(()=>renderCResult(),1000);
+        setTimeout(()=>renderCResult(d.result||null),1500);
       }else{
         // ← Input reste visible
         document.getElementById('cinp-wrap').style.display='flex';
