@@ -873,12 +873,12 @@ async function renderCResult(resultDirect){
     const sv=(v)=>`<div class="sc"><div class="sc-lbl">${v.toUpperCase()}</div><div class="sc-val ${s[v.toLowerCase()]>=6?'hi':'lo'}">${s[v.toLowerCase()]}/10</div></div>`;
     document.getElementById('c-content').innerHTML=`
       <div class="c-result">
-        <div class="c-profil-name">${r.profil}</div>
-        <div class="c-profil-lec">${r.lecture}</div>
+        <div class="c-profil-name">${res.profil}</div>
+        <div class="c-profil-lec">${res.lecture}</div>
       </div>
       <div class="score-grid">${sv('love')}${sv('skill')}${sv('need')}${sv('money')}</div>
-      <div class="c-suggest">→ ${r.suggestion}</div>
-      <button class="btn-prim" onclick="shareResult('${r.profil}')">🚀 Partager mon profil</button>
+      <div class="c-suggest">→ ${res.suggestion}</div>
+      <button class="btn-prim" onclick="shareResult('${res.profil}')">🚀 Partager mon profil</button>
       <button class="btn-sec" onclick="switchTab('chat')">Continuer avec Attractor</button>`;
     // Proposer défi #7 si pas encore fait
     if(defisD.defis_completes&&defisD.defis_completes.indexOf('D7')<0){
