@@ -1169,7 +1169,7 @@ function badgePop(label){
 // ── SUPERVISION ──
 function logSup(type,detail){
   supErrs++;
-  const dot=document.getElementById('sup-dot');dot.style.display='block';
+  if(cid==='AA-MrAttractor-8IRVL')document.getElementById('sup-dot').style.display='block';
   if(supErrs>=3)dot.className='err';else dot.className='warn';
 }
 
