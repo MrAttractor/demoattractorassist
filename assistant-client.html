@@ -401,6 +401,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <button class="mbtn prim" style="margin-top:20px;" onclick="closeM('m-cgv-info')"">Compris ✓</button>
   </div>
 </div>
+  <button id="back-top" onclick="scrollZoneTop()" style="display:none;position:fixed;bottom:calc(var(--nav-h) + 80px);right:16px;z-index:150;width:40px;height:40px;border-radius:50%;background:var(--dark3);border:1px solid #333;color:var(--muted);font-size:18px;cursor:pointer;">↑</button>
 <div id="bz"></div>
 
 <!-- MODALS -->
@@ -758,14 +759,18 @@ function switchTab(tab){
   if(tab==='chat'){
     document.getElementById('z-chat').classList.add('on');
     if(!blocked)inpZ.style.display='block';cInp.style.display='none';scrollB();
+    document.getElementById('back-top').style.display='block';
   }else if(tab==='coul'){
     document.getElementById('z-coul').classList.add('on');
+    document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';loadCouloir();
   }else if(tab==='defis'){
     document.getElementById('z-defis').classList.add('on');
+    document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';cInp.style.display='none';
  }else if(tab==='info'){
     document.getElementById('z-info').classList.add('on');
+    document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';cInp.style.display='none';
     chargerFAQ();
   }
@@ -1039,7 +1044,12 @@ function updateCProg(){
   const f=document.getElementById('c-fill');const l=document.getElementById('c-lbl');const p=document.getElementById('c-pct');
   if(f)f.style.width=pct+'%';if(l)l.textContent='Étape '+cEtape+' / '+cTotal;if(p)p.textContent=pct+'%';
 }
-
+function scrollZoneTop(){
+  ['z-chat','z-coul','z-info'].forEach(function(id){
+    const z=document.getElementById(id);
+    if(z&&z.classList.contains('on'))z.scrollTo({top:0,behavior:'smooth'});
+  });
+}
 function scrollCoul(){const z=document.getElementById('z-coul');setTimeout(()=>z.scrollTo({top:z.scrollHeight,behavior:'smooth'}),50);}
 
 function shareResult(profil){
