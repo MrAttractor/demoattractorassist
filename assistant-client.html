@@ -769,7 +769,9 @@ async function loadCouloir(){
 
    if(cTermine){
       document.getElementById('cinp-wrap').style.display='none';
+      document.getElementById('c-prog-wrap').style.display='none';
       renderCResult(d.result||null);
+      return;
     }else if(cEtape===0&&(!d.historique||d.historique.length===0)){
       renderCStart();
     }else{
