@@ -52,7 +52,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 /* ZONES */
 .zone{position:fixed;top:var(--hdr-h);bottom:var(--nav-h);left:0;right:0;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .zone.on{display:block;}
-#z-chat{background:var(--dark);padding:12px 14px 10px;}
+#z-chat{background:var(--dark);padding:12px 14px 160px;}
 #z-chat.bc{top:calc(var(--hdr-h) + 56px);}
 
 /* BUBBLES */
@@ -329,8 +329,13 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </div>
   </div>
   <div class="is">
-    <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question" target="_blank" class="iwa">💬 Contacter Mac Arthur</a>
-    <a href="https://agenceattractor.com/cgv" target="_blank" class="icgv">📄 Conditions Générales de Vente</a>
+    <div class="icard" style="background:linear-gradient(135deg,#1a1200,#221800);border:1px solid rgba(201,168,76,.25);border-radius:14px;padding:16px;margin-bottom:10px;">
+  <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:6px;">📅 Agenda intelligent</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:12px;">Synchronisation agenda · Rappels automatiques · Briefing du jour avec tes événements · Disponible en Bras Droit Pro.</div>
+  <a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20je%20veux%20passer%20au%20Bras%20Droit%20Pro" target="_blank" style="display:block;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;padding:11px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none;text-align:center;">Passer au Bras Droit Pro →</a>
+</div>
+<a href="https://wa.me/2250576877070?text=Bonjour%20Mac%20Arthur%2C%20j%27ai%20une%20question" target="_blank" class="iwa">💬 Contacter Mac Arthur</a>
+   <button onclick="showM('m-cgv')" class="icgv" style="width:100%;cursor:pointer;border:none;">📄 Conditions Générales de Vente</button>
   </div>
 </div>
 
@@ -371,10 +376,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
     Défis<div class="ndot"></div>
   </button>
-  <button class="nbtn" id="nb-info" onclick="switchTab('info')">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-    Info<div class="ndot"></div>
-  </button>
+ 
 </div>
 
 <div id="bz"></div>
