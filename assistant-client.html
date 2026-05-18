@@ -298,7 +298,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     <div class="iebook">
       <div class="iebook-t">Méthode ATTRACTOR — Guide gratuit</div>
       <div class="iebook-d">Le système complet de Mac Arthur pour attirer, convertir et structurer ton activité.</div>
-      <a href="https://agenceattractor.com/lead-magnet" target="_blank" class="iebook-btn">📥 Télécharger gratuitement</a>
+      <button onclick="demanderEbook()" class="iebook-btn" style="border:none;cursor:pointer;font-family:inherit;">📖 Recevoir l'ebook gratuit</button>
     </div>
   </div>
   <div class="is">
@@ -1049,6 +1049,13 @@ function scrollZoneTop(){
     const z=document.getElementById(id);
     if(z&&z.classList.contains('on'))z.scrollTo({top:0,behavior:'smooth'});
   });
+}
+  function demanderEbook(){
+  switchTab('chat');
+  setTimeout(function(){
+    document.getElementById('usr-inp').value='Je veux recevoir le lead magnet gratuit';
+    sendMsg();
+  },400);
 }
 function scrollCoul(){const z=document.getElementById('z-coul');setTimeout(()=>z.scrollTo({top:z.scrollHeight,behavior:'smooth'}),50);}
 
