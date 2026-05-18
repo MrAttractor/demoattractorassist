@@ -757,7 +757,30 @@ function switchTab(tab){
     chargerFAQ();
   }
 }
+async function chargerFAQ(){
+  const zone=document.getElementById('faq-zone');
+  if(!zone)return;
+  try{
+    const d=await api('getKnowledge',{categorie:'faq'});
+    if(!d.success||!d.items){zone.innerHTML='';return;}
+    let h='';
+    d.items.forEach(function(item){
+      const parts=item.contenu.split('|');
+      if(parts.length<3)return;
+      const titre=parts[1];
+      const reponse=parts[2];
+      h+=`<div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-q">${titre} <span class="faq-arr">▾</span></div>
+        <div class="faq-a">${reponse}</div>
+      </div>`;
+    });
+    zone.innerHTML=h||'<div style="color:var(--muted);font-size:13px;padding:12px;">Aucune question disponible.</div>';
+  }catch(e){zone.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px;">Erreur de chargement.</div>';}
+}
 
+function toggleFaq(el){
+  el.classList.toggle('open');
+}
 // ── COULOIR — FIX PRINCIPAL ──
 async function loadCouloir(){
   const cc=document.getElementById('c-content');
