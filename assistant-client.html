@@ -1050,12 +1050,22 @@ function scrollZoneTop(){
     if(z&&z.classList.contains('on'))z.scrollTo({top:0,behavior:'smooth'});
   });
 }
-  function demanderEbook(){
-  switchTab('chat');
-  setTimeout(function(){
-    document.getElementById('usr-inp').value='Je veux recevoir le lead magnet gratuit';
-    sendMsg();
-  },400);
+  async function demanderEbook(){
+  const btn=event.target;
+  btn.disabled=true;btn.textContent='Envoi en cours...';
+  try{
+    const d=await api('envoyerEbook',{id:cid});
+    if(d.success){
+      btn.textContent='✅ Ebook envoyé par email !';
+      btn.style.background='var(--green)';
+    }else{
+      btn.textContent='Erreur — contacte Mac Arthur';
+      btn.disabled=false;
+    }
+  }catch(e){
+    btn.textContent='Erreur de connexion';
+    btn.disabled=false;
+  }
 }
 function scrollCoul(){const z=document.getElementById('z-coul');setTimeout(()=>z.scrollTo({top:z.scrollHeight,behavior:'smooth'}),50);}
 
