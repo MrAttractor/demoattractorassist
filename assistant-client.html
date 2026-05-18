@@ -885,7 +885,7 @@ async function renderCResult(resultDirect){
       badgePop('🎯 Défi #7 disponible — Partage ton couloir !');
       document.getElementById('nb-defis').classList.add('notif');
     }
-  }catch(e){}
+ }catch(e){console.error('renderCResult ERROR:',e);appendCB('bot','ERR: '+e.message);}
 }
 
 function appendCB(role,txt){
