@@ -327,11 +327,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 </div>
 <!-- ZONE VENTES -->
 <div class="zone" id="z-ventes">
-  <div class="vm-accueil">
-    <div class="vm-accueil-tag">Méthode ATTRACTOR</div>
-    <div class="vm-accueil-titre">⚡ Booster mes ventes</div>
-    <div class="vm-accueil-sub">"J'ai vendu 600 kg de chocolat ivoirien à Paris sans un franc de budget transport. Pas de magie. Une méthode."</div>
-    <div class="vm-accueil-sig">— Mac Arthur KOUASSI · Fondateur Agence Mr Attractor</div>
+  <div id="vc-content"></div>
+  <div id="vc-conv" style="padding:12px 14px 16px;"></div>
+</div>
+
+<!-- INPUT COACH VENTES -->
+<div id="vcinp-wrap" style="display:none;position:fixed;bottom:var(--nav-h);left:0;right:0;z-index:105;background:rgba(17,17,17,.97);border-top:1px solid #1e1e1e;padding:8px 12px 12px;">
+  <div style="display:flex;gap:10px;align-items:flex-end;">
+    <textarea id="vcinp" placeholder="Réponds ici..." style="flex:1;background:var(--dark3);border:1px solid #2a2a2a;border-radius:20px;padding:10px 16px;color:var(--text);font-size:14.5px;resize:none;max-height:80px;outline:none;font-family:inherit;line-height:1.45;" rows="1"></textarea>
+    <button onclick="envoiCoach()" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a87830);border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#0a0a0a;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
   </div>
   <div class="vm-prog">
     <div class="vm-step" id="vs1"></div>
@@ -847,10 +854,12 @@ function switchTab(tab){
   const cInp=document.getElementById('cinp-wrap');
   // Cacher blk-bar quand on quitte le chat
   document.getElementById('blk-bar').style.display='none';
+  document.getElementById('vcinp-wrap').style.display='none';
   if(tab==='chat'){
     document.getElementById('z-chat').classList.add('on');
     if(!blocked)inpZ.style.display='block';
     else document.getElementById('blk-bar').style.display='block';
+    document.getElementById('vcinp-wrap').style.display='none';
     cInp.style.display='none';scrollB();
     document.getElementById('back-top').style.display='block';
   }else if(tab==='coul'){
@@ -915,15 +924,187 @@ var MODULES_VENTES = {
   }
 };
 
+var ventesModule = 1;
+
 async function loadVentes(){
+  const cc=document.getElementById('vc-content');
+  const cv=document.getElementById('vc-conv');
+  const vi=document.getElementById('vcinp-wrap');
+  cc.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Chargement...</div>';
+  cv.innerHTML='';vi.style.display='none';
+
   try{
     const d=await api('getParcoursventes',{id:cid});
-    if(!d.success)return;
+    if(!d.success){cc.innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px;">Erreur de chargement. Réessaie.</div>';return;}
     ventesD=d;
-    const m=d.module_courant||0;
-    majStepsVentes(m);
-    majBoutonsVentes(m);
+    ventesModule=d.module_courant||1;
+
+    // Afficher l'accueil si module 0
+    if(ventesModule===0||ventesModule===null){
+      afficherAccueilVentes();
+      return;
+    }
+
+    // Afficher la progression
+    cc.innerHTML=renderProgVentes(ventesModule);
+
+    // Charger historique coaching
+    const hist=await api('getHistoriqueCoach',{id:cid,module:ventesModule});
+    if(hist.success&&hist.historique){
+      hist.historique.forEach(m=>appendVB(m.role==='user'?'usr':'bot',m.content));
+    }
+
+    // Si pas d'historique → démarrer le module
+    if(!hist.historique||hist.historique.length===0){
+      demarrerModule(ventesModule);
+    }else{
+      vi.style.display='block';
+      scrollVentes();
+    }
+
+  }catch(e){cc.innerHTML='<div style="padding:16px;color:var(--muted);">Erreur de connexion.</div>';}
+}
+
+function renderProgVentes(m){
+  const modules=[
+    {n:1,titre:'Connaître ma cible',ico:'🎯'},
+    {n:2,titre:'Mon message qui touche',ico:'✍️'},
+    {n:3,titre:'Mon offre irrésistible',ico:'💎'},
+    {n:4,titre:'Plan 30 jours',ico:'🚀'}
+  ];
+  let h='<div style="padding:12px 14px 0;">';
+  h+='<div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Méthode ATTRACTOR</div>';
+  h+='<div style="display:flex;gap:4px;margin-bottom:12px;">';
+  modules.forEach(function(mod){
+    const done=mod.n<m;const active=mod.n===m;
+    h+='<div style="flex:1;height:4px;border-radius:100px;background:'+(done?'var(--green)':active?'var(--gold)':'var(--dark4)')+'"></div>';
+  });
+  h+='</div>';
+  h+='<div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px;">'+modules[m-1].ico+' Module '+m+' — '+modules[m-1].titre+'</div>';
+  h+='</div>';
+  return h;
+}
+
+function afficherAccueilVentes(){
+  const cc=document.getElementById('vc-content');
+  cc.innerHTML=`
+    <div style="padding:20px 16px;text-align:center;">
+      <div style="font-size:11px;color:var(--muted);background:var(--dark3);border-radius:20px;padding:4px 12px;display:inline-block;margin-bottom:16px;">Méthode ATTRACTOR</div>
+      <div style="font-size:22px;font-weight:700;color:var(--gold);margin-bottom:8px;line-height:1.3;">⚡ Booster mes ventes</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:6px;">"J'ai vendu 600 kg de chocolat ivoirien à Paris sans un franc de budget transport. Pas de magie. Une méthode."</div>
+      <div style="font-size:12px;color:var(--muted2);margin-bottom:24px;font-style:italic;">— Mac Arthur KOUASSI · Fondateur Agence Mr Attractor</div>
+      <div style="display:flex;gap:4px;margin-bottom:20px;">
+        <div style="flex:1;height:4px;border-radius:100px;background:var(--dark4);"></div>
+        <div style="flex:1;height:4px;border-radius:100px;background:var(--dark4);"></div>
+        <div style="flex:1;height:4px;border-radius:100px;background:var(--dark4);"></div>
+        <div style="flex:1;height:4px;border-radius:100px;background:var(--dark4);"></div>
+      </div>
+      <button onclick="demarrerModule(1)" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Démarrer mon coaching →</button>
+    </div>`;
+}
+
+async function demarrerModule(num){
+  ventesModule=num;
+  document.getElementById('vc-content').innerHTML=renderProgVentes(num);
+  document.getElementById('vc-conv').innerHTML='';
+
+  // Message d'intro du coach
+  const intro=await api('coachVentes',{id:cid,module:num,reponse:encodeURIComponent('__start__')});
+  if(intro.success&&intro.reply){
+    appendVB('bot',intro.reply);
+    document.getElementById('vcinp-wrap').style.display='block';
+    scrollVentes();
+  }
+}
+
+async function envoiCoach(){
+  const inp=document.getElementById('vcinp');
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  appendVB('usr',txt);
+
+  // Typing indicator
+  const tid='vt'+Date.now();
+  const tel=document.createElement('div');
+  tel.id=tid;tel.className='cbbl bot';
+  tel.innerHTML='<div class="cbico">⚡</div><div class="bbl"><div style="display:flex;gap:5px;align-items:center;padding:4px"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
+  document.getElementById('vc-conv').appendChild(tel);scrollVentes();
+
+  try{
+    const d=await api('coachVentes',{id:cid,module:ventesModule,reponse:encodeURIComponent(txt)},30000);
+    const te=document.getElementById(tid);if(te)te.remove();
+    if(d.success){
+      if(d.reply)appendVB('bot',d.reply);
+      if(d.module_complete){
+        // Module complété — afficher bouton suivant
+        setTimeout(function(){
+          if(d.prochain_module<=4){
+            const btn=document.createElement('div');
+            btn.style.cssText='padding:12px 14px;';
+            btn.innerHTML='<button onclick="demarrerModule('+d.prochain_module+')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--green),#2aa870);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Module '+d.prochain_module+' →</button>';
+            document.getElementById('vc-conv').appendChild(btn);
+          }else{
+            // Tous les modules complétés → générer plan
+            genererPlanFinal();
+          }
+          scrollVentes();
+        },1000);
+      }
+    }
+  }catch(e){
+    const te=document.getElementById(tid);if(te)te.remove();
+    appendVB('bot','Connexion lente — réessaie dans un instant.');
+  }
+  scrollVentes();
+}
+
+async function genererPlanFinal(){
+  appendVB('bot','⏳ Génération de ta Bible ATTRACTOR...');
+  try{
+    const d=await api('genererPlanVentes',{id:cid});
+    if(d.success){
+      afficherResultatFinal(d);
+    }
   }catch(e){}
+}
+
+function afficherResultatFinal(d){
+  const plan=d.plan||[];
+  const planHtml=plan.map(j=>'<div style="padding:8px 0;border-bottom:1px solid var(--dark4);font-size:13px;"><strong style="color:var(--gold);">'+j.j+'</strong> — '+j.action+'</div>').join('');
+  const isPro=(ventesD.statut_pdf==='pro');
+
+  const zone=document.getElementById('vc-conv');
+  const bloc=document.createElement('div');
+  bloc.style.cssText='padding:12px 14px;';
+  bloc.innerHTML=`
+    <div style="background:linear-gradient(135deg,#1a1200,#221800);border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:20px;margin-bottom:12px;">
+      <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px;">🎉 Ta Bible est prête !</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Basée sur la Méthode ATTRACTOR · Personnalisée pour toi</div>
+      <div style="margin-bottom:16px;">${planHtml}</div>
+      <div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:16px;">${d.engagement||''}</div>
+      <button onclick="partagerEngagement('${(d.engagement||'').replace(/'/g,"\\'")}')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;">🤝 Je m'engage publiquement</button>
+      ${isPro
+        ?'<button style="width:100%;padding:12px;background:var(--dark4);border:1px solid var(--green);border-radius:12px;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">⬇️ Télécharger ma Bible PDF</button>'
+        :'<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px;">PDF téléchargeable en Bras Droit Pro</div><button onclick="switchTab(\'info\')" style="width:100%;padding:12px;background:var(--dark4);border:1px solid var(--gold);border-radius:12px;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Passer en Bras Droit Pro →</button>'
+      }
+    </div>`;
+  zone.appendChild(bloc);
+  scrollVentes();
+  document.getElementById('vcinp-wrap').style.display='none';
+}
+
+function appendVB(role,txt){
+  const conv=document.getElementById('vc-conv');
+  const w=document.createElement('div');w.className='cbbl '+(role==='usr'?'usr':'bot');
+  const fmt=txt.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>');
+  if(role==='bot')w.innerHTML='<div class="cbico">⚡</div><div class="bbl">'+fmt+'</div>';
+  else w.innerHTML='<div class="bbl">'+fmt+'</div>';
+  conv.appendChild(w);scrollVentes();
+}
+
+function scrollVentes(){
+  const z=document.getElementById('z-ventes');
+  setTimeout(()=>z.scrollTo({top:z.scrollHeight,behavior:'smooth'}),50);
 }
 
 function majStepsVentes(m){
@@ -934,116 +1115,6 @@ function majStepsVentes(m){
     else if(i===m)el.className='vm-step active';
     else el.className='vm-step';
   }
-}
-
-function majBoutonsVentes(m){
-  for(let i=1;i<=4;i++){
-    const btn=document.getElementById('vbtn'+i);
-    if(!btn)continue;
-    if(i<m){btn.className='vm-module-btn done';btn.onclick=()=>ouvrirModule(i);btn.querySelector('.vm-module-ico').textContent='✅';}
-    else if(i===m){btn.className='vm-module-btn active';btn.onclick=()=>ouvrirModule(i);}
-    else{btn.className='vm-module-btn lock';btn.onclick=null;}
-  }
-}
-
-function ouvrirModule(num){
-  const mod=MODULES_VENTES[num];
-  if(!mod)return;
-  moduleActif=num;
-  document.getElementById('vm-modules').style.display='none';
-  const zone=document.getElementById('vm-contenu');
-  zone.style.display='block';
-
-  let qHtml='';
-  mod.questions.forEach((q,i)=>{
-    const groupKey=q.champ.split('_')[0];
-    const fieldKey=q.champ.split('_').slice(1).join('_');
-    const valeur=(ventesD[groupKey]&&ventesD[groupKey][fieldKey])||'';
-    qHtml+=`<div class="vm-q">
-      <div class="vm-q-txt">${q.q}</div>
-      <textarea class="vm-inp" id="vinp-${q.champ}" placeholder="Ta réponse ici...">${valeur}</textarea>
-    </div>`;
-  });
-
-  zone.innerHTML=`
-    <button onclick="retourModules()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;font-family:inherit;">← Retour</button>
-    <div class="vm-card">
-      <div class="vm-titre">Module ${num} — ${mod.titre}</div>
-      <div class="vm-eveil">${mod.eveil}</div>
-      ${qHtml}
-      <button class="vm-btn" onclick="sauvegarderModule(${num})">Valider ce module →</button>
-    </div>`;
-}
-
-function retourModules(){
-  document.getElementById('vm-modules').style.display='block';
-  document.getElementById('vm-contenu').style.display='none';
-}
-
-async function sauvegarderModule(num){
-  const mod=MODULES_VENTES[num];
-  if(!mod)return;
-  const btn=document.querySelector('#vm-contenu .vm-btn');
-  btn.disabled=true;btn.textContent='Sauvegarde...';
-
-  try{
-    for(const q of mod.questions){
-      const val=document.getElementById('vinp-'+q.champ)?.value?.trim()||'';
-      if(val){
-        await api('repondreVentes',{id:cid,module:num,champ:q.champ,valeur:encodeURIComponent(val)});
-      }
-    }
-    const nextModule=num+1;
-    await api('repondreVentes',{id:cid,module:num,champ:'module_courant',valeur:nextModule});
-    ventesD.module_courant=nextModule;
-
-    if(num===4){
-      btn.textContent='Génération de ton plan...';
-      const d=await api('genererPlanVentes',{id:cid});
-      if(d.success){ afficherResultatVentes(d); return; }
-    }
-
-    majStepsVentes(nextModule);
-    majBoutonsVentes(nextModule);
-    retourModules();
-    badgePop('Module '+num+' complété ✅');
-
-  }catch(e){btn.disabled=false;btn.textContent='Valider ce module →';}
-}
-
-function afficherResultatVentes(d){
-  const zone=document.getElementById('vm-contenu');
-  const plan=d.plan||[];
-  const planHtml=plan.map(j=>`<div style="padding:8px 0;border-bottom:1px solid var(--dark4);font-size:13px;"><strong style="color:var(--gold);">${j.j}</strong> — ${j.action}</div>`).join('');
-  const isPro=(ventesD.statut_pdf==='pro');
-  zone.innerHTML=`
-    <div style="margin-bottom:20px;">
-      <div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:8px;">🎉 Ton plan est prêt !</div>
-      <div style="font-size:13px;color:var(--muted);">Basé sur ta Méthode ATTRACTOR personnalisée</div>
-    </div>
-    <div class="vm-card">
-      <div class="vm-titre">Ton plan 7 jours</div>
-      ${planHtml}
-    </div>
-    <div class="vm-card" style="margin-top:12px;">
-      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;">Ton engagement</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;">${d.engagement||''}</div>
-      <button class="vm-btn" onclick="partagerEngagement('${(d.engagement||'').replace(/'/g,"\\'")}')">🤝 Je m'engage publiquement</button>
-    </div>
-    <div class="vm-pdf">
-      <div class="vm-pdf-titre">📄 Ton plan complet</div>
-      <div class="vm-pdf-sub">Ton plan de vente personnalisé Méthode ATTRACTOR</div>
-      ${isPro
-        ?`<button class="vm-btn" onclick="telechargerPDF()">⬇️ Télécharger mon plan PDF</button>`
-        :`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Visible ici · Téléchargement disponible en Bras Droit Pro</div>
-          <div style="background:var(--dark4);border-radius:10px;padding:14px;font-size:12px;color:var(--muted);line-height:1.8;text-align:left;">
-            <strong style="color:var(--gold);">Mon client idéal</strong><br>${d.spin||'—'}<br><br>
-            <strong style="color:var(--gold);">Mon message</strong><br>${d.pasa||'—'}<br><br>
-            <strong style="color:var(--gold);">Mon offre</strong><br>${d.offre||'—'}
-          </div>
-          <button onclick="switchTab('info')" style="width:100%;padding:12px;margin-top:10px;background:var(--dark4);border:1px solid var(--gold);border-radius:12px;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Passer en Bras Droit Pro →</button>`
-      }
-    </div>`;
 }
 
 function partagerEngagement(engagement){
