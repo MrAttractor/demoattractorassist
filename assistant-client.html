@@ -229,6 +229,45 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .faq-item.open .faq-a{display:block;}
 #sup-dot.err{background:var(--red);animation:sp 1s infinite;}
 @keyframes sp{0%,100%{opacity:1}50%{opacity:.4}}
+  /* ZONE VENTES */
+#z-ventes{background:var(--dark);padding:16px 16px 120px;}
+.vm-card{background:var(--dark3);border:1px solid #2a2a2a;border-radius:16px;padding:18px;margin-bottom:14px;}
+.vm-eveil{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;font-style:italic;border-left:2px solid var(--gold);padding-left:12px;}
+.vm-titre{font-size:17px;font-weight:700;color:var(--gold);margin-bottom:12px;}
+.vm-q{background:var(--dark4);border-radius:12px;padding:14px;margin-bottom:10px;}
+.vm-q-txt{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.vm-inp{width:100%;background:var(--dark5);border:1px solid #333;border-radius:10px;padding:10px 12px;color:var(--text);font-size:13px;resize:none;height:70px;outline:none;font-family:inherit;line-height:1.5;}
+.vm-inp:focus{border-color:rgba(201,168,76,.4);}
+.vm-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;}
+.vm-btn:disabled{opacity:.4;cursor:not-allowed;}
+.vm-lock{text-align:center;padding:14px;color:var(--muted);font-size:13px;}
+.vm-lock-ico{font-size:24px;margin-bottom:8px;}
+.vm-prog{display:flex;gap:6px;margin-bottom:20px;}
+.vm-step{flex:1;height:4px;border-radius:100px;background:var(--dark4);}
+.vm-step.done{background:var(--green);}
+.vm-step.active{background:var(--gold);}
+.vm-accueil{text-align:center;padding:8px 0 24px;}
+.vm-accueil-tag{font-size:11px;color:var(--muted);background:var(--dark3);border-radius:20px;padding:4px 12px;display:inline-block;margin-bottom:16px;}
+.vm-accueil-titre{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:8px;line-height:1.3;}
+.vm-accueil-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:6px;}
+.vm-accueil-sig{font-size:12px;color:var(--muted2);margin-bottom:24px;font-style:italic;}
+.vm-module-btn{width:100%;padding:14px 16px;background:var(--dark3);border:1px solid #2a2a2a;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text);text-align:left;margin-bottom:10px;display:flex;align-items:center;gap:12px;transition:border-color .2s;}
+.vm-module-btn.active{border-color:var(--gold);color:var(--gold);}
+.vm-module-btn.done{border-color:rgba(61,201,138,.3);color:var(--green);}
+.vm-module-btn.lock{opacity:.5;cursor:not-allowed;}
+.vm-module-ico{font-size:20px;flex-shrink:0;}
+.vm-module-info{flex:1;}
+.vm-module-nom{font-size:13px;font-weight:700;}
+.vm-module-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.vm-pdf{background:linear-gradient(135deg,#1a1200,#221800);border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:20px;margin-top:16px;text-align:center;}
+.vm-pdf-titre{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+.vm-pdf-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.faq-item{background:var(--dark3);border:1px solid #2a2a2a;border-radius:12px;margin-bottom:8px;overflow:hidden;cursor:pointer;}
+.faq-q{padding:14px 16px;font-size:13px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;}
+.faq-arr{color:var(--muted);transition:transform .2s;}
+.faq-item.open .faq-arr{transform:rotate(180deg);}
+.faq-a{display:none;padding:0 16px 14px;font-size:13px;color:var(--muted);line-height:1.7;}
+.faq-item.open .faq-a{display:block;}
 </style>
 </head>
 <body>
@@ -286,7 +325,52 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </button>
   </div>
 </div>
-
+<!-- ZONE VENTES -->
+<div class="zone" id="z-ventes">
+  <div class="vm-accueil">
+    <div class="vm-accueil-tag">Méthode ATTRACTOR</div>
+    <div class="vm-accueil-titre">⚡ Booster mes ventes</div>
+    <div class="vm-accueil-sub">"J'ai vendu 600 kg de chocolat ivoirien à Paris sans un franc de budget transport. Pas de magie. Une méthode."</div>
+    <div class="vm-accueil-sig">— Mac Arthur KOUASSI · Fondateur Agence Mr Attractor</div>
+  </div>
+  <div class="vm-prog">
+    <div class="vm-step" id="vs1"></div>
+    <div class="vm-step" id="vs2"></div>
+    <div class="vm-step" id="vs3"></div>
+    <div class="vm-step" id="vs4"></div>
+  </div>
+  <div id="vm-modules">
+    <button class="vm-module-btn" id="vbtn1" onclick="ouvrirModule(1)">
+      <div class="vm-module-ico">🎯</div>
+      <div class="vm-module-info">
+        <div class="vm-module-nom">Module 1 — Connaître ma cible</div>
+        <div class="vm-module-desc">Analyse SPIN · Qui est vraiment ton client ?</div>
+      </div>
+    </button>
+    <button class="vm-module-btn lock" id="vbtn2">
+      <div class="vm-module-ico">🔒</div>
+      <div class="vm-module-info">
+        <div class="vm-module-nom">Module 2 — Mon message qui vend</div>
+        <div class="vm-module-desc">AIDA · PASA · L'argumentaire parfait</div>
+      </div>
+    </button>
+    <button class="vm-module-btn lock" id="vbtn3">
+      <div class="vm-module-ico">🔒</div>
+      <div class="vm-module-info">
+        <div class="vm-module-nom">Module 3 — Mon offre irrésistible</div>
+        <div class="vm-module-desc">Produit + Bonus + Limiteur</div>
+      </div>
+    </button>
+    <button class="vm-module-btn lock" id="vbtn4">
+      <div class="vm-module-ico">🔒</div>
+      <div class="vm-module-info">
+        <div class="vm-module-nom">Module 4 — Passer à l'action</div>
+        <div class="vm-module-desc">DMV · Plan 7 jours · Engagement</div>
+      </div>
+    </button>
+  </div>
+  <div id="vm-contenu" style="display:none;"></div>
+</div>
 <div id="z-defis" class="zone">
   <div class="d-hdr"><div class="d-titre">Défis personnels</div></div>
   <div id="d-content"></div>
@@ -380,6 +464,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
   <button class="nbtn" id="nb-coul" onclick="switchTab('coul')">
     <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     #1couloir<div class="ndot"></div>
+  </button>
+  <button class="nbtn" id="nb-ventes" onclick="switchTab('ventes')">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Ventes<div class="ndot"></div>
   </button>
   <button class="nbtn" id="nb-info" onclick="switchTab('info')">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
@@ -768,12 +856,203 @@ function switchTab(tab){
     document.getElementById('z-defis').classList.add('on');
     document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';cInp.style.display='none';
+    }else if(tab==='ventes'){
+    document.getElementById('z-ventes').classList.add('on');
+    inpZ.style.display='none';cInp.style.display='none';
+    loadVentes();
+  }else if(tab==='info'){
  }else if(tab==='info'){
     document.getElementById('z-info').classList.add('on');
     document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';cInp.style.display='none';
     chargerFAQ();
   }
+}
+  // ── VENTES ──
+var ventesD = {};
+var moduleActif = 0;
+
+var MODULES_VENTES = {
+  1: {
+    titre: 'Connaître ma cible',
+    eveil: '"J\'ai co-fondé Instant Chocolat en 2015 et pensais que mon produit parlait de lui-même. Personne n\'achetait. Jusqu\'au jour où j\'ai compris que mon client ne cherchait pas du chocolat — il cherchait à offrir quelque chose d\'authentique et mémorable. Le problème n\'est pas un obstacle. C\'est l\'écart entre où ton client est et où il veut arriver. TOI tu es le pont."',
+    questions: [
+      { champ:'spin_situation', q:'Décris-moi ton client idéal. Pas un groupe — une personne précise. Son âge, son quotidien, ce qu\'il fait le soir.' },
+      { champ:'spin_probleme', q:'Quel est le problème principal que tu résous ? Formule-le comme une question que ton client se pose chaque jour.' },
+      { champ:'spin_implications', q:'Qu\'est-ce qui lui arriverait de pire si ce problème n\'est pas résolu ? Les conséquences dans sa vie.' },
+      { champ:'spin_nouvelle_situation', q:'Quel est son souhait profond ? Pas le produit — le résultat dans sa vie après avoir utilisé ce que tu vends.' },
+      { champ:'spin_ou_trouver', q:'Où se trouve cette personne ? En ligne et hors ligne. Quels réseaux, endroits, événements ?' }
+    ]
+  },
+  2: {
+    titre: 'Mon message qui vend',
+    eveil: '"En 2016 j\'avais besoin de convaincre Air France de transporter 600 kg de chocolat d\'Abidjan à Paris gratuitement. Je n\'avais pas d\'argent. Pas de relations. J\'avais juste un message. On a organisé un vernissage, invité la presse et Air France. Résultat : transport gratuit en moins d\'une semaine. Un message qui vend ne parle pas du produit. Il parle de la douleur du client."',
+    questions: [
+      { champ:'pasa_probleme', q:'Écris une phrase qui nomme la douleur de ton client. Sans mentionner ton produit. Commence par : "Tu en as marre de..."' },
+      { champ:'pasa_agitation', q:'Qu\'est-ce qui empire si rien ne change ? La conséquence émotionnelle. Commence par : "Et pendant ce temps..."' },
+      { champ:'pasa_souhait', q:'Quelle transformation tu offres ? Avant → Après en une phrase. Commence par : "Et si tu pouvais..."' },
+      { champ:'pasa_action', q:'Que doit faire le client maintenant ? Un seul geste. Clair. Simple.' }
+    ]
+  },
+  3: {
+    titre: 'Mon offre irrésistible',
+    eveil: '"Imagine deux vendeurs d\'ordinateur. Vendeur 1 : un ordinateur à 350 000 FCFA. Vendeur 2 : un ordinateur + souris + batterie + sac + 3 logiciels + antivirus. Même prix. Choix évident. Ton produit est peut-être excellent. Mais ton OFFRE n\'est pas encore irrésistible. 3 piliers. Obligatoires. Toujours."',
+    questions: [
+      { champ:'offre_produit', q:'Quel est ton produit principal ? Décris le résultat en une phrase. Ce que le client obtient — pas ce que tu vends.' },
+      { champ:'offre_bonus', q:'Quel bonus peux-tu offrir ? Quelque chose de peu coûteux pour toi mais précieux pour le client.' },
+      { champ:'offre_limiteur', q:'Quel limiteur peux-tu créer ? Pourquoi acheter maintenant plutôt que dans 15 jours ?' },
+      { champ:'offre_prix', q:'À quel prix ? Comment le présenter pour que la valeur perçue dépasse largement le prix ?' }
+    ]
+  },
+  4: {
+    titre: 'Passer à l\'action',
+    eveil: '"Tu as maintenant tout ce qu\'il faut. Ta cible. Ton message. Ton offre. Le seul ennemi maintenant c\'est toi. La procrastination. Le manque de confiance. L\'attendre que ce soit parfait. Parfait n\'existe pas. Ce qui existe c\'est : fait ou pas fait. Aujourd\'hui on fait."',
+    questions: [
+      { champ:'plan_reseau', q:'Sur quel réseau est ta cible principale ? (Facebook · Instagram · TikTok · WhatsApp)' },
+      { champ:'engagement', q:'Quelle est ta première action dans les 24h ? Sois précis — une seule action.' }
+    ]
+  }
+};
+
+async function loadVentes(){
+  try{
+    const d=await api('getParcoursventes',{id:cid});
+    if(!d.success)return;
+    ventesD=d;
+    const m=d.module_courant||0;
+    majStepsVentes(m);
+    majBoutonsVentes(m);
+  }catch(e){}
+}
+
+function majStepsVentes(m){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('vs'+i);
+    if(!el)continue;
+    if(i<m)el.className='vm-step done';
+    else if(i===m)el.className='vm-step active';
+    else el.className='vm-step';
+  }
+}
+
+function majBoutonsVentes(m){
+  for(let i=1;i<=4;i++){
+    const btn=document.getElementById('vbtn'+i);
+    if(!btn)continue;
+    if(i<m){btn.className='vm-module-btn done';btn.onclick=()=>ouvrirModule(i);btn.querySelector('.vm-module-ico').textContent='✅';}
+    else if(i===m){btn.className='vm-module-btn active';btn.onclick=()=>ouvrirModule(i);}
+    else{btn.className='vm-module-btn lock';btn.onclick=null;}
+  }
+}
+
+function ouvrirModule(num){
+  const mod=MODULES_VENTES[num];
+  if(!mod)return;
+  moduleActif=num;
+  document.getElementById('vm-modules').style.display='none';
+  const zone=document.getElementById('vm-contenu');
+  zone.style.display='block';
+
+  let qHtml='';
+  mod.questions.forEach((q,i)=>{
+    const groupKey=q.champ.split('_')[0];
+    const fieldKey=q.champ.split('_').slice(1).join('_');
+    const valeur=(ventesD[groupKey]&&ventesD[groupKey][fieldKey])||'';
+    qHtml+=`<div class="vm-q">
+      <div class="vm-q-txt">${q.q}</div>
+      <textarea class="vm-inp" id="vinp-${q.champ}" placeholder="Ta réponse ici...">${valeur}</textarea>
+    </div>`;
+  });
+
+  zone.innerHTML=`
+    <button onclick="retourModules()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;font-family:inherit;">← Retour</button>
+    <div class="vm-card">
+      <div class="vm-titre">Module ${num} — ${mod.titre}</div>
+      <div class="vm-eveil">${mod.eveil}</div>
+      ${qHtml}
+      <button class="vm-btn" onclick="sauvegarderModule(${num})">Valider ce module →</button>
+    </div>`;
+}
+
+function retourModules(){
+  document.getElementById('vm-modules').style.display='block';
+  document.getElementById('vm-contenu').style.display='none';
+}
+
+async function sauvegarderModule(num){
+  const mod=MODULES_VENTES[num];
+  if(!mod)return;
+  const btn=document.querySelector('#vm-contenu .vm-btn');
+  btn.disabled=true;btn.textContent='Sauvegarde...';
+
+  try{
+    for(const q of mod.questions){
+      const val=document.getElementById('vinp-'+q.champ)?.value?.trim()||'';
+      if(val){
+        await api('repondreVentes',{id:cid,module:num,champ:q.champ,valeur:encodeURIComponent(val)});
+      }
+    }
+    const nextModule=num+1;
+    await api('repondreVentes',{id:cid,module:num,champ:'module_courant',valeur:nextModule});
+    ventesD.module_courant=nextModule;
+
+    if(num===4){
+      btn.textContent='Génération de ton plan...';
+      const d=await api('genererPlanVentes',{id:cid});
+      if(d.success){ afficherResultatVentes(d); return; }
+    }
+
+    majStepsVentes(nextModule);
+    majBoutonsVentes(nextModule);
+    retourModules();
+    badgePop('Module '+num+' complété ✅');
+
+  }catch(e){btn.disabled=false;btn.textContent='Valider ce module →';}
+}
+
+function afficherResultatVentes(d){
+  const zone=document.getElementById('vm-contenu');
+  const plan=d.plan||[];
+  const planHtml=plan.map(j=>`<div style="padding:8px 0;border-bottom:1px solid var(--dark4);font-size:13px;"><strong style="color:var(--gold);">${j.j}</strong> — ${j.action}</div>`).join('');
+  const isPro=(ventesD.statut_pdf==='pro');
+  zone.innerHTML=`
+    <div style="margin-bottom:20px;">
+      <div style="font-size:20px;font-weight:700;color:var(--gold);margin-bottom:8px;">🎉 Ton plan est prêt !</div>
+      <div style="font-size:13px;color:var(--muted);">Basé sur ta Méthode ATTRACTOR personnalisée</div>
+    </div>
+    <div class="vm-card">
+      <div class="vm-titre">Ton plan 7 jours</div>
+      ${planHtml}
+    </div>
+    <div class="vm-card" style="margin-top:12px;">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;">Ton engagement</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px;">${d.engagement||''}</div>
+      <button class="vm-btn" onclick="partagerEngagement('${(d.engagement||'').replace(/'/g,"\\'")}')">🤝 Je m'engage publiquement</button>
+    </div>
+    <div class="vm-pdf">
+      <div class="vm-pdf-titre">📄 Ton plan complet</div>
+      <div class="vm-pdf-sub">Ton plan de vente personnalisé Méthode ATTRACTOR</div>
+      ${isPro
+        ?`<button class="vm-btn" onclick="telechargerPDF()">⬇️ Télécharger mon plan PDF</button>`
+        :`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Visible ici · Téléchargement disponible en Bras Droit Pro</div>
+          <div style="background:var(--dark4);border-radius:10px;padding:14px;font-size:12px;color:var(--muted);line-height:1.8;text-align:left;">
+            <strong style="color:var(--gold);">Mon client idéal</strong><br>${d.spin||'—'}<br><br>
+            <strong style="color:var(--gold);">Mon message</strong><br>${d.pasa||'—'}<br><br>
+            <strong style="color:var(--gold);">Mon offre</strong><br>${d.offre||'—'}
+          </div>
+          <button onclick="switchTab('info')" style="width:100%;padding:12px;margin-top:10px;background:var(--dark4);border:1px solid var(--gold);border-radius:12px;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Passer en Bras Droit Pro →</button>`
+      }
+    </div>`;
+}
+
+function partagerEngagement(engagement){
+  const msg='Je viens de terminer le parcours Booster mes Ventes avec la Méthode ATTRACTOR ⚡\n\nMon engagement cette semaine :\n'+engagement+'\n\nTu veux ton propre plan ? → '+getRef()+'\n#MethoudeATTRACTOR #BoosterMesVentes';
+  if(navigator.share)navigator.share({text:msg}).catch(()=>{});
+  else window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function telechargerPDF(){
+  toast('PDF disponible en Bras Droit Pro');
 }
 async function chargerFAQ(){
   const zone=document.getElementById('faq-zone');
