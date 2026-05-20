@@ -926,6 +926,8 @@ var MODULES_VENTES = {
 
 var ventesModule = 1;
 
+var ventesModule = 1;
+
 async function loadVentes(){
   const cc=document.getElementById('vc-content');
   const cv=document.getElementById('vc-conv');
@@ -939,22 +941,18 @@ async function loadVentes(){
     ventesD=d;
     ventesModule=d.module_courant||1;
 
-    // Afficher l'accueil si module 0
     if(ventesModule===0||ventesModule===null){
       afficherAccueilVentes();
       return;
     }
 
-    // Afficher la progression
     cc.innerHTML=renderProgVentes(ventesModule);
 
-    // Charger historique coaching
     const hist=await api('getHistoriqueCoach',{id:cid,module:ventesModule});
     if(hist.success&&hist.historique){
       hist.historique.forEach(m=>appendVB(m.role==='user'?'usr':'bot',m.content));
     }
 
-    // Si pas d'historique → démarrer le module
     if(!hist.historique||hist.historique.length===0){
       demarrerModule(ventesModule);
     }else{
@@ -1008,7 +1006,6 @@ async function demarrerModule(num){
   document.getElementById('vc-content').innerHTML=renderProgVentes(num);
   document.getElementById('vc-conv').innerHTML='';
 
-  // Message d'intro du coach
   const intro=await api('coachVentes',{id:cid,module:num,reponse:encodeURIComponent('__start__')});
   if(intro.success&&intro.reply){
     appendVB('bot',intro.reply);
@@ -1023,7 +1020,6 @@ async function envoiCoach(){
   inp.value='';inp.style.height='auto';
   appendVB('usr',txt);
 
-  // Typing indicator
   const tid='vt'+Date.now();
   const tel=document.createElement('div');
   tel.id=tid;tel.className='cbbl bot';
@@ -1036,7 +1032,6 @@ async function envoiCoach(){
     if(d.success){
       if(d.reply)appendVB('bot',d.reply);
       if(d.module_complete){
-        // Module complété — afficher bouton suivant
         setTimeout(function(){
           if(d.prochain_module<=4){
             const btn=document.createElement('div');
@@ -1044,7 +1039,6 @@ async function envoiCoach(){
             btn.innerHTML='<button onclick="demarrerModule('+d.prochain_module+')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--green),#2aa870);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Module '+d.prochain_module+' →</button>';
             document.getElementById('vc-conv').appendChild(btn);
           }else{
-            // Tous les modules complétés → générer plan
             genererPlanFinal();
           }
           scrollVentes();
@@ -1062,9 +1056,7 @@ async function genererPlanFinal(){
   appendVB('bot','⏳ Génération de ta Bible ATTRACTOR...');
   try{
     const d=await api('genererPlanVentes',{id:cid});
-    if(d.success){
-      afficherResultatFinal(d);
-    }
+    if(d.success){afficherResultatFinal(d);}
   }catch(e){}
 }
 
@@ -1072,22 +1064,10 @@ function afficherResultatFinal(d){
   const plan=d.plan||[];
   const planHtml=plan.map(j=>'<div style="padding:8px 0;border-bottom:1px solid var(--dark4);font-size:13px;"><strong style="color:var(--gold);">'+j.j+'</strong> — '+j.action+'</div>').join('');
   const isPro=(ventesD.statut_pdf==='pro');
-
   const zone=document.getElementById('vc-conv');
   const bloc=document.createElement('div');
   bloc.style.cssText='padding:12px 14px;';
-  bloc.innerHTML=`
-    <div style="background:linear-gradient(135deg,#1a1200,#221800);border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:20px;margin-bottom:12px;">
-      <div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px;">🎉 Ta Bible est prête !</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Basée sur la Méthode ATTRACTOR · Personnalisée pour toi</div>
-      <div style="margin-bottom:16px;">${planHtml}</div>
-      <div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:16px;">${d.engagement||''}</div>
-      <button onclick="partagerEngagement('${(d.engagement||'').replace(/'/g,"\\'")}')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;">🤝 Je m'engage publiquement</button>
-      ${isPro
-        ?'<button style="width:100%;padding:12px;background:var(--dark4);border:1px solid var(--green);border-radius:12px;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">⬇️ Télécharger ma Bible PDF</button>'
-        :'<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px;">PDF téléchargeable en Bras Droit Pro</div><button onclick="switchTab(\'info\')" style="width:100%;padding:12px;background:var(--dark4);border:1px solid var(--gold);border-radius:12px;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Passer en Bras Droit Pro →</button>'
-      }
-    </div>`;
+  bloc.innerHTML='<div style="background:linear-gradient(135deg,#1a1200,#221800);border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:20px;margin-bottom:12px;"><div style="font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px;">🎉 Ta Bible est prête !</div><div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Basée sur la Méthode ATTRACTOR · Personnalisée pour toi</div><div style="margin-bottom:16px;">'+planHtml+'</div><div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:16px;">'+(d.engagement||'')+'</div><button onclick="partagerEngagement(\''+(d.engagement||'').replace(/'/g,"\\'")+'\')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;">🤝 Je m\'engage publiquement</button>'+(isPro?'<button style="width:100%;padding:12px;background:var(--dark4);border:1px solid var(--green);border-radius:12px;color:var(--green);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">⬇️ Télécharger ma Bible PDF</button>':'<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px;">PDF téléchargeable en Bras Droit Pro</div><button onclick="switchTab(\'info\')" style="width:100%;padding:12px;background:var(--dark4);border:1px solid var(--gold);border-radius:12px;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Passer en Bras Droit Pro →</button>')+'</div>';
   zone.appendChild(bloc);
   scrollVentes();
   document.getElementById('vcinp-wrap').style.display='none';
@@ -1106,7 +1086,6 @@ function scrollVentes(){
   const z=document.getElementById('z-ventes');
   setTimeout(()=>z.scrollTo({top:z.scrollHeight,behavior:'smooth'}),50);
 }
-
 function majStepsVentes(m){
   for(let i=1;i<=4;i++){
     const el=document.getElementById('vs'+i);
