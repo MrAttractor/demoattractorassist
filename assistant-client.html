@@ -1404,8 +1404,25 @@ async function sendToAI(txt){
   showTyping();
   const reply=await chatWithRetry(txt);
   hideTyping();
-  if(reply){appendB('bot',reply);hist.push({role:'assistant',content:reply});saveMsg('assistant',reply);checkBadges();}
+  if(reply){
+    appendB('bot',reply);
+    hist.push({role:'assistant',content:reply});
+    saveMsg('assistant',reply);
+    checkBadges();
+    // Générer résumé mémoire toutes les 5 réponses
+    if(msgN>0&&msgN%5===0){
+      genererResume();
+    }
+  }
   scrollB();
+}
+
+async function genererResume(){
+  try{
+    const derniersMsgs=hist.slice(-6).map(m=>m.role+': '+m.content.substring(0,100)).join('\n');
+    const prompt='Résume en 2-3 phrases courtes les sujets abordés et les points importants retenus sur ce client. Commence par "Dans nos échanges récents :". Texte:\n'+derniersMsgs;
+    const r=await fetch(SURL+'?action=sauvegarderMemoire&id='+encodeURIComponent(cid)+'&resume='+encodeURIComponent(prompt.substring(0,300)));
+  }catch(e){}
 }
 
 async function chatWithRetry(txt){
