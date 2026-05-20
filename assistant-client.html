@@ -845,24 +845,24 @@ function switchTab(tab){
   document.querySelectorAll('.zone').forEach(z=>z.classList.remove('on'));
   const inpZ=document.getElementById('inp-zone');
   const cInp=document.getElementById('cinp-wrap');
+  // Cacher blk-bar quand on quitte le chat
+  document.getElementById('blk-bar').style.display='none';
   if(tab==='chat'){
     document.getElementById('z-chat').classList.add('on');
-    if(!blocked)inpZ.style.display='block';cInp.style.display='none';scrollB();
+    if(!blocked)inpZ.style.display='block';
+    else document.getElementById('blk-bar').style.display='block';
+    cInp.style.display='none';scrollB();
     document.getElementById('back-top').style.display='block';
   }else if(tab==='coul'){
     document.getElementById('z-coul').classList.add('on');
     document.getElementById('back-top').style.display='block';
-    inpZ.style.display='none';loadCouloir();
-  }else if(tab==='defis'){
-    document.getElementById('z-defis').classList.add('on');
-    document.getElementById('back-top').style.display='block';
-    inpZ.style.display='none';cInp.style.display='none';
-    }else if(tab==='ventes'){
+    inpZ.style.display='none';cInp.style.display='none';loadCouloir();
+  }else if(tab==='ventes'){
     document.getElementById('z-ventes').classList.add('on');
+    document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';cInp.style.display='none';
     loadVentes();
   }else if(tab==='info'){
- }else if(tab==='info'){
     document.getElementById('z-info').classList.add('on');
     document.getElementById('back-top').style.display='block';
     inpZ.style.display='none';cInp.style.display='none';
