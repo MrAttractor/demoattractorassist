@@ -1433,7 +1433,7 @@ async function chatWithRetry(txt){
 }
 
 async function callChat(txt){
-  const h=hist.slice(-HIST_MAX).map(m=>({role:m.role,content:(m.content||'').substring(0,300)}));
+  const h=hist.slice(-4).map(m=>({role:m.role,content:(m.content||'').substring(0,300)}));
   const url=SURL+'?action=chat&id='+encodeURIComponent(cid)+'&msg='+encodeURIComponent(txt)+'&hist='+encodeURIComponent(JSON.stringify(h));
   try{
     const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),25000);
