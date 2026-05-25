@@ -768,64 +768,7 @@ function chargerClient() {
     construireCalendrier();
   });
 }
-    // Header
-    var nomAss = data.nom_assistant || 'Attractor';
-    document.getElementById('header-name').textContent = nomAss;
-    document.getElementById('header-avatar').textContent = nomAss.charAt(0).toUpperCase();
-    document.getElementById('header-sub').textContent = 'Assistant de ' + data.prenom;
-    document.getElementById('header-badge').textContent = data.formule || 'ESSAI';
-
-    // Forfait info
-    document.getElementById('nb-msg-info').textContent = data.nb_messages || 0;
-    document.getElementById('quota-info').textContent = data.quota_mensuel || 300;
-
-    // Zone prix selon zone géo
-    if (data.zone === 'EU') {
-      document.getElementById('bras-droit-price').textContent = '15€ / mois';
-      document.getElementById('digital-price').textContent = '45€ / mois';
-      document.getElementById('forfait-price').textContent = '0€ / mois';
-    }
-
-    // Profil champs
-    document.getElementById('pf-assistant').textContent = nomAss;
-    document.getElementById('pf-ton').textContent = data.ton_prefere || 'Tutoiement';
-    document.getElementById('pf-zone').textContent = data.zone || 'CI';
-
-    // Charger profil enrichi
-    callAPI({ action: 'getProfil', id: CLIENT_ID }, function(pr) {
-      if (pr.success && pr.profil) {
-        PROFIL_DATA = pr.profil;
-        if (pr.profil.activite) document.getElementById('pf-activite').textContent = pr.profil.activite;
-        if (pr.profil.canal_principal) document.getElementById('pf-canal').textContent = pr.profil.canal_principal;
-        if (pr.profil.ca_actuel) document.getElementById('pf-ca').textContent = pr.profil.ca_actuel;
-        if (pr.profil.objectif_3mois) document.getElementById('pf-obj3').textContent = pr.profil.objectif_3mois;
-      }
-    });
-
-    hideLoading();
-
-    // Vérifier si anamnèse complète
-    var anamneseFait = localStorage.getItem('aa_anamnese_' + CLIENT_ID);
-    if (!anamneseFait) {
-      setTimeout(lancerAnamnese, 600);
-    } else {
-      // Message de bienvenue
-      setTimeout(function() {
-        var prenom = data.prenom;
-        var nomAssistant = data.nom_assistant || 'Attractor';
-        var ton = data.ton_prefere === 'vouvoiement' ? 'vous' : 'tu';
-        addBubble('bot', 'Bonjour ' + prenom + ' 👋\nJe suis ' + nomAssistant + ', ' + (ton === 'vous' ? 'votre' : 'ton') + ' assistant personnel.\nComment puis-je ' + (ton === 'vous' ? 'vous' : 'te') + ' aider aujourd\'hui ?');
-      }, 300);
-    }
-
-    // Charger agenda
-    chargerAgenda();
-    chargerTodo();
-    chargerCommunaute();
-    construireCalendrier();
-  });
-}
-
+   
 // ============================================================
 // ANAMNESE CONVERSATIONNELLE
 // ============================================================
