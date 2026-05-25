@@ -918,22 +918,25 @@ function envoyerAnamnese() {
 
   setTimeout(function() {
     // Réaction au nom de l'assistant
-    if (q && q.key === 'nom_assistant') {
-      var nom = val;
-      var isFeminin = nom.endsWith('e') || nom.endsWith('a') || nom === 'Sophie' || nom === 'Marie';
-      var reaction = 'Ah super — tu préfères que je sois ' + (isFeminin ? 'une assistante personnelle' : 'un assistant personnel') + '. Bien enregistré 😊\n\n' + nom + ' — c\'est un prénom qui a une signification particulière pour toi ?';
-      addAnamneseBubble('bot', reaction);
-      ANAMNESE_STEP--;
-      // Fausse question intermédiaire
-      ANAMNESE_QUESTIONS.splice(ANAMNESE_STEP, 0, { key: '_nom_sig', question: '' });
-      ANAMNESE_STEP++;
-    } else if (q && q.key === '_nom_sig') {
-      // Passer à la vraie question suivante
-      poserProchainQuestion();
-    } else {
-      poserProchainQuestion();
-    }
+   // NOUVEAU — corrigé
+if (q && q.key === 'nom_assistant') {
+  var nom = val;
+  var isFeminin = ['hélène','sophie','marie','jade','emma','alice','awa','fatou'].some(function(n){ return nom.toLowerCase().includes(n); });
+  var reaction = 'Ah super — tu préfères que je sois ' + (isFeminin ? 'une assistante personnelle' : 'un assistant personnel') + '. Bien enregistré 😊\n\n' + nom + ' — c\'est un prénom qui a une signification particulière pour toi ?';
+  
+  setTimeout(function() {
+    addAnamneseBubble('bot', reaction);
+    // Marquer qu'on attend la réponse à la question de signification
+    ANAMNESE_QUESTIONS[ANAMNESE_STEP] = { key: '_nom_sig', question: '' };
   }, 500);
+  return; // STOP — ne pas appeler poserProchainQuestion
+  
+} else if (q && q.key === '_nom_sig') {
+  // L'utilisateur a répondu sur la signification → passer à la suite
+  setTimeout(poserProchainQuestion, 500);
+  
+} else {
+  setTimeout(poserProchainQuestion, 500);
 }
 
 function poserProchainQuestion() {
