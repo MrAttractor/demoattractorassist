@@ -6,507 +6,645 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Attractor">
-<meta name="theme-color" content="#06060E">
-<meta name="description" content="Attractor Assists — Ton assistant personnel IA. 7 jours gratuits.">
-<title>Attractor Assists — Ton assistant personnel</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="description" content="Attractor Assists — Ton bras droit professionnel. Gratuit. Disponible 24h/24.">
+<title>Attractor Assists</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --or:#C9A84C;--or2:#E8C96A;--or-dim:rgba(201,168,76,0.10);--or-glow:rgba(201,168,76,0.22);
-  --bg:#06060E;--s1:#0F0F1E;--s2:#141428;--s3:#1A1A32;--s4:rgba(255,255,255,0.04);
-  --txt:#F2EEE6;--txt2:rgba(242,238,230,0.58);--txt3:rgba(242,238,230,0.28);--txt4:rgba(242,238,230,0.06);
-  --green:#3DC98A;--red:#E85858;--r:16px;
+  --gold:#C9A84C;--gold2:#E8C97A;--gold-dim:rgba(201,168,76,0.10);--gold-glow:rgba(201,168,76,0.18);
+  --dark:#0a0a0a;--dark2:#111;--dark3:#1a1a1a;--dark4:#222;--dark5:#2a2a2a;
+  --txt:#f0ede8;--txt2:rgba(240,237,232,0.55);--txt3:rgba(240,237,232,0.25);--txt4:rgba(240,237,232,0.06);
+  --green:#3DC98A;--red:#E85858;--r:14px;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--txt);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
-.atmo{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 80% 50% at 85% -10%,rgba(201,168,76,0.09) 0%,transparent 55%),
-             radial-gradient(ellipse 60% 40% at -10% 85%,rgba(61,201,138,0.04) 0%,transparent 55%),
-             radial-gradient(ellipse 40% 30% at 50% 50%,rgba(201,168,76,0.02) 0%,transparent 60%);}
-.app{position:relative;z-index:1;max-width:460px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+body{background:var(--dark);color:var(--txt);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-/* HEADER */
-.header{padding:52px 28px 24px;text-align:center;}
-.logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:28px;}
-.logo-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--or),var(--or2));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:18px;color:#06060E;box-shadow:0 4px 24px var(--or-glow);}
-.logo-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;letter-spacing:.3px;}
-.logo-name span{color:var(--or);}
-.header-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;line-height:1.2;margin-bottom:12px;}
-.header-title em{font-style:italic;color:var(--or);}
-.header-sub{font-size:14.5px;color:var(--txt2);line-height:1.75;max-width:300px;margin:0 auto 16px;}
-.badge-essai{display:inline-flex;align-items:center;gap:7px;background:var(--or-dim);border:1px solid rgba(201,168,76,0.25);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--or);letter-spacing:.4px;}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ── GRAIN OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size:180px;opacity:.35;
+}
 
-/* PROGRESS */
-.progress-wrap{padding:8px 28px 20px;}
-.progress-bar{height:3px;background:var(--txt4);border-radius:100px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--or2));border-radius:100px;transition:width .45s cubic-bezier(.4,0,.2,1);}
-.progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3);margin-top:8px;letter-spacing:.4px;}
+/* ── GLOW ATMOSPHERE ── */
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 40% at 90% 0%,rgba(201,168,76,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 30% at 10% 100%,rgba(61,201,138,0.04) 0%,transparent 55%);}
 
-/* STEPS */
-.steps{flex:1;padding:4px 28px 56px;}
+/* ── WRAPPER ── */
+.wrap{position:relative;z-index:1;max-width:430px;margin:0 auto;min-height:100vh;}
+
+/* ============================================================
+   LANDING
+   ============================================================ */
+#landing{display:flex;flex-direction:column;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,40px) 22px 0;padding-top:max(env(safe-area-inset-top,0px),40px);}
+.logo{display:flex;align-items:center;gap:9px;}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:15px;color:#0a0a0a;box-shadow:0 4px 20px var(--gold-glow);}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;letter-spacing:.2px;}
+.logo-name span{color:var(--gold);}
+.live-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;border:1px solid rgba(61,201,138,0.25);background:rgba(61,201,138,0.07);font-size:11px;font-weight:600;color:var(--green);letter-spacing:.4px;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+
+/* HERO */
+.hero{padding:52px 24px 0;flex:1;}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:20px;opacity:.8;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;line-height:1.1;margin-bottom:10px;letter-spacing:-.5px;}
+.hero-title strong{font-weight:700;}
+.hero-title em{font-style:italic;color:var(--gold);}
+.hero-rule{width:40px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:20px 0;}
+.hero-sub{font-size:15px;color:var(--txt2);line-height:1.85;max-width:340px;}
+.hero-sub strong{color:var(--txt);font-weight:500;}
+
+/* PILLARS */
+.pillars{padding:40px 22px 0;display:flex;flex-direction:column;gap:1px;}
+.pillar{display:flex;align-items:flex-start;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.pillar:last-child{border-bottom:none;}
+.pillar-num{font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:2px;padding-top:3px;min-width:24px;opacity:.7;}
+.pillar-body{}
+.pillar-title{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:5px;line-height:1.3;}
+.pillar-desc{font-size:12.5px;color:var(--txt3);line-height:1.7;}
+
+/* PARCOURS BLOCK */
+.parcours-block{margin:36px 22px 0;padding:22px 20px;background:var(--dark2);border:1px solid rgba(255,255,255,0.06);border-radius:18px;}
+.pb-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:16px;opacity:.7;}
+.pb-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.pb-row:last-child{margin-bottom:0;}
+.pb-ico{width:38px;height:38px;border-radius:11px;background:var(--dark3);border:1px solid rgba(201,168,76,0.15);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.pb-content{}
+.pb-title{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:3px;}
+.pb-sub{font-size:12px;color:var(--txt3);line-height:1.55;}
+
+/* FREE BADGE */
+.free-block{margin:28px 22px 0;display:flex;align-items:center;gap:14px;padding:18px 20px;background:linear-gradient(135deg,rgba(201,168,76,0.07),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.18);border-radius:14px;}
+.free-ico{font-size:26px;flex-shrink:0;}
+.free-text{font-size:13px;color:var(--txt2);line-height:1.65;}
+.free-text strong{color:var(--gold);font-size:15px;font-family:'Cormorant Garamond',serif;display:block;margin-bottom:2px;}
+
+/* CTA */
+.cta-zone{padding:32px 22px max(env(safe-area-inset-bottom,0px),32px);}
+.btn-cta{width:100%;padding:18px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;letter-spacing:.2px;box-shadow:0 8px 32px rgba(201,168,76,0.25);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden;}
+.btn-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);border-radius:var(--r);}
+.btn-cta:active{transform:scale(.97);box-shadow:0 4px 16px rgba(201,168,76,0.15);}
+.cta-note{text-align:center;font-size:11.5px;color:var(--txt3);margin-top:12px;line-height:1.7;letter-spacing:.1px;}
+
+/* ============================================================
+   FORMULAIRE
+   ============================================================ */
+#formApp{display:none;flex-direction:column;min-height:100vh;}
+#formApp.on{display:flex;}
+
+.f-topbar{display:flex;align-items:center;gap:14px;padding:max(env(safe-area-inset-top,0px),44px) 22px 0;}
+.btn-back-top{width:36px;height:36px;border-radius:50%;background:var(--dark2);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--txt2);flex-shrink:0;}
+.f-logo-sm{display:flex;align-items:center;gap:8px;}
+.f-logo-sm .logo-mark{width:28px;height:28px;font-size:12px;}
+.f-logo-sm .logo-name{font-size:14px;}
+
+/* Progress */
+.prog-wrap{padding:24px 22px 0;}
+.prog-track{height:2px;background:var(--dark4);border-radius:100px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:100px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.prog-meta{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--txt3);letter-spacing:.5px;}
+
+/* Steps */
+.steps{flex:1;padding:32px 22px 48px;}
 .step{display:none;animation:fadeUp .3s ease both;}
-.step.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.step-chip{display:inline-flex;align-items:center;gap:6px;background:var(--or-dim);border-radius:100px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--or);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
-.step-title{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:700;line-height:1.2;margin-bottom:8px;}
-.step-sub{font-size:14px;color:var(--txt2);line-height:1.75;margin-bottom:22px;}
+.step.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* CHAMPS */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:8px;}
-.inp{width:100%;background:var(--s2);border:1.5px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:14px 18px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;}
-.inp:focus{border-color:rgba(201,168,76,0.45);box-shadow:0 0 0 3px rgba(201,168,76,0.06);}
+.step-tag{display:inline-block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px;opacity:.7;}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;line-height:1.2;margin-bottom:8px;}
+.step-sub{font-size:13.5px;color:var(--txt2);line-height:1.8;margin-bottom:28px;}
+
+/* Champs */
+.field{margin-bottom:16px;}
+.field-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);font-weight:600;margin-bottom:9px;display:block;}
+.inp{width:100%;background:var(--dark2);border:1px solid rgba(255,255,255,0.07);border-radius:var(--r);padding:15px 18px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:rgba(201,168,76,0.4);}
 .inp::placeholder{color:var(--txt3);}
-textarea.inp{resize:none;min-height:110px;line-height:1.65;}
 
-/* PRIORITÉS */
-.prio-hint{font-size:12px;color:var(--txt3);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.prio-count{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:var(--s3);font-size:11px;font-weight:700;color:var(--or);}
-.prio-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-.prio-item{display:flex;align-items:center;gap:12px;background:var(--s2);border:1.5px solid rgba(255,255,255,0.06);border-radius:14px;padding:13px 16px;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;}
-.prio-item.selected{background:var(--or-dim);border-color:rgba(201,168,76,0.35);}
-.prio-item.disabled{opacity:.3;pointer-events:none;}
-.prio-check{width:22px;height:22px;border-radius:7px;border:2px solid rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.prio-item.selected .prio-check{background:var(--or);border-color:var(--or);}
-.prio-check-icon{font-size:11px;color:#06060E;display:none;}
-.prio-item.selected .prio-check-icon{display:block;}
-.prio-label{font-size:14px;font-weight:500;}
-.prio-item.selected .prio-label{color:var(--or);}
-.autre-wrap{margin-bottom:12px;}
-
-/* BLOC PÉDA */
-.bloc-peda{background:linear-gradient(135deg,rgba(201,168,76,0.07),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.18);border-radius:var(--r);padding:18px;margin-bottom:22px;}
-.bp-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--or);font-weight:700;margin-bottom:10px;}
-.bp-text{font-size:13px;color:var(--txt2);line-height:1.8;}
-.bp-text strong{color:var(--txt);}
-
-/* PROFIL */
-.profil-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.profil-item{display:flex;align-items:center;gap:14px;background:var(--s2);border:2px solid rgba(255,255,255,0.06);border-radius:14px;padding:15px 16px;cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;}
-.profil-item.selected{background:var(--or-dim);border-color:rgba(201,168,76,0.4);}
-.profil-icon{font-size:26px;flex-shrink:0;}
-.profil-content{flex:1;}
-.profil-label{font-size:14px;font-weight:600;margin-bottom:3px;}
-.profil-item.selected .profil-label{color:var(--or);}
-.profil-desc{font-size:12px;color:var(--txt3);line-height:1.45;}
+/* Choix */
+.choice-grid{display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
+.choice{display:flex;align-items:center;gap:14px;padding:16px 16px;background:var(--dark2);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);cursor:pointer;transition:all .15s;-webkit-user-select:none;user-select:none;}
+.choice.sel{background:var(--gold-dim);border-color:rgba(201,168,76,0.35);}
+.choice-ico{font-size:22px;flex-shrink:0;width:32px;text-align:center;}
+.choice-body{flex:1;}
+.choice-lbl{font-size:14px;font-weight:600;margin-bottom:2px;transition:color .15s;}
+.choice.sel .choice-lbl{color:var(--gold);}
+.choice-desc{font-size:12px;color:var(--txt3);line-height:1.45;}
+.choice-radio{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.12);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.choice.sel .choice-radio{border-color:var(--gold);background:var(--gold);}
+.choice-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#0a0a0a;display:none;}
+.choice.sel .choice-radio::after{display:block;}
 
 /* CGV */
-.cgv-box{background:var(--s2);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:20px;margin-bottom:20px;}
-.cgv-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;margin-bottom:16px;color:var(--or);}
-.cgv-item{display:flex;gap:12px;margin-bottom:13px;align-items:flex-start;}
-.cgv-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
-.cgv-text{font-size:13px;color:var(--txt2);line-height:1.65;}
-.cgv-text strong{color:var(--txt);}
-.cgv-accept{display:flex;align-items:center;gap:12px;background:var(--s3);border-radius:12px;border:1.5px solid transparent;padding:14px 16px;cursor:pointer;margin-top:18px;transition:all .15s;}
-.cgv-accept.checked{background:rgba(61,201,138,0.07);border-color:rgba(61,201,138,0.25);}
-.cgv-checkbox{width:24px;height:24px;border-radius:8px;border:2px solid rgba(255,255,255,0.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.cgv-accept.checked .cgv-checkbox{background:var(--green);border-color:var(--green);}
-.cgv-checkbox-icon{font-size:13px;color:#06060E;display:none;}
-.cgv-accept.checked .cgv-checkbox-icon{display:block;}
-.cgv-accept-text{font-size:13px;color:var(--txt2);line-height:1.5;}
+.cgv-card{background:var(--dark2);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:20px;margin-bottom:20px;}
+.cgv-hdg{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--gold);margin-bottom:14px;}
+.cgv-line{display:flex;gap:11px;margin-bottom:11px;align-items:flex-start;}
+.cgv-ico{font-size:15px;flex-shrink:0;margin-top:1px;}
+.cgv-txt{font-size:13px;color:var(--txt2);line-height:1.65;}
+.cgv-txt strong{color:var(--txt);}
+.cgv-check-row{display:flex;align-items:center;gap:12px;background:var(--dark3);border:1.5px solid transparent;border-radius:11px;padding:14px 15px;cursor:pointer;margin-top:16px;transition:all .15s;}
+.cgv-check-row.on{background:rgba(61,201,138,0.06);border-color:rgba(61,201,138,0.22);}
+.cgv-box{width:22px;height:22px;border-radius:7px;border:2px solid rgba(255,255,255,0.12);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cgv-check-row.on .cgv-box{background:var(--green);border-color:var(--green);}
+.cgv-tick{font-size:11px;color:#0a0a0a;display:none;}
+.cgv-check-row.on .cgv-tick{display:block;}
+.cgv-agree{font-size:13px;color:var(--txt2);line-height:1.5;}
 
-/* BOUTONS */
-.btn-next{width:100%;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:var(--r);padding:17px;font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;margin-top:8px;box-shadow:0 8px 32px var(--or-glow);}
+/* Boutons form */
+.btn-next{width:100%;padding:17px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 6px 24px rgba(201,168,76,0.2);transition:transform .15s;margin-top:4px;letter-spacing:.2px;}
 .btn-next:active{transform:scale(.97);}
-.btn-next:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
-.btn-back{background:none;border:none;color:var(--txt3);font-size:13px;cursor:pointer;padding:14px 0;width:100%;text-align:center;font-family:'Outfit',sans-serif;transition:color .15s;}
-.btn-back:hover{color:var(--txt2);}
+.btn-next:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-prev{background:none;border:none;color:var(--txt3);font-size:13px;cursor:pointer;padding:14px 0;width:100%;text-align:center;font-family:'Outfit',sans-serif;transition:color .15s;}
+.btn-prev:hover{color:var(--txt2);}
 
-/* SUCCÈS */
-.success-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 28px;text-align:center;}
-.success-screen.show{display:flex;}
-.success-icon{font-size:60px;margin-bottom:24px;animation:popIn .45s cubic-bezier(.34,1.56,.64,1);}
+/* ============================================================
+   SUCCÈS
+   ============================================================ */
+#successScreen{display:none;position:relative;z-index:1;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:48px 24px;text-align:center;max-width:430px;margin:0 auto;}
+#successScreen.on{display:flex;}
+.s-icon{font-size:56px;margin-bottom:28px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
 @keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
-.success-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;margin-bottom:10px;line-height:1.2;}
-.success-title em{font-style:italic;color:var(--or);}
-.success-sub{font-size:15px;color:var(--txt2);line-height:1.75;max-width:300px;margin-bottom:28px;}
-.success-url{background:var(--s2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 18px;font-size:12px;color:var(--or);word-break:break-all;margin-bottom:24px;text-align:left;line-height:1.7;width:100%;}
-.btn-go{width:100%;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:var(--r);padding:17px;font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 8px 32px var(--or-glow);margin-bottom:12px;}
-.btn-pwa-cta{width:100%;background:var(--s2);border:1px solid rgba(201,168,76,0.2);color:var(--or);border-radius:var(--r);padding:14px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.s-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;line-height:1.2;margin-bottom:10px;}
+.s-title em{font-style:italic;color:var(--gold);}
+.s-sub{font-size:14px;color:var(--txt2);line-height:1.8;max-width:290px;margin-bottom:32px;}
+
+/* Onboarding coach */
+.coach-box{width:100%;background:var(--dark2);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:20px;margin-bottom:24px;text-align:left;}
+.coach-top{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.coach-ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8B5E1A);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.coach-name{font-size:13px;font-weight:700;color:var(--gold);}
+.coach-role{font-size:10px;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase;}
+.coach-msg{font-size:13.5px;color:var(--txt2);line-height:1.8;margin-bottom:16px;}
+.coach-msg strong{color:var(--txt);}
+.coach-parcours{display:flex;flex-direction:column;gap:8px;}
+.cp-item{display:flex;align-items:center;gap:12px;background:var(--dark3);border:1px solid rgba(201,168,76,0.12);border-radius:11px;padding:13px 14px;}
+.cp-ico{font-size:18px;flex-shrink:0;}
+.cp-body{flex:1;}
+.cp-title{font-size:12.5px;font-weight:600;color:var(--txt);margin-bottom:2px;}
+.cp-sub{font-size:11px;color:var(--txt3);}
+.cp-arrow{font-size:12px;color:var(--gold);opacity:.6;}
+
+.s-url{background:var(--dark2);border:1px solid rgba(201,168,76,0.18);border-radius:11px;padding:13px 16px;font-size:11.5px;color:var(--gold);word-break:break-all;margin-bottom:20px;text-align:left;line-height:1.7;width:100%;}
+.btn-go{width:100%;padding:17px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 8px 28px rgba(201,168,76,0.22);margin-bottom:10px;letter-spacing:.2px;}
+.btn-pwa{width:100%;padding:14px;background:var(--dark2);border:1px solid rgba(201,168,76,0.18);color:var(--gold);border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;}
 
 /* MODAL PWA */
-.pwa-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
-.pwa-overlay.active{display:flex;}
-.pwa-box{background:var(--s1);border:1px solid rgba(255,255,255,0.08);border-radius:24px 24px 0 0;padding:28px 24px 44px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;animation:slideUp .35s ease;}
-@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
-.pwa-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--or);margin-bottom:6px;}
-.pwa-sub{font-size:13px;color:var(--txt3);margin-bottom:24px;line-height:1.6;}
-.pwa-step{display:flex;gap:14px;margin-bottom:20px;align-items:flex-start;}
-.pwa-num{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
-.pwa-sc{flex:1;padding-top:4px;}
-.pwa-st{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:5px;}
+.pwa-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);align-items:flex-end;justify-content:center;}
+.pwa-overlay.on{display:flex;}
+.pwa-sheet{background:var(--dark2);border:1px solid rgba(255,255,255,0.07);border-radius:22px 22px 0 0;padding:28px 22px max(env(safe-area-inset-bottom,0px),36px);width:100%;max-width:430px;max-height:90vh;overflow-y:auto;animation:slideUp .3s cubic-bezier(.4,0,.2,1);}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.pwa-hdg{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--gold);margin-bottom:5px;}
+.pwa-sub{font-size:13px;color:var(--txt3);margin-bottom:22px;line-height:1.6;}
+.pwa-step{display:flex;gap:14px;margin-bottom:18px;}
+.pwa-num{width:30px;height:30px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px;}
+.pwa-sc{}
+.pwa-st{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:4px;}
 .pwa-sd{font-size:12.5px;color:var(--txt3);line-height:1.65;}
-.pwa-info{margin-top:8px;background:var(--s3);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--txt2);border-left:3px solid var(--or);line-height:1.6;}
-.pwa-tip{background:rgba(61,201,138,0.07);border:1px solid rgba(61,201,138,0.2);border-radius:12px;padding:12px 16px;margin:16px 0 20px;font-size:12.5px;color:var(--txt2);line-height:1.65;}
+.pwa-note{background:var(--dark3);border-left:2px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 13px;margin-top:7px;font-size:12px;color:var(--txt2);line-height:1.6;}
+.pwa-tip{background:rgba(61,201,138,0.06);border:1px solid rgba(61,201,138,0.18);border-radius:11px;padding:12px 15px;margin:14px 0 20px;font-size:12.5px;color:var(--txt2);line-height:1.65;}
 .pwa-tip strong{color:var(--green);}
-.btn-pwa-ok{width:100%;padding:15px;background:linear-gradient(135deg,var(--or),var(--or2));color:#06060E;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
-.btn-pwa-skip{width:100%;padding:12px;background:none;border:none;color:var(--txt3);font-size:13px;cursor:pointer;font-family:inherit;margin-top:8px;}
+.btn-pwa-ok{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),#a87830);color:#0a0a0a;border:none;border-radius:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-pwa-skip{width:100%;padding:11px;background:none;border:none;color:var(--txt3);font-size:13px;cursor:pointer;font-family:inherit;margin-top:6px;}
 
 /* LOADER */
-.loader-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(6,6,14,.92);backdrop-filter:blur(6px);flex-direction:column;align-items:center;justify-content:center;}
-.loader-overlay.active{display:flex;}
-.loader-spin{width:44px;height:44px;border-radius:50%;border:3px solid rgba(201,168,76,0.15);border-top-color:var(--or);animation:spin .8s linear infinite;margin-bottom:20px;}
+.loader-ov{display:none;position:fixed;inset:0;z-index:400;background:rgba(10,10,10,.94);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;}
+.loader-ov.on{display:flex;}
+.loader-ring{width:42px;height:42px;border-radius:50%;border:2.5px solid rgba(201,168,76,0.12);border-top-color:var(--gold);animation:spin .75s linear infinite;margin-bottom:18px;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loader-txt{font-size:14px;color:var(--txt2);text-align:center;line-height:1.8;}
+.loader-txt{font-size:13.5px;color:var(--txt2);text-align:center;line-height:1.8;}
 
 /* TOAST */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--txt);z-index:999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .2s ease;}
-@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--dark3);border:1px solid rgba(201,168,76,0.18);border-radius:11px;padding:11px 20px;font-size:13px;color:var(--txt);z-index:999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.6);animation:toastIn .2s ease;pointer-events:none;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(6px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
 </head>
 <body>
 <div class="atmo"></div>
 
-<!-- SUCCÈS -->
-<div class="success-screen" id="successScreen">
-  <div class="success-icon">🚀</div>
-  <div class="success-title">Ton assistant est <em>prêt</em>,<br><span id="successPrenom"></span> !</div>
-  <div class="success-sub">7 jours pour découvrir ce que ça fait d'avoir un vrai bras droit à portée de main.</div>
-  <div class="success-url" id="successUrl"></div>
+<!-- ============================================================
+     SUCCÈS + ONBOARDING
+     ============================================================ -->
+<div id="successScreen">
+  <div class="s-icon">✦</div>
+  <div class="s-title">Bienvenue,<br><em id="sPrenom"></em></div>
+  <div class="s-sub">Ton assistant est disponible maintenant. C'est à toi de jouer — plus tu lui parles, plus il devient précis.</div>
+
+  <!-- Coach onboarding -->
+  <div class="coach-box">
+    <div class="coach-top">
+      <div class="coach-ava">A</div>
+      <div>
+        <div class="coach-name">Attractor</div>
+        <div class="coach-role">Ton assistant personnel</div>
+      </div>
+    </div>
+    <div class="coach-msg">
+      Je suis là. Mais pour t'aider vraiment, j'ai besoin de te connaître.<br><br>
+      Commence par ces deux parcours — ils me rendront <strong>hyper précis</strong> sur ta vie et ton business.
+    </div>
+    <div class="coach-parcours">
+      <div class="cp-item">
+        <div class="cp-ico">🧭</div>
+        <div class="cp-body">
+          <div class="cp-title">#1dansmoncouloir</div>
+          <div class="cp-sub">Trouve ta voie et ce que tu veux vraiment</div>
+        </div>
+        <div class="cp-arrow">›</div>
+      </div>
+      <div class="cp-item">
+        <div class="cp-ico">🎯</div>
+        <div class="cp-body">
+          <div class="cp-title">Parcours Ventes</div>
+          <div class="cp-sub">Affine ta stratégie business avec moi</div>
+        </div>
+        <div class="cp-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-url" id="sUrl"></div>
   <button class="btn-go" id="btnGo">Ouvrir mon assistant →</button>
-  <button class="btn-pwa-cta" onclick="ouvrirGuidePWA()">📲 Installer l'appli sur mon téléphone</button>
+  <button class="btn-pwa" onclick="ouvrirPWA()">📲 Installer l'appli sur mon téléphone</button>
 </div>
 
-<!-- APP PRINCIPALE -->
-<div class="app" id="mainApp">
-  <div class="header">
-    <div class="logo">
+<!-- ============================================================
+     LANDING
+     ============================================================ -->
+<div class="wrap" id="landing">
+  <div id="landingInner">
+
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-mark">A</div>
+        <div class="logo-name">Attractor <span>Assists</span></div>
+      </div>
+      <div class="live-pill"><div class="live-dot"></div>En ligne</div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-eyebrow">Assistant IA personnel</div>
+      <h1 class="hero-title">
+        Ton bras droit<br>
+        <em>professionnel.</em><br>
+        <strong>Gratuit.</strong>
+      </h1>
+      <div class="hero-rule"></div>
+      <p class="hero-sub">
+        Formé pour te <strong>décharger mentalement</strong> et te rendre plus efficace.<br>
+        Il travaille pour toi <strong>24h/24, 7j/7</strong> — sans jamais se plaindre.
+      </p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-num">01</div>
+        <div class="pillar-body">
+          <div class="pillar-title">Il pense à ta place quand tu es débordé</div>
+          <div class="pillar-desc">Briefing quotidien, suivi clients, rappels intelligents — il prend en charge ce qui t'épuise mentalement.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">02</div>
+        <div class="pillar-body">
+          <div class="pillar-title">Il apprend à te connaître. Vraiment.</div>
+          <div class="pillar-desc">Il n'est pas générique. Plus tu interagis avec lui, plus il devient précis sur toi, ton business et tes objectifs.</div>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">03</div>
+        <div class="pillar-body">
+          <div class="pillar-title">Il te pousse à avancer et à vendre</div>
+          <div class="pillar-desc">Stratégie ATTRACTOR intégrée. Ton assistant connaît la Méthode et t'accompagne pas à pas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="parcours-block">
+      <div class="pb-label">Deux parcours pour tout changer</div>
+      <div class="pb-row">
+        <div class="pb-ico">🧭</div>
+        <div class="pb-content">
+          <div class="pb-title">#1dansmoncouloir</div>
+          <div class="pb-sub">Trouve ta voie, tes forces et ce que tu veux vraiment construire.</div>
+        </div>
+      </div>
+      <div class="pb-row">
+        <div class="pb-ico">🎯</div>
+        <div class="pb-content">
+          <div class="pb-title">Parcours Ventes</div>
+          <div class="pb-sub">Affine ta cible, ton message et ton offre — avec ton assistant comme coach.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="free-block">
+      <div class="free-ico">∞</div>
+      <div class="free-text">
+        <strong>Gratuit pour toujours</strong>
+        Accès libre, sans carte bancaire. Des offres avancées existent si tu veux aller plus loin — tu choisis quand tu es prêt.
+      </div>
+    </div>
+
+    <div class="cta-zone">
+      <button class="btn-cta" onclick="demarrer()">Obtenir mon assistant →</button>
+      <div class="cta-note">Disponible en 2 minutes · Aucune carte requise<br>C'est à toi de l'alimenter pour qu'il devienne ton vrai bras droit</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     FORMULAIRE
+     ============================================================ -->
+<div class="wrap" id="formApp">
+  <div class="f-topbar">
+    <button class="btn-back-top" onclick="retour()">←</button>
+    <div class="f-logo-sm">
       <div class="logo-mark">A</div>
       <div class="logo-name">Attractor <span>Assists</span></div>
     </div>
-    <div class="header-title">Ton assistant <em>personnel</em>,<br>configuré pour toi.</div>
-    <div class="header-sub">En 2 minutes, je configure ton assistant pour qu'il soit vraiment utile dès le premier jour.</div>
-    <div class="badge-essai"><div class="badge-dot"></div> 7 jours gratuits — sans carte bancaire</div>
   </div>
 
-  <div class="progress-wrap">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:12%"></div></div>
-    <div class="progress-meta"><span id="progressStep">Étape 1 sur 8</span><span id="progressPct">12%</span></div>
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
+    <div class="prog-meta"><span id="progLbl">Étape 1 / 5</span><span id="progPct">20%</span></div>
   </div>
 
   <div class="steps">
 
-    <div class="step active" id="step1">
-      <div class="step-chip">Étape 1 / 8</div>
+    <!-- 1 — Prénom -->
+    <div class="step on" id="s1">
+      <div class="step-tag">Étape 1 / 5</div>
       <div class="step-title">Comment tu t'appelles ?</div>
-      <div class="step-sub">Ton assistant te parlera par ton prénom chaque jour. C'est notre première connexion.</div>
-      <div class="field"><label>Ton prénom</label><input class="inp" id="f-prenom" type="text" placeholder="Ex : Aminata" maxlength="40" autocomplete="given-name"></div>
-      <button class="btn-next" onclick="nextStep(1)">Continuer →</button>
+      <div class="step-sub">Ton assistant te parlera par ton prénom. C'est votre première connexion.</div>
+      <div class="field">
+        <label class="field-lbl">Ton prénom</label>
+        <input class="inp" id="f-prenom" type="text" placeholder="Ex : Aminata" maxlength="40" autocomplete="given-name">
+      </div>
+      <button class="btn-next" onclick="next(1)">Continuer →</button>
     </div>
 
-    <div class="step" id="step2">
-      <div class="step-chip">Étape 2 / 8</div>
+    <!-- 2 — WhatsApp -->
+    <div class="step" id="s2">
+      <div class="step-tag">Étape 2 / 5</div>
       <div class="step-title">Ton numéro WhatsApp</div>
-      <div class="step-sub">Mac Arthur peut te contacter personnellement si tu as besoin d'aide. C'est son engagement direct.</div>
-      <div class="field"><label>WhatsApp</label><input class="inp" id="f-whatsapp" type="tel" placeholder="+225 07 00 00 00 00" autocomplete="tel"></div>
-      <button class="btn-next" onclick="nextStep(2)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(2)">← Retour</button>
+      <div class="step-sub">Mac Arthur peut te contacter directement si tu as besoin d'aide. C'est son engagement.</div>
+      <div class="field">
+        <label class="field-lbl">WhatsApp</label>
+        <input class="inp" id="f-wa" type="tel" placeholder="+225 07 00 00 00 00" autocomplete="tel">
+      </div>
+      <button class="btn-next" onclick="next(2)">Continuer →</button>
+      <button class="btn-prev" onclick="prev(2)">← Retour</button>
     </div>
 
-    <div class="step" id="step3">
-      <div class="step-chip">Étape 3 / 8</div>
+    <!-- 3 — Email -->
+    <div class="step" id="s3">
+      <div class="step-tag">Étape 3 / 5</div>
       <div class="step-title">Ton adresse email</div>
-      <div class="step-sub">Tu recevras les infos de ton essai ici. Zéro spam — parole de Mac Arthur.</div>
-      <div class="field"><label>Email</label><input class="inp" id="f-email" type="email" placeholder="ton@email.com" autocomplete="email"></div>
-      <button class="btn-next" onclick="nextStep(3)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(3)">← Retour</button>
+      <div class="step-sub">Tu recevras les informations de ton accès ici. Zéro spam — parole de Mac Arthur.</div>
+      <div class="field">
+        <label class="field-lbl">Email</label>
+        <input class="inp" id="f-email" type="email" placeholder="ton@email.com" autocomplete="email">
+      </div>
+      <button class="btn-next" onclick="next(3)">Continuer →</button>
+      <button class="btn-prev" onclick="prev(3)">← Retour</button>
     </div>
 
-    <div class="step" id="step4">
-      <div class="step-chip">Étape 4 / 8</div>
+    <!-- 4 — Zone -->
+    <div class="step" id="s4">
+      <div class="step-tag">Étape 4 / 5</div>
       <div class="step-title">Tu es où dans le monde ?</div>
-      <div class="step-sub">Ça détermine ton mode de paiement et les conditions qui s'appliquent.</div>
-      <div class="profil-grid">
-        <div class="profil-item" onclick="selectZone(this)" data-val="CI">
-          <div class="profil-icon">🌍</div>
-          <div class="profil-content"><div class="profil-label">Afrique francophone</div><div class="profil-desc">Côte d'Ivoire, Sénégal, Mali, Cameroun, Bénin…</div></div>
+      <div class="step-sub">Ça permet d'adapter les conditions et les modes de contact.</div>
+      <div class="choice-grid">
+        <div class="choice" onclick="pickZone(this)" data-val="CI">
+          <div class="choice-ico">🌍</div>
+          <div class="choice-body"><div class="choice-lbl">Afrique francophone</div><div class="choice-desc">Côte d'Ivoire, Sénégal, Mali, Cameroun, Bénin…</div></div>
+          <div class="choice-radio"></div>
         </div>
-        <div class="profil-item" onclick="selectZone(this)" data-val="EU">
-          <div class="profil-icon">🇪🇺</div>
-          <div class="profil-content"><div class="profil-label">Europe & Diaspora</div><div class="profil-desc">France, Belgique, Suisse, Canada…</div></div>
-        </div>
-      </div>
-      <button class="btn-next" id="btnZone" onclick="nextStep(4)" disabled>Continuer →</button>
-      <button class="btn-back" onclick="prevStep(4)">← Retour</button>
-    </div>
-
-    <div class="step" id="step5">
-      <div class="step-chip">Étape 5 / 8</div>
-      <div class="step-title">Ton activité en quelques mots</div>
-      <div class="step-sub">Ton assistant sera configuré spécifiquement pour ce que tu fais. Sois précis — c'est ce qui fait la différence.</div>
-      <div class="field"><label>Ton activité</label><input class="inp" id="f-activite" type="text" placeholder="Ex : Consultante en marketing digital — Paris" maxlength="120"></div>
-      <button class="btn-next" onclick="nextStep(5)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(5)">← Retour</button>
-    </div>
-
-    <div class="step" id="step6">
-      <div class="step-chip">Étape 6 / 8</div>
-      <div class="step-title">Tes priorités du moment</div>
-      <div class="step-sub">Sur quoi ton assistant doit se concentrer en premier ?</div>
-      <div class="prio-hint"><div class="prio-count" id="prioCount">0</div>&nbsp;sélectionné(s) — 3 maximum</div>
-      <div class="prio-grid" id="prioGrid">
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Organiser mon temps"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">⏰ Organiser mon temps</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Gérer mes clients et relances"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">👥 Gérer mes clients et relances</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Suivre mes finances"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">💰 Suivre mes finances</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Créer du contenu"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">✍️ Créer du contenu</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Prospecter et développer mon business"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">🎯 Prospecter et développer</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="M'organiser au quotidien"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">📋 M'organiser au quotidien</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="Gérer mon équipe"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">🤝 Gérer mon équipe</div></div>
-        <div class="prio-item" onclick="togglePrio(this)" data-val="autre" id="prioAutre"><div class="prio-check"><span class="prio-check-icon">✓</span></div><div class="prio-label">➕ Autre priorité</div></div>
-      </div>
-      <div class="autre-wrap" id="autreWrap" style="display:none;"><input class="inp" id="f-autre" type="text" placeholder="Précise ta priorité..." maxlength="80"></div>
-      <button class="btn-next" onclick="nextStep(6)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(6)">← Retour</button>
-    </div>
-
-    <div class="step" id="step7">
-      <div class="step-chip">Étape 7 / 8</div>
-      <div class="step-title">Ton résultat attendu</div>
-      <div class="bloc-peda">
-        <div class="bp-label">📌 Une nuance importante</div>
-        <div class="bp-text">Dans la Méthode ATTRACTOR, le <strong>résultat</strong> c'est ta destination. Les <strong>objectifs</strong> sont les paliers pour y arriver.<br><br>Plus tu es précis ici, plus ton assistant sera chirurgical.</div>
-      </div>
-      <div class="field"><label>Ce que tu veux vraiment obtenir</label><textarea class="inp" id="f-resultat" placeholder="Avec mon assistant je veux pouvoir [faire X], sans les contraintes de [Y]..." rows="5"></textarea></div>
-      <button class="btn-next" onclick="nextStep(7)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(7)">← Retour</button>
-    </div>
-
-    <div class="step" id="step8">
-      <div class="step-chip">Étape 8 / 8 — Dernière !</div>
-      <div class="step-title">Ta situation &amp; les règles du jeu</div>
-      <div class="step-sub">Pour que ton assistant parle vraiment ton langage.</div>
-      <div class="profil-grid" id="profilGrid">
-        <div class="profil-item" onclick="selectProfil(this)" data-val="salarie"><div class="profil-icon">💼</div><div class="profil-content"><div class="profil-label">Salarié uniquement</div><div class="profil-desc">J'ai un emploi et je cherche à mieux m'organiser</div></div></div>
-        <div class="profil-item" onclick="selectProfil(this)" data-val="salarie_side"><div class="profil-icon">⚡</div><div class="profil-content"><div class="profil-label">Salarié + activité en parallèle</div><div class="profil-desc">J'ai un emploi et je développe quelque chose à côté</div></div></div>
-        <div class="profil-item" onclick="selectProfil(this)" data-val="entrepreneur"><div class="profil-icon">🚀</div><div class="profil-content"><div class="profil-label">Entrepreneur à 100%</div><div class="profil-desc">Mon activité principale c'est mon business</div></div></div>
-        <div class="profil-item" onclick="selectProfil(this)" data-val="quotidien"><div class="profil-icon">🌟</div><div class="profil-content"><div class="profil-label">Compagnon du quotidien</div><div class="profil-desc">Je veux m'organiser et avancer dans ma vie</div></div></div>
-      </div>
-      <div class="cgv-box">
-        <div class="cgv-title">Avant de commencer</div>
-        <div class="cgv-item"><div class="cgv-icon">🎁</div><div class="cgv-text"><strong>7 jours gratuits.</strong> Sans carte bancaire. Sans engagement automatique.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">🤖</div><div class="cgv-text"><strong>Un assistant configuré pour toi.</strong> Selon ce que tu viens de nous dire — pas un chatbot générique.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">🔒</div><div class="cgv-text"><strong>Tes données restent privées.</strong> Jamais partagées, jamais vendues.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">📲</div><div class="cgv-text"><strong>Mac Arthur peut te contacter</strong> sur WhatsApp pour s'assurer que tout est bien configuré.</div></div>
-        <div class="cgv-item"><div class="cgv-icon">💬</div><div class="cgv-text"><strong>Après les 7 jours.</strong> Tu reçois une offre personnalisée. Tu décides. Zéro pression.</div></div>
-        <div class="cgv-accept" id="cgvAccept" onclick="toggleCGV()">
-          <div class="cgv-checkbox"><span class="cgv-checkbox-icon">✓</span></div>
-          <div class="cgv-accept-text">J'ai lu, je comprends et j'accepte. Je commence mon essai gratuit.</div>
+        <div class="choice" onclick="pickZone(this)" data-val="EU">
+          <div class="choice-ico">🇪🇺</div>
+          <div class="choice-body"><div class="choice-lbl">Europe & Diaspora</div><div class="choice-desc">France, Belgique, Suisse, Canada…</div></div>
+          <div class="choice-radio"></div>
         </div>
       </div>
+      <button class="btn-next" id="btnZone" onclick="next(4)" disabled>Continuer →</button>
+      <button class="btn-prev" onclick="prev(4)">← Retour</button>
+    </div>
+
+    <!-- 5 — Activité + Profil + CGV -->
+    <div class="step" id="s5">
+      <div class="step-tag">Étape 5 / 5 — Dernière</div>
+      <div class="step-title">Ton activité &amp; ta situation</div>
+      <div class="step-sub">Ton assistant s'adapte à ce que tu fais. Sois précis — c'est ce qui fait la différence.</div>
+
+      <div class="field">
+        <label class="field-lbl">Ton activité en quelques mots</label>
+        <input class="inp" id="f-activite" type="text" placeholder="Ex : Je vends des cosmétiques en ligne" maxlength="120">
+      </div>
+
+      <div class="choice-grid" id="profilGrid">
+        <div class="choice" onclick="pickProfil(this)" data-val="salarie">
+          <div class="choice-ico">💼</div>
+          <div class="choice-body"><div class="choice-lbl">Salarié uniquement</div><div class="choice-desc">J'ai un emploi et je cherche à mieux m'organiser</div></div>
+          <div class="choice-radio"></div>
+        </div>
+        <div class="choice" onclick="pickProfil(this)" data-val="salarie_side">
+          <div class="choice-ico">⚡</div>
+          <div class="choice-body"><div class="choice-lbl">Salarié + activité en parallèle</div><div class="choice-desc">J'ai un emploi et je développe quelque chose à côté</div></div>
+          <div class="choice-radio"></div>
+        </div>
+        <div class="choice" onclick="pickProfil(this)" data-val="entrepreneur">
+          <div class="choice-ico">🚀</div>
+          <div class="choice-body"><div class="choice-lbl">Entrepreneur à 100%</div><div class="choice-desc">Mon activité principale c'est mon business</div></div>
+          <div class="choice-radio"></div>
+        </div>
+        <div class="choice" onclick="pickProfil(this)" data-val="quotidien">
+          <div class="choice-ico">🌟</div>
+          <div class="choice-body"><div class="choice-lbl">Compagnon du quotidien</div><div class="choice-desc">Je veux m'organiser et avancer dans ma vie</div></div>
+          <div class="choice-radio"></div>
+        </div>
+      </div>
+
+      <div class="cgv-card">
+        <div class="cgv-hdg">Avant de commencer</div>
+        <div class="cgv-line"><div class="cgv-ico">∞</div><div class="cgv-txt"><strong>Gratuit pour toujours.</strong> Sans carte bancaire. Sans engagement.</div></div>
+        <div class="cgv-line"><div class="cgv-ico">🤖</div><div class="cgv-txt"><strong>Un assistant mis à disposition en 2 minutes.</strong> C'est toi qui l'alimentes pour qu'il devienne vraiment utile.</div></div>
+        <div class="cgv-line"><div class="cgv-ico">🔒</div><div class="cgv-txt"><strong>Tes données restent privées.</strong> Jamais partagées, jamais vendues.</div></div>
+        <div class="cgv-line"><div class="cgv-ico">💬</div><div class="cgv-txt"><strong>Des offres avancées existent.</strong> Tu les découvres dans l'application, quand tu es prêt.</div></div>
+        <div class="cgv-check-row" id="cgvRow" onclick="toggleCGV()">
+          <div class="cgv-box"><span class="cgv-tick">✓</span></div>
+          <div class="cgv-agree">J'ai lu, je comprends et j'accepte. Je veux mon assistant.</div>
+        </div>
+      </div>
+
       <button class="btn-next" id="btnSubmit" onclick="soumettre()" disabled>Activer mon assistant →</button>
-      <button class="btn-back" onclick="prevStep(8)">← Retour</button>
+      <button class="btn-prev" onclick="prev(5)">← Retour</button>
     </div>
 
   </div>
 </div>
 
-<!-- MODAL GUIDE PWA -->
+<!-- MODAL PWA -->
 <div class="pwa-overlay" id="pwaOverlay">
-  <div class="pwa-box">
-    <div class="pwa-title">📲 Installe Attractor sur ton téléphone</div>
-    <div class="pwa-sub">Comme une vraie appli — accès en 1 tap depuis ton écran d'accueil. Gratuit, zéro Play Store requis.</div>
-    <div id="pwaStepsContent"></div>
-    <button class="btn-pwa-ok" onclick="fermerGuidePWA()">C'est fait ! Fermer ✓</button>
-    <button class="btn-pwa-skip" onclick="fermerGuidePWA()">Plus tard</button>
+  <div class="pwa-sheet">
+    <div class="pwa-hdg">📲 Installe Attractor</div>
+    <div class="pwa-sub">Comme une vraie appli — accès en 1 tap depuis ton écran d'accueil.</div>
+    <div id="pwaContent"></div>
+    <button class="btn-pwa-ok" onclick="fermerPWA()">C'est fait ✓</button>
+    <button class="btn-pwa-skip" onclick="fermerPWA()">Plus tard</button>
   </div>
 </div>
 
 <!-- LOADER -->
-<div class="loader-overlay" id="loaderOverlay">
-  <div class="loader-spin"></div>
+<div class="loader-ov" id="loader">
+  <div class="loader-ring"></div>
   <div class="loader-txt" id="loaderTxt">Ton assistant se prépare…</div>
 </div>
 
 <script>
-const SURL = 'https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
+const SURL='https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
+let step=1,zone='',profil='',cgv=false;
 
-let currentStep=1, totalSteps=8;
-let cgvAccepted=false, prioritesSelec=[], profilSel='', zoneSel='';
+// Déjà inscrit ?
+try{const u=localStorage.getItem('aa_client_url');if(u)window.location.href=u;}catch(e){}
+// Parrainage
+try{const r=new URLSearchParams(location.search).get('ref');if(r)localStorage.setItem('aa_ref_source',r);}catch(e){}
 
-// Redirection si déjà inscrit
-try{ const u=localStorage.getItem('aa_client_url'); if(u) window.location.href=u; }catch(e){}
-// Capture parrainage
-try{ const p=new URLSearchParams(window.location.search); const r=p.get('ref'); if(r) localStorage.setItem('aa_ref_source',r); }catch(e){}
-
-function nextStep(from){ if(!valider(from)) return; currentStep=from+1; afficherStep(currentStep); }
-function prevStep(from){ currentStep=from-1; afficherStep(currentStep); }
-
-function afficherStep(n){
-  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-  const el=document.getElementById('step'+n); if(el) el.classList.add('active');
-  const pct=Math.round((n/totalSteps)*100);
-  document.getElementById('progressFill').style.width=pct+'%';
-  document.getElementById('progressStep').textContent='Étape '+n+' sur '+totalSteps;
-  document.getElementById('progressPct').textContent=pct+'%';
+function demarrer(){
+  document.getElementById('landing').style.display='none';
+  document.getElementById('formApp').style.display='';
+  document.getElementById('formApp').classList.add('on');
+  window.scrollTo(0,0);
+}
+function retour(){
+  document.getElementById('formApp').style.display='none';
+  document.getElementById('formApp').classList.remove('on');
+  document.getElementById('landing').style.display='';
   window.scrollTo(0,0);
 }
 
-function valider(step){
-  if(step===1){const v=document.getElementById('f-prenom').value.trim();if(!v){toast('Entre ton prénom pour continuer');return false;}}
-  if(step===2){const v=document.getElementById('f-whatsapp').value.trim();if(!v){toast('Entre ton numéro WhatsApp');return false;}}
-  if(step===3){const v=document.getElementById('f-email').value.trim();if(!v||v.indexOf('@')<1){toast('Entre une adresse email valide');return false;}}
-  if(step===4){if(!zoneSel){toast('Sélectionne ta zone géographique');return false;}}
-  if(step===5){const v=document.getElementById('f-activite').value.trim();if(!v){toast('Décris ton activité pour continuer');return false;}}
-  if(step===6){if(prioritesSelec.length===0){toast('Sélectionne au moins une priorité');return false;}if(prioritesSelec.includes('autre')&&!document.getElementById('f-autre').value.trim()){toast('Précise ta priorité dans le champ Autre');return false;}}
-  if(step===7){const v=document.getElementById('f-resultat').value.trim();if(!v){toast('Décris ton résultat attendu pour continuer');return false;}}
-  if(step===8){if(!profilSel){toast('Sélectionne ta situation actuelle');return false;}if(!cgvAccepted){toast('Accepte les conditions pour continuer');return false;}}
+function next(from){if(!ok(from))return;step=from+1;show(step);}
+function prev(from){step=from-1;show(step);}
+
+function show(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('on'));
+  const el=document.getElementById('s'+n);if(el)el.classList.add('on');
+  const pct=Math.round((n/5)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent='Étape '+n+' / 5';
+  document.getElementById('progPct').textContent=pct+'%';
+  window.scrollTo(0,0);
+}
+
+function ok(n){
+  if(n===1){const v=document.getElementById('f-prenom').value.trim();if(!v){toast('Entre ton prénom pour continuer');return false;}}
+  if(n===2){const v=document.getElementById('f-wa').value.trim();if(!v){toast('Entre ton numéro WhatsApp');return false;}}
+  if(n===3){const v=document.getElementById('f-email').value.trim();if(!v||!v.includes('@')){toast('Entre une adresse email valide');return false;}}
+  if(n===4){if(!zone){toast('Sélectionne ta zone géographique');return false;}}
+  if(n===5){
+    if(!document.getElementById('f-activite').value.trim()){toast('Décris ton activité pour continuer');return false;}
+    if(!profil){toast('Sélectionne ta situation actuelle');return false;}
+    if(!cgv){toast('Accepte les conditions pour continuer');return false;}
+  }
   return true;
 }
 
-function selectZone(el){
-  document.querySelectorAll('#step4 .profil-item').forEach(i=>i.classList.remove('selected'));
-  el.classList.add('selected'); zoneSel=el.getAttribute('data-val');
+function pickZone(el){
+  document.querySelectorAll('#s4 .choice').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');zone=el.dataset.val;
   document.getElementById('btnZone').disabled=false;
 }
-
-function togglePrio(el){
-  const val=el.getAttribute('data-val'), isSel=el.classList.contains('selected');
-  if(isSel){
-    el.classList.remove('selected'); prioritesSelec=prioritesSelec.filter(p=>p!==val);
-    if(val==='autre') document.getElementById('autreWrap').style.display='none';
-  } else {
-    if(prioritesSelec.length>=3){toast('Maximum 3 priorités');return;}
-    el.classList.add('selected'); prioritesSelec.push(val);
-    if(val==='autre') document.getElementById('autreWrap').style.display='block';
-  }
-  document.getElementById('prioCount').textContent=prioritesSelec.length;
-  document.querySelectorAll('.prio-item').forEach(item=>{
-    if(!item.classList.contains('selected')) prioritesSelec.length>=3?item.classList.add('disabled'):item.classList.remove('disabled');
-  });
+function pickProfil(el){
+  document.querySelectorAll('#profilGrid .choice').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');profil=el.dataset.val;checkSubmit();
 }
-
-function selectProfil(el){
-  document.querySelectorAll('#profilGrid .profil-item').forEach(i=>i.classList.remove('selected'));
-  el.classList.add('selected'); profilSel=el.getAttribute('data-val');
-  verifierSubmit();
+function toggleCGV(){
+  cgv=!cgv;
+  document.getElementById('cgvRow').classList.toggle('on',cgv);
+  checkSubmit();
 }
-function toggleCGV(){ cgvAccepted=!cgvAccepted; document.getElementById('cgvAccept').classList.toggle('checked',cgvAccepted); verifierSubmit(); }
-function verifierSubmit(){ document.getElementById('btnSubmit').disabled=!(cgvAccepted&&profilSel); }
+function checkSubmit(){document.getElementById('btnSubmit').disabled=!(cgv&&profil);}
 
-// SOUMISSION en GET pur — fix CORS définitif
 async function soumettre(){
-  const btn=document.getElementById('btnSubmit'); btn.disabled=true;
-  const prios=prioritesSelec.map(p=>p==='autre'?document.getElementById('f-autre').value.trim():p).filter(Boolean).join(' | ');
-  let refSource=''; try{refSource=localStorage.getItem('aa_ref_source')||'';}catch(e){}
-
-  const params=new URLSearchParams({
+  const btn=document.getElementById('btnSubmit');btn.disabled=true;
+  let ref='';try{ref=localStorage.getItem('aa_ref_source')||'';}catch(e){}
+  const p=new URLSearchParams({
     action:'creerEssai',
     prenom:document.getElementById('f-prenom').value.trim(),
-    whatsapp:document.getElementById('f-whatsapp').value.trim(),
+    whatsapp:document.getElementById('f-wa').value.trim(),
     email:document.getElementById('f-email').value.trim(),
     activite:document.getElementById('f-activite').value.trim(),
-    priorite:prios,
-    objectif:document.getElementById('f-resultat').value.trim(),
-    profil_situation:profilSel,
-    zone:zoneSel,
-    ref_source:refSource
+    priorite:'',objectif:'',
+    profil_situation:profil,
+    zone:zone,ref_source:ref
   });
-
   document.getElementById('loaderTxt').textContent='Ton assistant se prépare…';
-  document.getElementById('loaderOverlay').classList.add('active');
+  document.getElementById('loader').classList.add('on');
 
-  let tentative=0, succes=false;
-  while(tentative<3&&!succes){
-    tentative++;
+  let t=0,ok2=false;
+  while(t<3&&!ok2){
+    t++;
     try{
       const ctrl=new AbortController();
       const timer=setTimeout(()=>ctrl.abort(),30000);
-      const res=await fetch(SURL+'?'+params.toString(),{method:'GET',signal:ctrl.signal});
+      const res=await fetch(SURL+'?'+p.toString(),{method:'GET',signal:ctrl.signal});
       clearTimeout(timer);
-      const result=await res.json();
-      if(result.success){
-        succes=true;
-        document.getElementById('loaderOverlay').classList.remove('active');
-        afficherSucces(document.getElementById('f-prenom').value.trim(), result.url);
-      } else {
-        if(tentative>=3){ document.getElementById('loaderOverlay').classList.remove('active'); btn.disabled=false; toast('Erreur : '+(result.error||'Réessaie dans un instant')); }
-        else{ document.getElementById('loaderTxt').textContent='Tentative '+(tentative+1)+'/3…'; await new Promise(r=>setTimeout(r,2500)); }
+      const data=await res.json();
+      if(data.success){
+        ok2=true;
+        document.getElementById('loader').classList.remove('on');
+        afficherSucces(document.getElementById('f-prenom').value.trim(),data.url);
+      }else{
+        if(t>=3){document.getElementById('loader').classList.remove('on');btn.disabled=false;toast('Erreur : '+(data.error||'Réessaie dans un instant'));}
+        else{document.getElementById('loaderTxt').textContent='Tentative '+(t+1)+'/3…';await pause(2500);}
       }
-    }catch(err){
-      if(tentative>=3){ document.getElementById('loaderOverlay').classList.remove('active'); btn.disabled=false; toast('Connexion lente — réessaie dans quelques secondes'); }
-      else{ document.getElementById('loaderTxt').textContent='Reconnexion…'; await new Promise(r=>setTimeout(r,3000)); }
+    }catch(e){
+      if(t>=3){document.getElementById('loader').classList.remove('on');btn.disabled=false;toast('Connexion lente — réessaie');}
+      else{document.getElementById('loaderTxt').textContent='Reconnexion…';await pause(3000);}
     }
   }
 }
+function pause(ms){return new Promise(r=>setTimeout(r,ms));}
 
 function afficherSucces(prenom,url){
   try{localStorage.setItem('aa_client_url',url);localStorage.setItem('aa_client_prenom',prenom);}catch(e){}
-  document.getElementById('mainApp').style.display='none';
-  document.getElementById('successScreen').classList.add('show');
-  document.getElementById('successPrenom').textContent=prenom;
-  document.getElementById('successUrl').textContent=url;
+  document.getElementById('landing').style.display='none';
+  document.getElementById('formApp').style.display='none';
+  document.getElementById('successScreen').classList.add('on');
+  document.getElementById('sPrenom').textContent=prenom;
+  document.getElementById('sUrl').textContent=url;
   document.getElementById('btnGo').onclick=()=>window.location.href=url;
 }
 
-// GUIDE PWA DÉTAILLÉ NOVICE
-function ouvrirGuidePWA(){
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isAndroid=/android/i.test(navigator.userAgent);
-  let html='';
-
-  if(isIOS){
-    html=`
-    <div class="pwa-step"><div class="pwa-num">1</div><div class="pwa-sc">
-      <div class="pwa-st">Ouvre cette page dans Safari</div>
-      <div class="pwa-sd">L'installation fonctionne uniquement depuis Safari sur iPhone/iPad. Si tu utilises Chrome ou un autre navigateur, copie l'adresse dans la barre en haut, ouvre Safari et colle-la.</div>
-      <div class="pwa-info">📍 Regarde la barre tout en haut de ton écran — c'est là que se trouve l'adresse.</div>
-    </div></div>
-    <div class="pwa-step"><div class="pwa-num">2</div><div class="pwa-sc">
-      <div class="pwa-st">Appuie sur l'icône Partager en bas</div>
-      <div class="pwa-sd">En bas au centre de Safari, tu vois un carré avec une flèche qui pointe vers le haut ↑. Appuie dessus — c'est le bouton de partage.</div>
-      <div class="pwa-info">📍 Ce n'est pas le bouton "partager" habituel — c'est celui en bas de l'écran, pas en haut.</div>
-    </div></div>
-    <div class="pwa-step"><div class="pwa-num">3</div><div class="pwa-sc">
-      <div class="pwa-st">Choisis "Sur l'écran d'accueil"</div>
-      <div class="pwa-sd">Dans le menu qui s'ouvre, fais défiler vers le bas jusqu'à voir "Sur l'écran d'accueil" avec un carré et un +. Appuie dessus.</div>
-      <div class="pwa-info">📍 Si tu ne la vois pas immédiatement, fais défiler la liste — elle est là.</div>
-    </div></div>
-    <div class="pwa-step"><div class="pwa-num">4</div><div class="pwa-sc">
-      <div class="pwa-st">Appuie sur "Ajouter" en haut à droite</div>
-      <div class="pwa-sd">Un écran de confirmation avec le nom "Attractor" apparaît. Appuie sur "Ajouter" en haut à droite — c'est terminé. L'icône apparaît sur ton écran d'accueil.</div>
-    </div></div>`;
-  } else if(isAndroid){
-    html=`
-    <div class="pwa-step"><div class="pwa-num">1</div><div class="pwa-sc">
-      <div class="pwa-st">Ouvre dans Google Chrome</div>
-      <div class="pwa-sd">L'installation fonctionne le mieux depuis Chrome sur Android. Si tu utilises un autre navigateur, copie l'adresse et ouvre-la dans Chrome.</div>
-    </div></div>
-    <div class="pwa-step"><div class="pwa-num">2</div><div class="pwa-sc">
-      <div class="pwa-st">Appuie sur les 3 points ⋮ en haut à droite</div>
-      <div class="pwa-sd">En haut à droite de Chrome, tu vois trois points verticaux. Appuie dessus pour ouvrir le menu des options.</div>
-    </div></div>
-    <div class="pwa-step"><div class="pwa-num">3</div><div class="pwa-sc">
-      <div class="pwa-st">Cherche "Ajouter à l'écran d'accueil"</div>
-      <div class="pwa-sd">Dans le menu, cherche "Ajouter à l'écran d'accueil" ou "Installer l'application". Appuie dessus.</div>
-      <div class="pwa-info">📍 Si tu ne la vois pas en haut, fais défiler le menu vers le bas.</div>
-    </div></div>
-    <div class="pwa-step"><div class="pwa-num">4</div><div class="pwa-sc">
-      <div class="pwa-st">Confirme en appuyant sur "Ajouter"</div>
-      <div class="pwa-sd">Une fenêtre avec "Attractor" apparaît. Appuie sur "Ajouter" ou "Installer" — l'icône est maintenant sur ton écran d'accueil.</div>
-    </div></div>`;
-  } else {
-    html=`
-    <div class="pwa-step"><div class="pwa-num">📱</div><div class="pwa-sc">
-      <div class="pwa-st">Ouvre cette page depuis ton smartphone</div>
-      <div class="pwa-sd">Pour installer Attractor comme une appli, ouvre cette page depuis ton iPhone (Safari) ou ton Android (Chrome). Le guide d'installation détaillé apparaîtra ici.</div>
-    </div></div>`;
+function ouvrirPWA(){
+  const iOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const android=/android/i.test(navigator.userAgent);
+  let h='';
+  if(iOS){
+    h=`<div class="pwa-step"><div class="pwa-num">1</div><div class="pwa-sc"><div class="pwa-st">Ouvre dans Safari</div><div class="pwa-sd">L'installation fonctionne uniquement depuis Safari sur iPhone/iPad.</div><div class="pwa-note">📍 Si tu utilises Chrome, copie l'adresse et ouvre-la dans Safari.</div></div></div><div class="pwa-step"><div class="pwa-num">2</div><div class="pwa-sc"><div class="pwa-st">Appuie sur l'icône Partager ↑</div><div class="pwa-sd">En bas au centre de Safari — un carré avec une flèche vers le haut.</div></div></div><div class="pwa-step"><div class="pwa-num">3</div><div class="pwa-sc"><div class="pwa-st">Choisis "Sur l'écran d'accueil"</div><div class="pwa-sd">Fais défiler le menu vers le bas jusqu'à voir cette option.</div></div></div><div class="pwa-step"><div class="pwa-num">4</div><div class="pwa-sc"><div class="pwa-st">Appuie sur "Ajouter"</div><div class="pwa-sd">L'icône Attractor apparaît sur ton écran d'accueil.</div></div></div>`;
+  }else if(android){
+    h=`<div class="pwa-step"><div class="pwa-num">1</div><div class="pwa-sc"><div class="pwa-st">Ouvre dans Chrome</div><div class="pwa-sd">Fonctionne le mieux depuis Google Chrome sur Android.</div></div></div><div class="pwa-step"><div class="pwa-num">2</div><div class="pwa-sc"><div class="pwa-st">Appuie sur ⋮ en haut à droite</div><div class="pwa-sd">Ouvre le menu des options Chrome.</div></div></div><div class="pwa-step"><div class="pwa-num">3</div><div class="pwa-sc"><div class="pwa-st">Choisis "Ajouter à l'écran d'accueil"</div><div class="pwa-sd">Ou "Installer l'application" selon ta version.</div></div></div><div class="pwa-step"><div class="pwa-num">4</div><div class="pwa-sc"><div class="pwa-st">Confirme en appuyant sur "Ajouter"</div><div class="pwa-sd">L'icône est maintenant sur ton écran d'accueil.</div></div></div>`;
+  }else{
+    h=`<div class="pwa-step"><div class="pwa-num">📱</div><div class="pwa-sc"><div class="pwa-st">Ouvre depuis ton smartphone</div><div class="pwa-sd">Ouvre cette page depuis Safari (iPhone) ou Chrome (Android) pour voir le guide d'installation.</div></div></div>`;
   }
-
-  html+=`<div class="pwa-tip"><strong>✅ Aucun téléchargement depuis l'App Store ou Play Store.</strong><br>Attractor est une Progressive Web App (PWA) — elle fonctionne exactement comme une vraie appli, toujours à jour, sans occuper d'espace de stockage.</div>`;
-
-  document.getElementById('pwaStepsContent').innerHTML=html;
-  document.getElementById('pwaOverlay').classList.add('active');
+  h+=`<div class="pwa-tip"><strong>✅ Aucun App Store, aucun Play Store.</strong><br>Attractor est une Progressive Web App — toujours à jour, zéro espace de stockage.</div>`;
+  document.getElementById('pwaContent').innerHTML=h;
+  document.getElementById('pwaOverlay').classList.add('on');
 }
-
-function fermerGuidePWA(){ document.getElementById('pwaOverlay').classList.remove('active'); }
+function fermerPWA(){document.getElementById('pwaOverlay').classList.remove('on');}
 
 function toast(msg){
-  const existing=document.querySelector('.toast'); if(existing) existing.remove();
-  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
-  document.body.appendChild(t); setTimeout(()=>{if(t.parentNode)t.remove();},3500);
+  document.querySelector('.toast')?.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3500);
 }
 </script>
 </body>
