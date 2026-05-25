@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#070707">
+<title>Attractor Assists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VARIABLES & RESET
+============================================================ */
+:root {
+  --gold: #C9A84C;
+  --gold-dim: #8B6F2E;
+  --gold-glow: rgba(201,168,76,0.08);
+  --bordeaux: #8B2020;
+  --black: #070707;
+  --s1: #0A0A0A;
+  --s2: #0F0F0F;
+  --s3: #161616;
+  --s4: #1E1E1E;
+  --s5: #242424;
+  --text: #E8E0D0;
+  --text-dim: #7A7060;
+  --text-muted: #4A4035;
+  --border: rgba(201,168,76,0.1);
+  --border2: rgba(201,168,76,0.2);
+  --green: #2D6A4F;
+  --green-l: #52B788;
+  --nav-h: 64px;
+  --header-h: 58px;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --mono: 'DM Mono', 'Courier New', monospace;
+}
+body.light {
+  --black: #F8F5F0;
+  --s1: #F0EDE8;
+  --s2: #FFFFFF;
+  --s3: #F5F2ED;
+  --s4: #EAE7E2;
+  --s5: #E0DDD8;
+  --text: #1A1A1A;
+  --text-dim: #5A5040;
+  --text-muted: #9A9080;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.15);
+  --gold: #B8922A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:var(--mono);background:var(--black);color:var(--text)}
+button{border:none;background:none;cursor:pointer;font-family:var(--mono)}
+input,textarea{font-family:var(--mono);outline:none}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:var(--black)}
+#header{height:var(--header-h);background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;z-index:10}
+#content{flex:1;overflow:hidden;position:relative}
+#nav{height:var(--nav-h);background:var(--s1);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+
+/* ============================================================
+   HEADER
+============================================================ */
+.header-left{display:flex;align-items:center;gap:10px}
+.header-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--black);font-weight:500;font-family:var(--serif);flex-shrink:0}
+.header-name{font-family:var(--serif);font-size:17px;color:var(--text);letter-spacing:.01em}
+.header-sub{font-size:9px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.header-badge{font-size:8px;background:var(--gold-glow);border:1px solid var(--border2);color:var(--gold);padding:3px 8px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+
+/* ============================================================
+   NAV BOTTOM
+============================================================ */
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;background:none;border:none;padding:0;transition:opacity .15s}
+.nav-btn svg{width:20px;height:20px;stroke:var(--text-muted);stroke-width:1.5;fill:none;transition:stroke .15s}
+.nav-btn span{font-size:8px;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;transition:color .15s}
+.nav-btn.active svg{stroke:var(--gold)}
+.nav-btn.active span{color:var(--gold)}
+
+/* ============================================================
+   ZONES
+============================================================ */
+.zone{display:none;position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.zone.on{display:block}
+
+/* ============================================================
+   ZONE CHAT
+============================================================ */
+#zone-chat{display:none;flex-direction:column;position:absolute;inset:0}
+#zone-chat.on{display:flex}
+#chat-messages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 8px;display:flex;flex-direction:column;gap:12px}
+.bubble-wrap{display:flex;gap:8px;align-items:flex-end}
+.bubble-wrap.usr{justify-content:flex-end}
+.bubble-ico{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--black);font-family:var(--serif);flex-shrink:0}
+.bubble{padding:11px 13px;border-radius:0 14px 14px 14px;font-size:13px;line-height:1.65;max-width:85%;background:var(--s2);border:1px solid var(--border);color:var(--text)}
+.bubble.usr{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:var(--black);border-radius:14px 0 14px 14px;border:none;font-weight:500;max-width:78%}
+.bubble-time{font-size:9px;color:var(--text-muted);margin-top:3px;padding:0 4px}
+.typing-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin:0 2px;animation:typing .8s infinite alternate}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{from{opacity:.3;transform:translateY(0)}to{opacity:1;transform:translateY(-3px)}}
+
+/* Chat input */
+#chat-input-area{background:var(--s1);border-top:1px solid var(--border);padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+#chat-input{flex:1;background:var(--s3);border:1px solid var(--border);border-radius:20px;padding:10px 14px;font-size:13px;color:var(--text);resize:none;max-height:100px;min-height:40px;line-height:1.4}
+#chat-input::placeholder{color:var(--text-muted)}
+#chat-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+#chat-send:active{opacity:.8}
+#chat-send svg{width:16px;height:16px;stroke:var(--black);stroke-width:2;fill:none}
+
+/* Copy button */
+.btn-copy{display:inline-flex;align-items:center;gap:5px;background:var(--s3);border:1px solid var(--border);color:var(--gold);font-size:10px;padding:4px 10px;border-radius:20px;margin-top:6px;cursor:pointer;font-family:var(--mono);letter-spacing:.04em}
+.btn-copy svg{width:11px;height:11px;stroke:var(--gold);stroke-width:2;fill:none}
+
+/* ============================================================
+   ZONE MON ESPACE
+============================================================ */
+.espace-nav{display:flex;gap:8px;padding:14px;overflow-x:auto;scrollbar-width:none}
+.espace-nav::-webkit-scrollbar{display:none}
+.esp-tab{padding:7px 14px;border-radius:20px;font-size:11px;letter-spacing:.04em;white-space:nowrap;cursor:pointer;background:var(--s2);border:1px solid var(--border);color:var(--text-dim);transition:all .15s}
+.esp-tab.active{background:var(--gold-glow);border-color:var(--border2);color:var(--gold)}
+
+.espace-content{padding:0 14px 100px}
+.section-title{font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:14px;padding-top:4px}
+.card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;position:relative}
+.card::before{content:'';position:absolute;top:0;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* Agenda */
+.agenda-semaine{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.agenda-jour{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.agenda-jour-label{font-size:9px;color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase}
+.agenda-jour-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-dim);transition:all .15s}
+.agenda-jour-num.today{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:var(--black);font-weight:500}
+.agenda-jour-num.has-event::after{content:'';width:4px;height:4px;border-radius:50%;background:var(--gold);position:absolute;bottom:2px}
+.agenda-jour-num:active{background:var(--s3)}
+.rdv-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.rdv-item:last-child{border-bottom:none}
+.rdv-heure{font-size:11px;color:var(--gold);letter-spacing:.04em;min-width:36px;margin-top:1px}
+.rdv-titre{font-size:12px;color:var(--text);line-height:1.4}
+.rdv-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.btn-add{width:100%;padding:10px;border:1px dashed var(--border2);border-radius:10px;color:var(--gold);font-size:12px;letter-spacing:.04em;cursor:pointer;background:none;font-family:var(--mono);transition:background .15s;margin-top:4px}
+.btn-add:active{background:var(--gold-glow)}
+
+/* Todo */
+.todo-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.todo-item:last-child{border-bottom:none}
+.todo-check{width:20px;height:20px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s}
+.todo-check.done{background:var(--gold);border-color:var(--gold)}
+.todo-check.done svg{display:block}
+.todo-check svg{display:none;width:11px;height:11px;stroke:var(--black);stroke-width:2.5;fill:none}
+.todo-label{font-size:12px;color:var(--text);line-height:1.4}
+.todo-label.done{text-decoration:line-through;color:var(--text-muted)}
+.todo-meta{font-size:10px;color:var(--text-muted);margin-top:2px}
+.priority-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:20px;margin-left:6px;letter-spacing:.04em}
+.priority-haute{background:rgba(139,32,32,.15);color:#E05252}
+.priority-normale{background:var(--gold-glow);color:var(--gold)}
+.priority-basse{background:rgba(45,106,79,.15);color:var(--green-l)}
+
+/* Profil */
+.profil-field{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.profil-field:last-child{border-bottom:none}
+.profil-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.profil-value{font-size:13px;color:var(--text)}
+.profil-edit{font-size:10px;color:var(--gold);letter-spacing:.04em;cursor:pointer}
+
+/* Armoire */
+.dossier-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dossier-card{background:var(--s3);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:border-color .15s}
+.dossier-card:active{border-color:var(--border2)}
+.dossier-icon{font-size:22px;margin-bottom:6px}
+.dossier-name{font-size:11px;color:var(--text);letter-spacing:.02em}
+.dossier-count{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* ============================================================
+   ZONE PARCOURS
+============================================================ */
+.parcours-hero{padding:20px 14px 14px}
+.parcours-title{font-family:var(--serif);font-size:24px;color:var(--text);margin-bottom:4px}
+.parcours-sub{font-size:11px;color:var(--text-dim);line-height:1.6}
+.parcours-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:18px;margin:0 14px 12px;cursor:pointer;transition:border-color .15s;position:relative;overflow:hidden}
+.parcours-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.parcours-card:active{border-color:var(--border2)}
+.parcours-card-title{font-family:var(--serif);font-size:17px;color:var(--text);margin-bottom:4px}
+.parcours-card-desc{font-size:11px;color:var(--text-dim);line-height:1.6}
+.parcours-card-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.parcours-status{font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.parcours-status.todo{color:var(--text-muted)}
+.parcours-status.inprogress{color:var(--gold)}
+.parcours-status.done{color:var(--green-l)}
+.parcours-pct{font-size:11px;color:var(--gold)}
+.prog-bar{height:2px;background:var(--s4);border-radius:1px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-dim));border-radius:1px;transition:width .4s}
+
+/* Médailles */
+.medailles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 14px 14px}
+.medaille{display:flex;flex-direction:column;align-items:center;gap:4px}
+.medaille-ico{width:48px;height:48px;border-radius:50%;background:var(--s3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .15s}
+.medaille-ico.earned{background:var(--gold-glow);border-color:var(--border2)}
+.medaille-label{font-size:9px;color:var(--text-muted);text-align:center;letter-spacing:.02em}
+.medaille-ico.earned + .medaille-label{color:var(--gold)}
+
+/* ============================================================
+   ZONE COMMUNAUTE
+============================================================ */
+.communaute-header{padding:20px 14px 14px}
+.communaute-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin:0 14px 10px}
+.communaute-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.communaute-av{width:36px;height:36px;border-radius:50%;background:var(--s4);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px;color:var(--gold);flex-shrink:0}
+.communaute-name{font-size:13px;color:var(--text);font-weight:500}
+.communaute-activite{font-size:10px;color:var(--text-dim);margin-top:1px}
+.communaute-besoin{font-size:12px;color:var(--text-dim);line-height:1.6;background:var(--s3);border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.btn-wa{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border2);border-radius:20px;color:var(--gold);font-size:11px;letter-spacing:.04em;cursor:pointer;background:none;font-family:var(--mono);width:fit-content}
+.btn-wa svg{width:14px;height:14px;stroke:var(--gold);stroke-width:1.5;fill:none}
+.btn-publier{display:block;margin:0 14px 14px;width:calc(100% - 28px);padding:13px;border:1px solid var(--border2);border-radius:12px;color:var(--gold);font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;background:var(--gold-glow);font-family:var(--mono);text-align:center}
+
+/* ============================================================
+   ZONE INFO
+============================================================ */
+.info-section{padding:16px 14px;border-bottom:1px solid var(--border)}
+.info-section-title{font-family:var(--serif);font-size:18px;color:var(--text);margin-bottom:12px}
+.info-item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.info-item:last-child{border-bottom:none}
+.info-item-label{font-size:12px;color:var(--text)}
+.info-item-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+.info-item-right{font-size:11px;color:var(--gold);letter-spacing:.04em}
+.app-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.app-card-left{display:flex;align-items:center;gap:10px}
+.app-icon{width:36px;height:36px;border-radius:10px;background:var(--s3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px}
+.app-name{font-size:12px;color:var(--text)}
+.app-desc{font-size:10px;color:var(--text-muted);margin-top:1px}
+.app-btn{font-size:10px;padding:5px 12px;border-radius:20px;letter-spacing:.04em;cursor:pointer;font-family:var(--mono)}
+.app-btn.active{background:var(--gold-glow);border:1px solid var(--border2);color:var(--gold)}
+.app-btn.available{background:var(--s3);border:1px solid var(--border);color:var(--text-dim)}
+.app-btn.soon{background:var(--s3);border:1px solid var(--border);color:var(--text-muted);cursor:default}
+
+/* Toggle thème */
+.theme-toggle{display:flex;background:var(--s3);border:1px solid var(--border);border-radius:20px;padding:3px}
+.theme-btn{padding:6px 16px;border-radius:16px;font-size:11px;letter-spacing:.04em;cursor:pointer;background:none;border:none;color:var(--text-muted);font-family:var(--mono);transition:all .2s}
+.theme-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:var(--black)}
+
+/* Forfait */
+.forfait-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
+.forfait-card.current{border-color:var(--gold)}
+.forfait-card.current::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-dim))}
+.forfait-name{font-family:var(--serif);font-size:16px;color:var(--text);margin-bottom:2px}
+.forfait-price{font-size:13px;color:var(--gold);margin-bottom:10px}
+.forfait-features{list-style:none;display:flex;flex-direction:column;gap:6px}
+.forfait-features li{font-size:11px;color:var(--text-dim);display:flex;align-items:center;gap:6px}
+.forfait-features li::before{content:'→';color:var(--gold);flex-shrink:0}
+.btn-upgrade{width:100%;margin-top:12px;padding:11px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border:none;border-radius:10px;color:var(--black);font-size:12px;font-weight:500;letter-spacing:.06em;cursor:pointer;font-family:var(--mono);text-transform:uppercase}
+
+/* ============================================================
+   ÉCRANS SPÉCIAUX
+============================================================ */
+/* Loading */
+#loading-screen{position:fixed;inset:0;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:1000;transition:opacity .4s}
+#loading-screen.hidden{opacity:0;pointer-events:none}
+.loading-logo{font-family:var(--serif);font-size:32px;color:var(--gold);letter-spacing:.04em}
+.loading-sub{font-size:10px;color:var(--text-muted);letter-spacing:.12em;text-transform:uppercase}
+.loading-dots{display:flex;gap:6px;margin-top:8px}
+.loading-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:ldot 1.2s infinite}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes ldot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* Erreur */
+.error-banner{background:rgba(139,32,32,.15);border:1px solid rgba(139,32,32,.3);border-radius:8px;padding:10px 14px;font-size:11px;color:#E05252;margin:10px 14px;display:none}
+
+/* Anamnese overlay */
+#anamnese-overlay{position:fixed;inset:0;background:var(--black);z-index:500;display:none;flex-direction:column}
+#anamnese-overlay.on{display:flex}
+.anamnese-header{padding:20px 16px 10px;background:var(--s1);border-bottom:1px solid var(--border)}
+.anamnese-logo{font-family:var(--serif);font-size:20px;color:var(--gold)}
+.anamnese-progress{height:2px;background:var(--s4);margin:12px 0 0;overflow:hidden}
+.anamnese-prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-dim));transition:width .4s}
+.anamnese-chat{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px}
+.anamnese-input-area{background:var(--s1);border-top:1px solid var(--border);padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:flex-end}
+.anamnese-input{flex:1;background:var(--s3);border:1px solid var(--border);border-radius:20px;padding:10px 14px;font-size:13px;color:var(--text);font-family:var(--mono)}
+.anamnese-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.anamnese-send svg{width:15px;height:15px;stroke:var(--black);stroke-width:2;fill:none}
+
+/* Chips suggestion */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{padding:6px 12px;border:1px solid var(--border2);border-radius:20px;font-size:11px;color:var(--gold);cursor:pointer;background:var(--gold-glow);font-family:var(--mono);letter-spacing:.02em;transition:background .15s}
+.chip:active{background:rgba(201,168,76,.2)}
+
+/* ============================================================
+   UTILITAIRES
+============================================================ */
+.gold{color:var(--gold)}
+.muted{color:var(--text-muted)}
+.label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.separator{height:1px;background:var(--border);margin:8px 0}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:12px;line-height:1.8}
+.empty-icon{font-size:32px;margin-bottom:10px;opacity:.4}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo">Attractor</div>
+  <div class="loading-sub">Chargement de ton assistant...</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+</div>
+
+<!-- ANAMNESE OVERLAY -->
+<div id="anamnese-overlay">
+  <div class="anamnese-header">
+    <div class="anamnese-logo">Attractor Assists</div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:4px">Prise de connaissance · <span id="anamnese-step">Étape 1</span></div>
+    <div class="anamnese-progress"><div class="anamnese-prog-fill" id="anamnese-prog" style="width:10%"></div></div>
+  </div>
+  <div class="anamnese-chat" id="anamnese-chat"></div>
+  <div class="anamnese-input-area">
+    <input class="anamnese-input" id="anamnese-input" placeholder="Réponds ici..." autocomplete="off">
+    <button class="anamnese-send" id="anamnese-send-btn">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div class="header-left">
+      <div class="header-avatar" id="header-avatar">A</div>
+      <div>
+        <div class="header-name" id="header-name">Attractor</div>
+        <div class="header-sub" id="header-sub">Ton assistant personnel</div>
+      </div>
+    </div>
+    <div class="header-badge" id="header-badge">ESSAI</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- CHAT -->
+    <div id="zone-chat" class="on">
+      <div id="chat-messages"></div>
+      <div id="chat-input-area">
+        <textarea id="chat-input" placeholder="Écris un message..." rows="1"></textarea>
+        <button id="chat-send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- MON ESPACE -->
+    <div id="zone-espace" class="zone">
+      <div class="espace-nav" id="espace-nav">
+        <button class="esp-tab active" data-esp="agenda">📅 Agenda</button>
+        <button class="esp-tab" data-esp="todo">✅ To-do</button>
+        <button class="esp-tab" data-esp="profil">👤 Mon Profil</button>
+        <button class="esp-tab" data-esp="couloir">🌟 Mon Couloir</button>
+        <button class="esp-tab" data-esp="digital">📊 Digital Manager</button>
+        <button class="esp-tab" data-esp="armoire">📂 Armoire</button>
+      </div>
+      <div class="espace-content">
+
+        <!-- AGENDA -->
+        <div id="esp-agenda">
+          <div class="card">
+            <div class="section-title">Mon Agenda</div>
+            <div class="agenda-semaine" id="agenda-semaine"></div>
+            <div class="separator"></div>
+            <div id="agenda-rdvs">
+              <div class="empty-state"><div class="empty-icon">📅</div>Aucun RDV aujourd'hui.<br>Dicte-moi un RDV dans le chat.</div>
+            </div>
+            <button class="btn-add" onclick="addRdvFromChat()">+ Ajouter via le chat →</button>
+          </div>
+        </div>
+
+        <!-- TODO -->
+        <div id="esp-todo" style="display:none">
+          <div class="card">
+            <div class="section-title">Ma To-do</div>
+            <div id="todo-list">
+              <div class="empty-state"><div class="empty-icon">✅</div>Aucune tâche en cours.<br>Dis-moi ce que tu dois faire.</div>
+            </div>
+            <button class="btn-add" onclick="addTodoFromChat()">+ Ajouter via le chat →</button>
+          </div>
+        </div>
+
+        <!-- PROFIL -->
+        <div id="esp-profil" style="display:none">
+          <div class="card">
+            <div class="section-title">Mon Profil</div>
+            <div id="profil-fields">
+              <div class="profil-field">
+                <div><div class="profil-label">Nom de l'assistant</div><div class="profil-value" id="pf-assistant">Attractor</div></div>
+                <div class="profil-edit" onclick="editField('nom_assistant')">Modifier</div>
+              </div>
+              <div class="profil-field">
+                <div><div class="profil-label">Ton préféré</div><div class="profil-value" id="pf-ton">Tutoiement</div></div>
+                <div class="profil-edit" onclick="editField('ton_prefere')">Modifier</div>
+              </div>
+              <div class="profil-field">
+                <div><div class="profil-label">Activité</div><div class="profil-value" id="pf-activite">—</div></div>
+                <div class="profil-edit" onclick="editField('activite')">Modifier</div>
+              </div>
+              <div class="profil-field">
+                <div><div class="profil-label">Canal principal</div><div class="profil-value" id="pf-canal">—</div></div>
+                <div class="profil-edit" onclick="editField('canal_principal')">Modifier</div>
+              </div>
+              <div class="profil-field">
+                <div><div class="profil-label">Zone</div><div class="profil-value" id="pf-zone">—</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="label" style="margin-bottom:10px">Objectifs financiers</div>
+            <div class="profil-field">
+              <div><div class="profil-label">CA actuel / mois</div><div class="profil-value" id="pf-ca">Non renseigné</div></div>
+              <div class="profil-edit" onclick="editField('ca_actuel')">Renseigner</div>
+            </div>
+            <div class="profil-field">
+              <div><div class="profil-label">Objectif 3 mois</div><div class="profil-value" id="pf-obj3">Non renseigné</div></div>
+              <div class="profil-edit" onclick="editField('objectif_3mois')">Renseigner</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MON COULOIR -->
+        <div id="esp-couloir" style="display:none">
+          <div class="card">
+            <div class="section-title">Mon Couloir ✦</div>
+            <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-bottom:14px">Ton bilan Ikigai · Ton positionnement · Ta zone de génie.</p>
+            <div id="couloir-content">
+              <div class="empty-state"><div class="empty-icon">🌟</div>Ton Couloir se construit dans le Parcours.<br>Lance #1dansmoncouloir pour commencer.</div>
+            </div>
+            <button class="btn-add" onclick="goToParcours('couloir')" style="margin-top:12px">Commencer #1dansmoncouloir →</button>
+          </div>
+        </div>
+
+        <!-- DIGITAL MANAGER -->
+        <div id="esp-digital" style="display:none">
+          <div class="card">
+            <div class="section-title">Mon Digital Manager</div>
+            <p style="font-size:12px;color:var(--text-dim);line-height:1.7;margin-bottom:14px">Disponible après le Parcours Ventes. Ton assistant analyse tes réseaux et surveille ta cible.</p>
+            <div id="digital-content">
+              <div class="empty-state"><div class="empty-icon">📊</div>Complete le Parcours Ventes pour activer<br>ton Digital Manager.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ARMOIRE -->
+        <div id="esp-armoire" style="display:none">
+          <div class="section-title" style="padding:4px 0 14px">Mon Armoire 📂</div>
+          <div class="dossier-grid" id="armoire-grid">
+            <div class="dossier-card" onclick="ouvrirDossier('Documents')">
+              <div class="dossier-icon">📄</div>
+              <div class="dossier-name">Documents</div>
+              <div class="dossier-count" id="count-Documents">0 fichier</div>
+            </div>
+            <div class="dossier-card" onclick="ouvrirDossier('Messages')">
+              <div class="dossier-icon">💬</div>
+              <div class="dossier-name">Messages prêts</div>
+              <div class="dossier-count" id="count-Messages">0 message</div>
+            </div>
+            <div class="dossier-card" onclick="ouvrirDossier('Clients')">
+              <div class="dossier-icon">🤝</div>
+              <div class="dossier-name">Clients</div>
+              <div class="dossier-count" id="count-Clients">0 fiche</div>
+            </div>
+            <div class="dossier-card" onclick="ouvrirDossier('Business')">
+              <div class="dossier-icon">💼</div>
+              <div class="dossier-name">Business</div>
+              <div class="dossier-count" id="count-Business">0 document</div>
+            </div>
+            <div class="dossier-card" onclick="ouvrirDossier('Veille')">
+              <div class="dossier-icon">🔍</div>
+              <div class="dossier-name">Veille</div>
+              <div class="dossier-count" id="count-Veille">0 rapport</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PARCOURS -->
+    <div id="zone-parcours" class="zone">
+      <div class="parcours-hero">
+        <div class="parcours-title">Mon Parcours</div>
+        <div class="parcours-sub">3 étapes pour construire ton business avec méthode.</div>
+      </div>
+
+      <div class="parcours-card" onclick="lancerCouloir()">
+        <div class="parcours-card-title">#1dansmoncouloir</div>
+        <div class="parcours-card-desc">22 questions inspirées de l'Ikigai pour trouver ta zone de génie et ton positionnement unique.</div>
+        <div class="parcours-card-meta">
+          <span class="parcours-status todo" id="couloir-status">À commencer</span>
+          <span class="parcours-pct" id="couloir-pct">0/22</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="couloir-prog" style="width:0%"></div></div>
+      </div>
+
+      <div class="parcours-card" onclick="lancerVentes()">
+        <div class="parcours-card-title">Booster mes ventes</div>
+        <div class="parcours-card-desc">4 modules pour connaître ta cible, construire ton message, créer ton offre et lancer ton plan 30 jours.</div>
+        <div class="parcours-card-meta">
+          <span class="parcours-status todo" id="ventes-status">À commencer</span>
+          <span class="parcours-pct" id="ventes-pct">0/4 modules</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="ventes-prog" style="width:0%"></div></div>
+      </div>
+
+      <div style="padding:4px 14px 14px">
+        <div class="label" style="margin-bottom:12px">Mes médailles</div>
+        <div class="medailles-grid">
+          <div class="medaille"><div class="medaille-ico" id="med-0">🌱</div><div class="medaille-label">Départ</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-1">⏰</div><div class="medaille-label">Organisé</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-2">🗂️</div><div class="medaille-label">Structuré</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-3">🎯</div><div class="medaille-label">Cible</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-4">✍️</div><div class="medaille-label">Voix</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-5">💎</div><div class="medaille-label">Offre</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-6">🚀</div><div class="medaille-label">Décollage</div></div>
+          <div class="medaille"><div class="medaille-ico" id="med-7">👑</div><div class="medaille-label">Couloir</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMUNAUTE -->
+    <div id="zone-communaute" class="zone">
+      <div class="communaute-header">
+        <div class="section-title">Communauté</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.6">Entrepreneurs Attractor — Collaborations & Partenariats</div>
+      </div>
+      <button class="btn-publier" onclick="publierDemande()">+ Publier une demande de collaboration</button>
+      <div id="communaute-list">
+        <div class="empty-state"><div class="empty-icon">🤝</div>Aucune demande pour l'instant.<br>Sois le premier à publier !</div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div id="zone-info" class="zone">
+
+      <!-- Comment ça marche -->
+      <div class="info-section">
+        <div class="info-section-title">Comment ça marche</div>
+        <div class="info-item">
+          <div><div class="info-item-label">💬 Chat</div><div class="info-item-sub">Parle à ton assistant · il répond en connaissant ton business</div></div>
+        </div>
+        <div class="info-item">
+          <div><div class="info-item-label">📋 Mon Espace</div><div class="info-item-sub">Agenda · To-do · Profil · Armoire de documents</div></div>
+        </div>
+        <div class="info-item">
+          <div><div class="info-item-label">🚀 Parcours</div><div class="info-item-sub">Ikigai + Méthode Ventes ATTRACTOR en 4 modules</div></div>
+        </div>
+        <div class="info-item">
+          <div><div class="info-item-label">🤝 Communauté</div><div class="info-item-sub">Collaborations et partenariats entre entrepreneurs</div></div>
+        </div>
+      </div>
+
+      <!-- Apps sœurs -->
+      <div class="info-section">
+        <div class="info-section-title">Mes Applications</div>
+        <div class="app-card">
+          <div class="app-card-left">
+            <div class="app-icon">⚡</div>
+            <div><div class="app-name">Attractor Assists</div><div class="app-desc">Ton assistant IA personnel</div></div>
+          </div>
+          <div class="app-btn active">Actif</div>
+        </div>
+        <div class="app-card">
+          <div class="app-card-left">
+            <div class="app-icon">🚚</div>
+            <div><div class="app-name">Livraison Pro</div><div class="app-desc">Gestion livraisons & missions</div></div>
+          </div>
+          <button class="app-btn available" onclick="window.open('https://livraison-pro.agenceattractor.com','_blank')">Accéder →</button>
+        </div>
+        <div class="app-card">
+          <div class="app-card-left">
+            <div class="app-icon">💎</div>
+            <div><div class="app-name">Fidelys</div><div class="app-desc">Fidélisation clients avancée</div></div>
+          </div>
+          <div class="app-btn soon">Bientôt</div>
+        </div>
+        <div class="app-card">
+          <div class="app-card-left">
+            <div class="app-icon">📊</div>
+            <div><div class="app-name">Dashboard Objectifs</div><div class="app-desc">Tes KPIs · Ta progression</div></div>
+          </div>
+          <div class="app-btn soon">Bientôt</div>
+        </div>
+      </div>
+
+      <!-- Mon forfait -->
+      <div class="info-section">
+        <div class="info-section-title">Mon Forfait</div>
+        <div id="forfait-info">
+          <div class="forfait-card current">
+            <div class="forfait-name" id="forfait-name">Accès Gratuit</div>
+            <div class="forfait-price" id="forfait-price">0 FCFA / mois</div>
+            <ul class="forfait-features">
+              <li>20 messages par jour</li>
+              <li>Briefing quotidien</li>
+              <li>To-do basique</li>
+              <li>#1dansmoncouloir</li>
+            </ul>
+          </div>
+          <div class="forfait-card">
+            <div class="forfait-name">Bras Droit</div>
+            <div class="forfait-price" id="bras-droit-price">5 000 FCFA / mois</div>
+            <ul class="forfait-features">
+              <li>Messages illimités</li>
+              <li>Agenda interactif</li>
+              <li>Armoire complète</li>
+              <li>Parcours ventes</li>
+              <li>Mon Couloir PDF</li>
+            </ul>
+            <button class="btn-upgrade" onclick="upgradeFormufe('BRAS_DROIT')">Passer au Bras Droit →</button>
+          </div>
+          <div class="forfait-card">
+            <div class="forfait-name">Digital Manager</div>
+            <div class="forfait-price" id="digital-price">15 000 FCFA / mois</div>
+            <ul class="forfait-features">
+              <li>Tout Bras Droit</li>
+              <li>Analyse réseaux sociaux</li>
+              <li>Veille concurrentielle</li>
+              <li>Calendrier éditorial auto</li>
+              <li>Rapport digital vendredi</li>
+            </ul>
+            <button class="btn-upgrade" onclick="upgradeFormufe('DIGITAL_MANAGER')">Passer au Digital Manager →</button>
+          </div>
+        </div>
+        <div style="height:10px;font-size:10px;color:var(--text-muted);text-align:center;padding:14px 0">
+          <span id="nb-msg-info">0</span> messages ce mois · Quota : <span id="quota-info">300</span>
+        </div>
+      </div>
+
+      <!-- Thème -->
+      <div class="info-section">
+        <div class="info-section-title">Apparence</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+          <div style="font-size:12px;color:var(--text)">Thème de l'interface</div>
+          <div class="theme-toggle">
+            <button class="theme-btn active" id="theme-dark" onclick="setTheme('dark')">🌙 Sombre</button>
+            <button class="theme-btn" id="theme-light" onclick="setTheme('light')">☀️ Clair</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- end content -->
+
+  <!-- NAV -->
+  <div id="nav">
+    <button class="nav-btn active" data-zone="chat" onclick="switchZone('chat')">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Chat</span>
+    </button>
+    <button class="nav-btn" data-zone="espace" onclick="switchZone('espace')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Mon Espace</span>
+    </button>
+    <button class="nav-btn" data-zone="parcours" onclick="switchZone('parcours')">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>Parcours</span>
+    </button>
+    <button class="nav-btn" data-zone="communaute" onclick="switchZone('communaute')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Communauté</span>
+    </button>
+    <button class="nav-btn" data-zone="info" onclick="switchZone('info')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>Info</span>
+    </button>
+  </div>
+
+</div><!-- end app -->
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+var SURL = 'https://script.google.com/macros/s/AKfycbz5czKhDzqf1DZmo1JFaTxMvt8Hqcf0Jr0A6JIBxyWhqIVwXoG-VTD8I1SJStr_I7Ajqw/exec';
+var CLIENT_ID = '';
+var CLIENT_DATA = {};
+var PROFIL_DATA = {};
+var HIST = [];
+var HIST_MAX = 6;
+var CURRENT_ZONE = 'chat';
+var CURRENT_ESP = 'agenda';
+var IS_SENDING = false;
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', function() {
+  var theme = localStorage.getItem('aa_theme') || 'dark';
+  setTheme(theme);
+  var id = getParam('id');
+  if (!id) { showError('ID manquant dans l\'URL'); hideLoading(); return; }
+  CLIENT_ID = id;
+  chargerClient();
+});
+
+function getParam(name) {
+  var url = new URL(window.location.href);
+  return url.searchParams.get(name) || '';
+}
+
+function hideLoading() {
+  var el = document.getElementById('loading-screen');
+  if (el) { el.classList.add('hidden'); setTimeout(function(){ el.style.display='none'; }, 400); }
+}
+
+// ============================================================
+// CHARGER CLIENT
+// ============================================================
+function chargerClient() {
+  callAPI({ action: 'getAssistant', id: CLIENT_ID }, function(data) {
+    if (!data.success) { showError('Compte introuvable. Vérifie ton lien.'); hideLoading(); return; }
+    CLIENT_DATA = data;
+// Header
+    var nomAss = data.nom_assistant || 'Attractor';
+    document.getElementById('header-name').textContent = nomAss;
+    document.getElementById('header-avatar').textContent = nomAss.charAt(0).toUpperCase();
+    document.getElementById('header-sub').textContent = 'Assistant de ' + data.prenom;
+    document.getElementById('header-badge').textContent = data.formule || 'ESSAI';
+    document.getElementById('nb-msg-info').textContent = data.nb_messages || 0;
+    document.getElementById('quota-info').textContent = data.quota_mensuel || 300;
+
+    if (data.zone === 'EU') {
+      document.getElementById('bras-droit-price').textContent = '15€ / mois';
+      document.getElementById('digital-price').textContent = '45€ / mois';
+    }
+
+    document.getElementById('pf-assistant').textContent = nomAss;
+    document.getElementById('pf-ton').textContent = data.ton_prefere || 'Tutoiement';
+    document.getElementById('pf-zone').textContent = data.zone || 'CI';
+
+    hideLoading();
+
+    var anamneseFait = localStorage.getItem('aa_anamnese_' + CLIENT_ID);
+    if (!anamneseFait) {
+      setTimeout(lancerAnamnese, 600);
+    } else {
+      setTimeout(function() {
+        var nomAssistant = data.nom_assistant || 'Attractor';
+        addBubble('bot', 'Bonjour ' + data.prenom + ' 👋\nJe suis ' + nomAssistant + ', ton assistant personnel.\nComment puis-je t\'aider aujourd\'hui ?');
+      }, 300);
+    }
+
+    chargerAgenda();
+    chargerTodo();
+    chargerCommunaute();
+    construireCalendrier();
+  });
+}
+   
+// ============================================================
+// ANAMNESE CONVERSATIONNELLE
+// ============================================================
+var ANAMNESE_QUESTIONS = [];
+var ANAMNESE_STEP = 0;
+var ANAMNESE_REPONSES = {};
+
+function lancerAnamnese() {
+  var profil = CLIENT_DATA.profil_situation || 'entrepreneur';
+  var prenom = CLIENT_DATA.prenom || '';
+
+  ANAMNESE_QUESTIONS = buildAnamneseQuestions(profil, prenom);
+  ANAMNESE_STEP = 0;
+
+  document.getElementById('anamnese-overlay').classList.add('on');
+  var chat = document.getElementById('anamnese-chat');
+  chat.innerHTML = '';
+
+  addAnamneseBubble('bot', 'Bonjour ' + prenom + ' 👋\n\nJe suis ton assistant Attractor.\nJe ne te connais pas encore — et un assistant qui ne te connaît pas ne peut pas vraiment t\'aider.\n\nOn va faire connaissance. 5 minutes. Quelques questions.\n\nPremière chose : comment tu aimerais m\'appeler ?');
+  updateAnamneseProgress();
+
+  document.getElementById('anamnese-send-btn').onclick = envoyerAnamnese;
+  document.getElementById('anamnese-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); envoyerAnamnese(); }
+  });
+}
+
+function buildAnamneseQuestions(profil, prenom) {
+  var base = [
+    { key: 'nom_assistant', question: 'Comment tu aimerais m\'appeler ?' },
+    { key: 'ton_prefere', question: 'Tu préfères qu\'on se tutoie ou qu\'on se vouvoie ?', chips: ['Tutoyer', 'Vouvoyer'] },
+  ];
+
+  if (profil === 'entrepreneur') {
+    base = base.concat([
+      { key: 'activite', question: 'Décris-moi ton activité en 2-3 phrases. Qu\'est-ce que tu fais exactement ?' },
+      { key: 'canal_principal', question: 'Tu utilises quoi principalement pour ton business ?', chips: ['WhatsApp', 'Email', 'Instagram', 'Appels'] },
+      { key: 'niveau_organisation', question: 'Comment tu t\'organises en ce moment ?', chips: ['Agenda digital', 'Cahier', 'Tout dans ma tête', 'Post-it'] },
+      { key: 'maitrise_temps', question: 'Tu maîtrises bien ton temps ?', chips: ['Oui plutôt', 'Parfois', 'Non je cours', 'Tout est flou'] },
+    ]);
+  } else if (profil === 'salarie_side') {
+    base = base.concat([
+      { key: 'activite', question: 'Sur quel projet tu travailles en parallèle de ton emploi ?' },
+      { key: 'canal_principal', question: 'Tu communiques surtout comment ?', chips: ['WhatsApp', 'Email', 'Appels', 'Instagram'] },
+      { key: 'niveau_organisation', question: 'Comment tu gères ton temps entre le job et le projet ?', chips: ['Agenda', 'À la volée', 'J\'essaie', 'Chaos total'] },
+    ]);
+  } else {
+    base = base.concat([
+      { key: 'activite', question: 'Qu\'est-ce qui t\'amène à vouloir un assistant ?' },
+      { key: 'canal_principal', question: 'Tu es plus à l\'aise sur quoi ?', chips: ['WhatsApp', 'Email', 'Appels'] },
+      { key: 'niveau_organisation', question: 'Comment tu t\'organises au quotidien ?', chips: ['Agenda digital', 'Cahier', 'À l\'instinct'] },
+    ]);
+  }
+
+  base.push({ key: 'objectif', question: 'Et ton grand objectif pour les 3 prochains mois ?' });
+  return base;
+}
+
+function addAnamneseBubble(role, text) {
+  var chat = document.getElementById('anamnese-chat');
+  var wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap' + (role === 'usr' ? ' usr' : '');
+  if (role === 'bot') {
+    wrap.innerHTML = '<div class="bubble-ico">' + (document.getElementById('header-avatar').textContent) + '</div><div class="bubble">' + text.replace(/\n/g,'<br>') + '</div>';
+  } else {
+    wrap.innerHTML = '<div class="bubble usr">' + text + '</div>';
+  }
+  chat.appendChild(wrap);
+
+  // Chips si disponibles
+  if (role === 'bot' && ANAMNESE_STEP < ANAMNESE_QUESTIONS.length) {
+    var q = ANAMNESE_QUESTIONS[ANAMNESE_STEP];
+    if (q && q.chips) {
+      var chipsDiv = document.createElement('div');
+      chipsDiv.className = 'chips';
+      chipsDiv.style.marginLeft = '34px';
+      q.chips.forEach(function(c) {
+        var chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = c;
+        chip.onclick = function() { choisirChip(c); };
+        chipsDiv.appendChild(chip);
+      });
+      chat.appendChild(chipsDiv);
+    }
+  }
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function choisirChip(val) {
+  document.getElementById('anamnese-input').value = val;
+  envoyerAnamnese();
+}
+
+var ATTENTE_SIG = false;
+
+function envoyerAnamnese() {
+  var input = document.getElementById('anamnese-input');
+  var val = input.value.trim();
+  if (!val) return;
+  input.value = '';
+
+  addAnamneseBubble('usr', val);
+
+  // Si on attend la réponse sur la signification du nom
+  if (ATTENTE_SIG) {
+    ATTENTE_SIG = false;
+    setTimeout(poserProchainQuestion, 500);
+    return;
+  }
+
+  var q = ANAMNESE_QUESTIONS[ANAMNESE_STEP];
+  if (!q) return;
+
+  // Stocker la réponse
+  ANAMNESE_REPONSES[q.key] = val;
+
+  // Actions spéciales selon la clé
+  if (q.key === 'nom_assistant') {
+    CLIENT_DATA.nom_assistant = val;
+    document.getElementById('header-name').textContent = val;
+    document.getElementById('header-avatar').textContent = val.charAt(0).toUpperCase();
+    document.getElementById('pf-assistant').textContent = val;
+    callAPI({ action: 'updateProfil', id: CLIENT_ID, nom_assistant: encodeURIComponent(val) }, null);
+
+    ANAMNESE_STEP++;
+    var isFem = ['hélène','sophie','marie','jade','emma','alice','awa','fatou','carine','nadège','laetitia'].some(function(n){ return val.toLowerCase().includes(n); });
+    var reaction = 'Ah super — tu préfères que je sois ' + (isFem ? 'une assistante personnelle' : 'un assistant personnel') + '. Bien enregistré 😊\n\n' + val + ' — c\'est un prénom qui a une signification particulière pour toi ?';
+    
+    ATTENTE_SIG = true;
+    setTimeout(function() { addAnamneseBubble('bot', reaction); }, 500);
+    return;
+  }
+
+  if (q.key === 'ton_prefere') {
+    var ton = val.toLowerCase().includes('vous') ? 'vouvoiement' : 'tutoiement';
+    CLIENT_DATA.ton_prefere = ton;
+    ANAMNESE_REPONSES['ton_prefere'] = ton;
+    callAPI({ action: 'updateProfil', id: CLIENT_ID, ton_prefere: ton }, null);
+  }
+
+  ANAMNESE_STEP++;
+  updateAnamneseProgress();
+
+  setTimeout(function() {
+    if (ANAMNESE_STEP >= ANAMNESE_QUESTIONS.length) {
+      terminerAnamnese();
+    } else {
+      poserProchainQuestion();
+    }
+  }, 500);
+}
+
+function poserProchainQuestion() {
+  if (ANAMNESE_STEP >= ANAMNESE_QUESTIONS.length) {
+    // Fin anamnèse
+    terminerAnamnese();
+    return;
+  }
+  var q = ANAMNESE_QUESTIONS[ANAMNESE_STEP];
+  if (q.question) addAnamneseBubble('bot', q.question);
+}
+
+function terminerAnamnese() {
+  addAnamneseBubble('bot', 'Parfait ! Je te connais maintenant.\n\nTon assistant est configuré pour toi. 🎉\n\nChaque conversation va m\'aider à mieux comprendre ton univers et t\'aider de façon concrète.\n\nLet\'s go !');
+
+  // Sauvegarder dans le Sheet
+  var params = { action: 'enrichirProfil', id: CLIENT_ID, anamnese_complete: 'OUI' };
+  Object.keys(ANAMNESE_REPONSES).forEach(function(k) {
+    if (k !== '_nom_sig') params[k] = encodeURIComponent(ANAMNESE_REPONSES[k]);
+  });
+  callAPI(params, null);
+
+  localStorage.setItem('aa_anamnese_' + CLIENT_ID, '1');
+
+  setTimeout(function() {
+    document.getElementById('anamnese-overlay').classList.remove('on');
+    var prenom = CLIENT_DATA.prenom;
+    var nomAss = CLIENT_DATA.nom_assistant || 'Attractor';
+    addBubble('bot', 'Bonjour ' + prenom + ' 👋\nJe suis ' + nomAss + ', ton assistant personnel.\nJe suis prêt à travailler avec toi. Par quoi on commence ?');
+  }, 2500);
+}
+
+function updateAnamneseProgress() {
+  var total = ANAMNESE_QUESTIONS.filter(function(q){return q.key && !q.key.startsWith('_');}).length;
+  var pct = Math.min(100, Math.round((ANAMNESE_STEP / total) * 100));
+  document.getElementById('anamnese-prog').style.width = pct + '%';
+  document.getElementById('anamnese-step').textContent = 'Étape ' + Math.min(ANAMNESE_STEP + 1, total) + '/' + total;
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+function addBubble(role, text, withCopy) {
+  var msgs = document.getElementById('chat-messages');
+  var wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap' + (role === 'usr' ? ' usr' : '') + ' fade-in';
+
+  if (role === 'bot') {
+    var ico = document.getElementById('header-avatar').textContent;
+    var copyBtn = '';
+    if (withCopy) {
+      copyBtn = '<br><button class="btn-copy" onclick="copierTexte(this)"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copier</button>';
+    }
+    wrap.innerHTML = '<div class="bubble-ico">' + ico + '</div><div><div class="bubble">' + text.replace(/\n/g,'<br>') + copyBtn + '</div></div>';
+  } else {
+    wrap.innerHTML = '<div class="bubble usr">' + text + '</div>';
+  }
+
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTyping() {
+  var msgs = document.getElementById('chat-messages');
+  var wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap';
+  wrap.id = 'typing-indicator';
+  var ico = document.getElementById('header-avatar').textContent;
+  wrap.innerHTML = '<div class="bubble-ico">' + ico + '</div><div class="bubble" style="padding:12px 16px"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  var el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function sendMessage() {
+  if (IS_SENDING) return;
+  var input = document.getElementById('chat-input');
+  var msg = input.value.trim();
+  if (!msg) return;
+
+  // Vérifier quota
+  var nbMsg = parseInt(CLIENT_DATA.nb_messages) || 0;
+  var quota = parseInt(CLIENT_DATA.quota_mensuel) || 300;
+  if (nbMsg >= quota) {
+    addBubble('bot', 'Tu as atteint ton quota de messages ce mois-ci.\nPasse au Bras Droit pour continuer sans limite 🚀');
+    switchZone('info');
+    return;
+  }
+
+  addBubble('usr', msg);
+  input.value = '';
+  input.style.height = 'auto';
+  IS_SENDING = true;
+
+  HIST.push({ role: 'user', content: msg });
+  if (HIST.length > HIST_MAX) HIST = HIST.slice(HIST.length - HIST_MAX);
+
+  addTyping();
+
+  var params = {
+    action: 'chat',
+    id: CLIENT_ID,
+    msg: encodeURIComponent(msg),
+    hist: encodeURIComponent(JSON.stringify(HIST.slice(-4)))
+  };
+
+  callAPI(params, function(data) {
+    removeTyping();
+    IS_SENDING = false;
+
+    if (!data.success) {
+      addBubble('bot', 'Une erreur est survenue. Réessaie dans quelques secondes.');
+      return;
+    }
+
+    var reply = data.reply || '';
+    CLIENT_DATA.nb_messages = data.nb_messages || nbMsg + 1;
+    document.getElementById('nb-msg-info').textContent = CLIENT_DATA.nb_messages;
+
+    // Détecter si c'est un message à copier (templates, posts, messages SAV)
+    var needsCopy = msg.toLowerCase().includes('post') || msg.toLowerCase().includes('message') || msg.toLowerCase().includes('relance');
+    addBubble('bot', reply, needsCopy);
+
+    HIST.push({ role: 'assistant', content: reply });
+    if (HIST.length > HIST_MAX) HIST = HIST.slice(HIST.length - HIST_MAX);
+
+    // Détecter agenda dans la réponse
+    if (reply.includes('RDV') || reply.includes('rendez-vous') || reply.includes('planifié')) {
+      chargerAgenda();
+    }
+  });
+}
+
+function copierTexte(btn) {
+  var bubble = btn.closest('.bubble');
+  var text = bubble.textContent.replace('Copier','').trim();
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = '✓ Copié !';
+    setTimeout(function(){ btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--gold);stroke-width:2;fill:none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copier'; }, 2000);
+  });
+}
+
+// Input auto-resize
+document.getElementById('chat-input').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+document.getElementById('chat-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && window.innerWidth > 768) { e.preventDefault(); sendMessage(); }
+});
+
+document.getElementById('chat-send').onclick = sendMessage;
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchZone(zone) {
+  CURRENT_ZONE = zone;
+
+  // Zones
+  document.querySelectorAll('[id^="zone-"]').forEach(function(el) { el.classList.remove('on'); });
+  var el = document.getElementById('zone-' + zone);
+  if (el) el.classList.add('on');
+
+  // Nav
+  document.querySelectorAll('.nav-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.zone === zone);
+  });
+}
+
+// Espace tabs
+document.querySelectorAll('.esp-tab').forEach(function(btn) {
+  btn.onclick = function() {
+    var esp = this.dataset.esp;
+    CURRENT_ESP = esp;
+    document.querySelectorAll('.esp-tab').forEach(function(b){ b.classList.remove('active'); });
+    this.classList.add('active');
+    document.querySelectorAll('#zone-espace [id^="esp-"]').forEach(function(el){ el.style.display='none'; });
+    var target = document.getElementById('esp-' + esp);
+    if (target) target.style.display = '';
+  };
+});
+
+// ============================================================
+// AGENDA
+// ============================================================
+function construireCalendrier() {
+  var now = new Date();
+  var jours = ['Lu','Ma','Me','Je','Ve','Sa','Di'];
+  var semaine = document.getElementById('agenda-semaine');
+  semaine.innerHTML = '';
+
+  var debut = new Date(now);
+  var joursSemaine = debut.getDay() || 7;
+  debut.setDate(debut.getDate() - joursSemaine + 1);
+
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(debut);
+    d.setDate(debut.getDate() + i);
+    var isToday = d.toDateString() === now.toDateString();
+    var j = document.createElement('div');
+    j.className = 'agenda-jour';
+    j.innerHTML = '<div class="agenda-jour-label">' + jours[i] + '</div><div class="agenda-jour-num' + (isToday ? ' today' : '') + '" data-date="' + formatDate(d) + '">' + d.getDate() + '</div>';
+    semaine.appendChild(j);
+  }
+}
+
+function formatDate(d) {
+  return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();
+}
+
+function chargerAgenda() {
+  callAPI({ action: 'getAgenda', id: CLIENT_ID }, function(data) {
+    if (!data.success) return;
+    var liste = document.getElementById('agenda-rdvs');
+    if (!data.events || !data.events.length) {
+      liste.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div>Aucun RDV aujourd\'hui.<br>Dicte-moi un RDV dans le chat.</div>';
+      return;
+    }
+    liste.innerHTML = data.events.slice(0,5).map(function(e) {
+      return '<div class="rdv-item"><div class="rdv-heure">' + (e.heure_debut||'—') + '</div><div><div class="rdv-titre">' + e.titre + '</div><div class="rdv-desc">' + (e.description||'') + '</div></div></div>';
+    }).join('');
+  });
+}
+
+function addRdvFromChat() {
+  switchZone('chat');
+  document.getElementById('chat-input').value = 'Ajoute un RDV : ';
+  document.getElementById('chat-input').focus();
+}
+
+// ============================================================
+// TODO
+// ============================================================
+function chargerTodo() {
+  callAPI({ action: 'getTodo', id: CLIENT_ID }, function(data) {
+    if (!data.success) return;
+    var liste = document.getElementById('todo-list');
+    if (!data.todos || !data.todos.length) {
+      liste.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div>Aucune tâche en cours.<br>Dis-moi ce que tu dois faire.</div>';
+      return;
+    }
+    liste.innerHTML = data.todos.map(function(t) {
+      var pClass = t.priorite === 'HAUTE' ? 'priority-haute' : t.priorite === 'BASSE' ? 'priority-basse' : 'priority-normale';
+      return '<div class="todo-item"><div class="todo-check" onclick="completerTodo(this,' + t.id + ')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="todo-label">' + t.titre + '<span class="priority-badge ' + pClass + '">' + (t.priorite||'NORMALE') + '</span></div><div class="todo-meta">' + (t.date_echeance||'') + '</div></div></div>';
+    }).join('');
+  });
+}
+
+function completerTodo(el, rowId) {
+  el.classList.add('done');
+  el.nextElementSibling.querySelector('.todo-label').classList.add('done');
+  callAPI({ action: 'completerTodo', id: CLIENT_ID, row_id: rowId }, null);
+}
+
+function addTodoFromChat() {
+  switchZone('chat');
+  document.getElementById('chat-input').value = 'Ajoute une tâche : ';
+  document.getElementById('chat-input').focus();
+}
+
+// ============================================================
+// PARCOURS
+// ============================================================
+function lancerCouloir() {
+  // Aller au chat et lancer le couloir
+  switchZone('chat');
+  setTimeout(function() {
+    addBubble('usr', '#1dansmoncouloir');
+    addTyping();
+    callAPI({ action: 'getParcoursCourant', id: CLIENT_ID }, function(data) {
+      removeTyping();
+      var etape = data.success ? data.etape : 0;
+      callAPI({ action: 'getParcours', id: CLIENT_ID }, function(p) {
+        if (!p.success || !p.questions || !p.questions.length) {
+          addBubble('bot', 'Le parcours Ikigai n\'est pas encore configuré. Reviens très bientôt !');
+          return;
+        }
+        var q = p.questions[etape];
+        if (!q) { addBubble('bot', 'Tu as déjà complété le parcours Ikigai ! 🎉 Va dans Mon Couloir pour voir ton bilan.'); return; }
+        addBubble('bot', '🌟 #1dansmoncouloir\n\nQuestion ' + (etape+1) + '/22\n\n' + q.question);
+      });
+    });
+  }, 200);
+}
+
+function lancerVentes() {
+  switchZone('chat');
+  setTimeout(function() {
+    addBubble('usr', 'Booster mes ventes');
+    addTyping();
+    callAPI({ action: 'getParcoursventes', id: CLIENT_ID }, function(data) {
+      removeTyping();
+      if (!data.success) { addBubble('bot', 'Erreur lors du chargement. Réessaie.'); return; }
+      var module = data.module_courant || 0;
+      var titres = ['Ta cible PPSD', 'Tes messages émotionnels', 'Ton offre irrésistible', 'Ton plan 30 jours'];
+      if (module >= 4) {
+        addBubble('bot', 'Tu as complété les 4 modules du parcours ventes ! 🎉\nTon plan est dans Mon Armoire > Business.');
+        return;
+      }
+      addBubble('bot', '🚀 Booster mes ventes — Module ' + (module+1) + '/4\n' + titres[module] + '\n\nPrêt(e) ? On commence par ce module ?');
+    });
+  }, 200);
+}
+
+function goToParcours(type) {
+  switchZone('parcours');
+}
+
+// ============================================================
+// COMMUNAUTE
+// ============================================================
+function chargerCommunaute() {
+  callAPI({ action: 'getCommunaute' }, function(data) {
+    if (!data.success || !data.items || !data.items.length) return;
+    var liste = document.getElementById('communaute-list');
+    liste.innerHTML = data.items.slice(0,10).map(function(item) {
+      var initiale = (item.prenom||'?').charAt(0).toUpperCase();
+      return '<div class="communaute-card fade-in"><div class="communaute-card-top"><div class="communaute-av">' + initiale + '</div><div><div class="communaute-name">' + item.prenom + '</div><div class="communaute-activite">' + (item.activite||item.secteur||'Entrepreneur') + '</div></div></div><div class="communaute-besoin">' + item.besoin + '</div><button class="btn-wa" onclick="contactWA(\'' + item.id + '\')"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Contacter</button></div>';
+    }).join('');
+  });
+}
+
+function publierDemande() {
+  var besoin = prompt('Décris ta demande de collaboration en 1-2 phrases :');
+  if (!besoin) return;
+  callAPI({ action: 'publierCommunaute', id: CLIENT_ID, besoin: encodeURIComponent(besoin) }, function(data) {
+    if (data.success) { alert('Ta demande est publiée !'); chargerCommunaute(); }
+  });
+}
+
+function contactWA(id) {
+  alert('Contact via WhatsApp — fonctionnalité en cours d\'intégration.');
+}
+
+// ============================================================
+// PROFIL — EDIT
+// ============================================================
+function editField(key) {
+  var labels = { nom_assistant: 'Nom de l\'assistant', ton_prefere: 'Tutoiement ou vouvoiement ?', activite: 'Ton activité', canal_principal: 'Canal principal', ca_actuel: 'CA actuel / mois', objectif_3mois: 'Objectif 3 mois' };
+  var val = prompt(labels[key] || key);
+  if (!val) return;
+
+  var params = { action: 'updateProfil', id: CLIENT_ID };
+  params[key] = encodeURIComponent(val);
+
+  callAPI(params, function(data) {
+    if (!data.success) { callAPI({ action: 'enrichirProfil', id: CLIENT_ID, [key]: encodeURIComponent(val) }, null); }
+  });
+
+  // Mettre à jour UI
+  var mapId = { nom_assistant: 'pf-assistant', ton_prefere: 'pf-ton', activite: 'pf-activite', canal_principal: 'pf-canal', ca_actuel: 'pf-ca', objectif_3mois: 'pf-obj3' };
+  if (mapId[key]) document.getElementById(mapId[key]).textContent = val;
+  if (key === 'nom_assistant') {
+    document.getElementById('header-name').textContent = val;
+    document.getElementById('header-avatar').textContent = val.charAt(0).toUpperCase();
+  }
+}
+
+// ============================================================
+// ARMOIRE
+// ============================================================
+function ouvrirDossier(dossier) {
+  callAPI({ action: 'getArmoire', id: CLIENT_ID, dossier: dossier }, function(data) {
+    if (!data.success) return;
+    var items = data.items || [];
+    var msg = items.length ? '📂 ' + dossier + ' (' + items.length + ' fichier' + (items.length>1?'s':'') + ')\n\n' + items.map(function(i){ return '• ' + i.nom + ' (' + i.date + ')'; }).join('\n') : 'Le dossier ' + dossier + ' est vide pour l\'instant.';
+    switchZone('chat');
+    addBubble('bot', msg);
+  });
+}
+
+// ============================================================
+// FORFAIT & UPGRADE
+// ============================================================
+function upgradeFormufe(formule) {
+  var zone = CLIENT_DATA.zone || 'CI';
+  var label = formule === 'BRAS_DROIT' ? (zone === 'EU' ? '15€' : '5 000 FCFA') : (zone === 'EU' ? '45€' : '15 000 FCFA');
+  var msg = 'Pour passer au ' + formule.replace('_',' ') + ' (' + label + '/mois) :\n\n';
+  if (zone === 'EU') {
+    msg += '👉 PayPal : paypal.me/Myattractor\nMention : ' + formule + ' - ' + CLIENT_ID;
+  } else {
+    msg += '👉 Wave/MTN : +2250576877070\nMention : ' + formule + ' - ' + CLIENT_ID;
+  }
+  msg += '\n\nTon accès sera activé sous 24h.';
+  switchZone('chat');
+  addBubble('bot', msg);
+}
+
+// ============================================================
+// THÈME
+// ============================================================
+function setTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('theme-dark').classList.remove('active');
+    document.getElementById('theme-light').classList.add('active');
+  } else {
+    document.body.classList.remove('light');
+    document.getElementById('theme-dark').classList.add('active');
+    document.getElementById('theme-light').classList.remove('active');
+  }
+  localStorage.setItem('aa_theme', theme);
+}
+
+// ============================================================
+// API
+// ============================================================
+function callAPI(params, callback) {
+  var url = SURL + '?' + Object.keys(params).map(function(k){ return k + '=' + (params[k] !== undefined ? params[k] : ''); }).join('&');
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.timeout = 25000;
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (callback) callback(data);
+    } catch(e) {
+      if (callback) callback({ success: false, error: 'Parse error' });
+    }
+  };
+  xhr.onerror = function() { if (callback) callback({ success: false, error: 'Network error' }); };
+  xhr.ontimeout = function() {
+    removeTyping();
+    IS_SENDING = false;
+    if (callback) callback({ success: false, error: 'Timeout' });
+  };
+  xhr.send();
+}
+
+function showError(msg) {
+  var el = document.getElementById('loading-screen');
+  if (el) el.querySelector('.loading-sub').textContent = '⚠ ' + msg;
+}
+</script>
+</body>
+</html>
