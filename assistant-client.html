@@ -886,6 +886,8 @@ function choisirChip(val) {
   envoyerAnamnese();
 }
 
+var ATTENTE_SIG = false;
+
 function envoyerAnamnese() {
   var input = document.getElementById('anamnese-input');
   var val = input.value.trim();
@@ -894,25 +896,54 @@ function envoyerAnamnese() {
 
   addAnamneseBubble('usr', val);
 
-  var q = ANAMNESE_QUESTIONS[ANAMNESE_STEP];
-  if (q) {
-    ANAMNESE_REPONSES[q.key] = val;
-
-    // Actions spéciales
-    if (q.key === 'nom_assistant') {
-      CLIENT_DATA.nom_assistant = val;
-      document.getElementById('header-name').textContent = val;
-      document.getElementById('header-avatar').textContent = val.charAt(0).toUpperCase();
-      document.getElementById('pf-assistant').textContent = val;
-      callAPI({ action: 'updateProfil', id: CLIENT_ID, nom_assistant: encodeURIComponent(val) }, null);
-    }
-    if (q.key === 'ton_prefere') {
-      var ton = val.toLowerCase().includes('vous') ? 'vouvoiement' : 'tutoiement';
-      CLIENT_DATA.ton_prefere = ton;
-      callAPI({ action: 'updateProfil', id: CLIENT_ID, ton_prefere: ton }, null);
-    }
+  // Si on attend la réponse sur la signification du nom
+  if (ATTENTE_SIG) {
+    ATTENTE_SIG = false;
+    setTimeout(poserProchainQuestion, 500);
+    return;
   }
 
+  var q = ANAMNESE_QUESTIONS[ANAMNESE_STEP];
+  if (!q) return;
+
+  // Stocker la réponse
+  ANAMNESE_REPONSES[q.key] = val;
+
+  // Actions spéciales selon la clé
+  if (q.key === 'nom_assistant') {
+    CLIENT_DATA.nom_assistant = val;
+    document.getElementById('header-name').textContent = val;
+    document.getElementById('header-avatar').textContent = val.charAt(0).toUpperCase();
+    document.getElementById('pf-assistant').textContent = val;
+    callAPI({ action: 'updateProfil', id: CLIENT_ID, nom_assistant: encodeURIComponent(val) }, null);
+
+    ANAMNESE_STEP++;
+    var isFem = ['hélène','sophie','marie','jade','emma','alice','awa','fatou','carine','nadège','laetitia'].some(function(n){ return val.toLowerCase().includes(n); });
+    var reaction = 'Ah super — tu préfères que je sois ' + (isFem ? 'une assistante personnelle' : 'un assistant personnel') + '. Bien enregistré 😊\n\n' + val + ' — c\'est un prénom qui a une signification particulière pour toi ?';
+    
+    ATTENTE_SIG = true;
+    setTimeout(function() { addAnamneseBubble('bot', reaction); }, 500);
+    return;
+  }
+
+  if (q.key === 'ton_prefere') {
+    var ton = val.toLowerCase().includes('vous') ? 'vouvoiement' : 'tutoiement';
+    CLIENT_DATA.ton_prefere = ton;
+    ANAMNESE_REPONSES['ton_prefere'] = ton;
+    callAPI({ action: 'updateProfil', id: CLIENT_ID, ton_prefere: ton }, null);
+  }
+
+  ANAMNESE_STEP++;
+  updateAnamneseProgress();
+
+  setTimeout(function() {
+    if (ANAMNESE_STEP >= ANAMNESE_QUESTIONS.length) {
+      terminerAnamnese();
+    } else {
+      poserProchainQuestion();
+    }
+  }, 500);
+}
   ANAMNESE_STEP++;
   updateAnamneseProgress();
 
