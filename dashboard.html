@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Attractor Assists — Pilotage</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-dim: #8B6F2E;
+  --gold-glow: rgba(201,168,76,0.12);
+  --bordeaux: #8B2020;
+  --bordeaux-light: #E05252;
+  --black: #070707;
+  --surface: #0F0F0F;
+  --surface2: #161616;
+  --surface3: #1E1E1E;
+  --border: rgba(201,168,76,0.1);
+  --border-bright: rgba(201,168,76,0.3);
+  --text: #E8E0D0;
+  --text-dim: #7A7060;
+  --green: #2D6A4F;
+  --green-light: #52B788;
+  --orange: #C07A20;
+  --orange-light: #F0A840;
+  --nav-h: 64px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: var(--nav-h);
+}
+
+/* ── LOGIN ── */
+#login {
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh;
+  background: radial-gradient(ellipse at 50% 30%, rgba(201,168,76,0.07) 0%, transparent 60%);
+}
+.login-box {
+  width:320px; padding:48px 32px;
+  border:1px solid var(--border-bright);
+  background:var(--surface);
+  position:relative;
+}
+.login-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.login-logo {
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px; font-weight:700; color:var(--gold);
+  letter-spacing:.1em; margin-bottom:4px;
+}
+.login-sub { font-size:11px; color:var(--text-dim); margin-bottom:32px; }
+.login-inp {
+  width:100%; padding:12px 14px;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Mono',monospace; font-size:13px;
+  outline:none; margin-bottom:12px;
+  transition:border .2s;
+}
+.login-inp:focus { border-color:var(--gold); }
+.login-btn {
+  width:100%; padding:13px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#0a0a0a; font-family:'DM Mono',monospace; font-size:13px;
+  font-weight:500; border:none; cursor:pointer;
+  letter-spacing:.05em;
+}
+.login-err { font-size:11px; color:var(--bordeaux-light); margin-top:8px; display:none; }
+
+/* ── APP ── */
+#app { display:none; }
+
+/* ── HEADER ── */
+#hdr {
+  position:sticky; top:0; z-index:100;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:14px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.hdr-logo {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px; font-weight:700; color:var(--gold); letter-spacing:.08em;
+}
+.hdr-right { display:flex; align-items:center; gap:10px; }
+.hdr-sync { font-size:10px; color:var(--text-dim); }
+.hdr-refresh {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--gold); font-size:14px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ── NAV ── */
+#nav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  background:var(--surface); border-top:1px solid var(--border);
+  display:flex; height:var(--nav-h);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nbtn {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:3px;
+  background:none; border:none; color:var(--text-dim);
+  font-family:'DM Mono',monospace; font-size:9px;
+  cursor:pointer; transition:color .2s; position:relative;
+}
+.nbtn.active { color:var(--gold); }
+.nbtn svg { width:20px; height:20px; fill:currentColor; }
+.nbadge {
+  position:absolute; top:6px; right:calc(50% - 16px);
+  background:var(--bordeaux); color:#fff;
+  font-size:9px; min-width:16px; height:16px;
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  padding:0 4px; display:none;
+}
+
+/* ── ZONES ── */
+.zone { display:none; padding:16px; }
+.zone.on { display:block; }
+
+/* ── CARDS ── */
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:4px; padding:16px; margin-bottom:12px;
+}
+.card-title {
+  font-size:10px; color:var(--text-dim); letter-spacing:.1em;
+  text-transform:uppercase; margin-bottom:12px;
+}
+
+/* ── STATS GRID ── */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.stat-box {
+  background:var(--surface); border:1px solid var(--border);
+  padding:14px 12px; border-radius:4px; position:relative; overflow:hidden;
+}
+.stat-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+}
+.stat-box.gold::before { background:var(--gold); }
+.stat-box.green::before { background:var(--green-light); }
+.stat-box.orange::before { background:var(--orange-light); }
+.stat-box.red::before { background:var(--bordeaux-light); }
+.stat-lbl { font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.stat-val { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; color:var(--text); line-height:1; }
+.stat-sub { font-size:9px; color:var(--text-dim); margin-top:4px; }
+
+/* ── ALERTES ── */
+.alerte {
+  padding:10px 12px; margin-bottom:8px; border-radius:4px;
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:12px; line-height:1.5;
+}
+.alerte.warn { background:rgba(192,122,32,.1); border:1px solid rgba(192,122,32,.3); }
+.alerte.err  { background:rgba(139,32,32,.1);  border:1px solid rgba(139,32,32,.3); }
+.alerte.ok   { background:rgba(45,106,79,.1);  border:1px solid rgba(45,106,79,.3); }
+.alerte-dot  { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.alerte.warn .alerte-dot { background:var(--orange-light); }
+.alerte.err  .alerte-dot { background:var(--bordeaux-light); }
+.alerte.ok   .alerte-dot { background:var(--green-light); }
+
+/* ── SEGMENTS ── */
+.seg-bar { display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px; }
+.seg-btn {
+  padding:6px 12px; border-radius:20px; font-size:11px; white-space:nowrap;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text-dim); cursor:pointer; transition:all .2s;
+}
+.seg-btn.active { background:var(--gold-glow); border-color:var(--gold); color:var(--gold); }
+
+/* ── TABLE CLIENTS ── */
+.client-row {
+  padding:12px 0; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+}
+.client-row:last-child { border-bottom:none; }
+.client-avatar {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--surface2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600;
+  color:var(--gold); flex-shrink:0;
+}
+.client-info { flex:1; min-width:0; }
+.client-name { font-size:13px; color:var(--text); margin-bottom:2px; }
+.client-meta { font-size:10px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.client-right { text-align:right; flex-shrink:0; }
+.client-msgs { font-size:13px; color:var(--text); }
+.client-days { font-size:10px; margin-top:2px; }
+
+/* ── BADGES STATUT ── */
+.badge {
+  display:inline-block; padding:2px 8px; border-radius:10px;
+  font-size:9px; letter-spacing:.05em; text-transform:uppercase;
+}
+.badge.essai  { background:rgba(201,168,76,.1);  color:var(--gold); border:1px solid rgba(201,168,76,.2); }
+.badge.actif  { background:rgba(45,106,79,.1);   color:var(--green-light); border:1px solid rgba(45,106,79,.2); }
+.badge.expire { background:rgba(139,32,32,.1);   color:var(--bordeaux-light); border:1px solid rgba(139,32,32,.2); }
+.badge.chaud  { background:rgba(192,122,32,.15); color:var(--orange-light); border:1px solid rgba(192,122,32,.3); }
+
+/* ── MODAL ── */
+.modal {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(0,0,0,.85); align-items:flex-end;
+}
+.modal.on { display:flex; }
+.modal-box {
+  width:100%; max-height:85vh; overflow-y:auto;
+  background:var(--surface); border-top:1px solid var(--border-bright);
+  padding:24px 16px 32px;
+}
+.modal-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px; font-weight:600; color:var(--gold);
+  margin-bottom:16px;
+}
+.modal-line { padding:10px 0; border-bottom:1px solid var(--border); font-size:12px; }
+.modal-line:last-child { border-bottom:none; }
+.modal-lbl { font-size:10px; color:var(--text-dim); margin-bottom:3px; }
+
+/* ── BOUTONS ── */
+.btn-gold {
+  width:100%; padding:13px; margin-top:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#0a0a0a; font-family:'DM Mono',monospace; font-size:12px;
+  font-weight:500; border:none; cursor:pointer; border-radius:4px;
+}
+.btn-outline {
+  width:100%; padding:12px; margin-top:8px;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-dim); font-family:'DM Mono',monospace; font-size:12px;
+  cursor:pointer; border-radius:4px;
+}
+.btn-red {
+  width:100%; padding:12px; margin-top:8px;
+  background:rgba(139,32,32,.15); border:1px solid rgba(139,32,32,.3);
+  color:var(--bordeaux-light); font-family:'DM Mono',monospace; font-size:12px;
+  cursor:pointer; border-radius:4px;
+}
+
+/* ── CONVERSATIONS ── */
+.conv-item {
+  padding:12px 0; border-bottom:1px solid var(--border);
+}
+.conv-item:last-child { border-bottom:none; }
+.conv-header { display:flex; justify-content:space-between; margin-bottom:6px; }
+.conv-name { font-size:12px; color:var(--text); font-weight:500; }
+.conv-count { font-size:11px; color:var(--text-dim); }
+.conv-bar { height:4px; background:var(--surface3); border-radius:2px; overflow:hidden; }
+.conv-fill { height:100%; border-radius:2px; transition:width .5s; }
+.conv-tags { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+.conv-tag {
+  font-size:9px; padding:2px 7px; border-radius:10px;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text-dim);
+}
+
+/* ── REVENUS ── */
+.rev-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 0; border-bottom:1px solid var(--border);
+}
+.rev-item:last-child { border-bottom:none; }
+.rev-name { font-size:12px; }
+.rev-amount { font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--green-light); }
+
+/* ── SAV ── */
+.sav-item {
+  padding:12px; margin-bottom:8px; border-radius:4px;
+  background:var(--surface2); border:1px solid var(--border);
+}
+.sav-header { display:flex; justify-content:space-between; margin-bottom:6px; }
+.sav-type { font-size:10px; color:var(--gold); text-transform:uppercase; letter-spacing:.05em; }
+.sav-date { font-size:10px; color:var(--text-dim); }
+.sav-msg { font-size:12px; color:var(--text); line-height:1.5; }
+
+/* ── TENDANCES ── */
+.tendance-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 0; border-bottom:1px solid var(--border);
+}
+.tendance-item:last-child { border-bottom:none; }
+.tendance-rank {
+  font-family:'Cormorant Garamond',serif; font-size:20px;
+  color:var(--gold-dim); width:20px; flex-shrink:0; text-align:center;
+}
+.tendance-info { flex:1; }
+.tendance-label { font-size:12px; color:var(--text); }
+.tendance-count { font-size:10px; color:var(--text-dim); }
+.tendance-bar { width:60px; height:4px; background:var(--surface3); border-radius:2px; overflow:hidden; }
+.tendance-fill { height:100%; background:var(--gold); border-radius:2px; }
+
+/* ── EMPTY ── */
+.empty { text-align:center; padding:32px 16px; color:var(--text-dim); font-size:12px; }
+
+/* ── LOADING ── */
+.loading { text-align:center; padding:48px 16px; color:var(--text-dim); }
+.spinner {
+  width:24px; height:24px; border:2px solid var(--border);
+  border-top-color:var(--gold); border-radius:50%;
+  animation:spin .8s linear infinite; margin:0 auto 12px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── TOAST ── */
+#toast {
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+  background:var(--surface2); border:1px solid var(--border);
+  padding:10px 20px; border-radius:20px; font-size:12px;
+  z-index:300; opacity:0; transition:opacity .3s; pointer-events:none;
+  white-space:nowrap;
+}
+#toast.on { opacity:1; }
+
+/* ── FILTRE SEARCH ── */
+.search-wrap { position:relative; margin-bottom:12px; }
+.search-inp {
+  width:100%; padding:10px 14px 10px 36px;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Mono',monospace; font-size:12px;
+  outline:none; border-radius:4px;
+}
+.search-inp:focus { border-color:var(--gold); }
+.search-ico {
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  color:var(--text-dim); font-size:13px;
+}
+
+/* ── TEXTAREA ── */
+.msg-inp {
+  width:100%; padding:10px 12px; margin-top:12px;
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Mono',monospace; font-size:12px;
+  resize:none; height:80px; outline:none; border-radius:4px;
+  line-height:1.5;
+}
+.msg-inp:focus { border-color:var(--gold); }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px; font-weight:600; color:var(--text);
+  margin-bottom:4px;
+}
+.section-sub { font-size:10px; color:var(--text-dim); margin-bottom:16px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="login-logo">⚡ ATTRACTOR</div>
+    <div class="login-sub">Dashboard de pilotage</div>
+    <input class="login-inp" type="password" id="pwd" placeholder="Mot de passe..." autocomplete="off">
+    <button class="login-btn" onclick="login()">Accéder →</button>
+    <div class="login-err" id="login-err">Mot de passe incorrect</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="hdr">
+    <div class="hdr-logo">⚡ PILOTAGE</div>
+    <div class="hdr-right">
+      <div class="hdr-sync" id="last-sync">—</div>
+      <button class="hdr-refresh" onclick="charger()" title="Actualiser">↻</button>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="zone on" id="z-overview">
+    <div class="section-title">Vue d'ensemble</div>
+    <div class="section-sub" id="date-now">—</div>
+
+    <div class="stats-grid">
+      <div class="stat-box gold">
+        <div class="stat-lbl">Total</div>
+        <div class="stat-val" id="s-total">—</div>
+        <div class="stat-sub">utilisateurs</div>
+      </div>
+      <div class="stat-box green">
+        <div class="stat-lbl">Actifs aujourd'hui</div>
+        <div class="stat-val" id="s-dau">—</div>
+        <div class="stat-sub">DAU</div>
+      </div>
+      <div class="stat-box orange">
+        <div class="stat-lbl">En closing</div>
+        <div class="stat-val" id="s-closing">—</div>
+        <div class="stat-sub">J ≤ 3</div>
+      </div>
+      <div class="stat-box red">
+        <div class="stat-lbl">MRR</div>
+        <div class="stat-val" id="s-mrr">—</div>
+        <div class="stat-sub">FCFA / mois</div>
+      </div>
+    </div>
+
+    <!-- Rétention -->
+    <div class="card">
+      <div class="card-title">Rétention essai → payant</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="flex:1;">
+          <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;">Taux conversion</div>
+          <div class="conv-bar" style="height:8px;">
+            <div class="conv-fill" id="conv-bar" style="background:var(--gold);width:0%"></div>
+          </div>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);" id="conv-rate">—%</div>
+      </div>
+    </div>
+
+    <!-- Alertes -->
+    <div class="card">
+      <div class="card-title">Alertes prioritaires</div>
+      <div id="alertes-zone"><div class="empty">Chargement...</div></div>
+    </div>
+
+    <!-- Segmentation rapide -->
+    <div class="card">
+      <div class="card-title">Segmentation</div>
+      <div id="seg-zone"></div>
+    </div>
+  </div>
+
+  <!-- CLIENTS -->
+  <div class="zone" id="z-clients">
+    <div class="section-title">Clients</div>
+    <div class="section-sub">Tous les utilisateurs</div>
+
+    <div class="search-wrap">
+      <span class="search-ico">⌕</span>
+      <input class="search-inp" id="search-inp" placeholder="Rechercher..." oninput="filtrer(this.value)">
+    </div>
+
+    <div class="seg-bar" id="seg-clients">
+      <button class="seg-btn active" onclick="filtrerSeg('tous',this)">Tous</button>
+      <button class="seg-btn" onclick="filtrerSeg('actifs',this)">🔥 Actifs</button>
+      <button class="seg-btn" onclick="filtrerSeg('tièdes',this)">⏳ Tièdes</button>
+      <button class="seg-btn" onclick="filtrerSeg('inactifs',this)">❄️ Inactifs</button>
+      <button class="seg-btn" onclick="filtrerSeg('closing',this)">🎯 Closing</button>
+      <button class="seg-btn" onclick="filtrerSeg('payants',this)">💰 Payants</button>
+    </div>
+
+    <div class="card" style="padding:0 16px;">
+      <div id="clients-liste"></div>
+    </div>
+  </div>
+
+  <!-- CONVERSATIONS -->
+  <div class="zone" id="z-conv">
+    <div class="section-title">Conversations</div>
+    <div class="section-sub">Tendances et activité</div>
+
+    <div class="card">
+      <div class="card-title">Activité aujourd'hui</div>
+      <div id="conv-today"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sujets les plus demandés</div>
+      <div id="tendances-zone"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Utilisateurs inactifs +2 jours</div>
+      <div id="inactifs-zone"></div>
+    </div>
+  </div>
+
+  <!-- REVENUS -->
+  <div class="zone" id="z-rev">
+    <div class="section-title">Revenus</div>
+    <div class="section-sub">Paiements et pipeline</div>
+
+    <div class="stats-grid">
+      <div class="stat-box green">
+        <div class="stat-lbl">MRR actuel</div>
+        <div class="stat-val" id="r-mrr">—</div>
+        <div class="stat-sub">FCFA</div>
+      </div>
+      <div class="stat-box gold">
+        <div class="stat-lbl">Pipeline</div>
+        <div class="stat-val" id="r-pipe">—</div>
+        <div class="stat-sub">en closing</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Clients payants</div>
+      <div id="payants-liste"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Pipeline closing</div>
+      <div id="closing-liste"></div>
+    </div>
+  </div>
+
+  <!-- SAV -->
+  <div class="zone" id="z-sav">
+    <div class="section-title">SAV & Bugs</div>
+    <div class="section-sub">Signalements et erreurs système</div>
+
+    <div class="card">
+      <div class="card-title">Bugs signalés par les testeurs</div>
+      <div id="bugs-zone">
+        <div class="sav-item">
+          <div class="sav-header">
+            <span class="sav-type">Chat</span>
+            <span class="sav-date">19/05</span>
+          </div>
+          <div class="sav-msg">Réponses trop longues — system prompt mis à jour</div>
+        </div>
+        <div class="sav-item">
+          <div class="sav-header">
+            <span class="sav-type">Couloir</span>
+            <span class="sav-date">18/05</span>
+          </div>
+          <div class="sav-msg">Parcours bloqué étape 22 — renderCResult corrigé</div>
+        </div>
+        <div class="sav-item">
+          <div class="sav-header">
+            <span class="sav-type">Inscription</span>
+            <span class="sav-date">17/05</span>
+          </div>
+          <div class="sav-msg">Laffissou — message connexion — creerEssai GET corrigé</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Ajouter un signalement</div>
+      <select id="bug-type" style="width:100%;padding:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;outline:none;border-radius:4px;margin-bottom:8px;">
+        <option value="Chat">Chat</option>
+        <option value="Couloir">#1dansmoncouloir</option>
+        <option value="Inscription">Inscription</option>
+        <option value="Info">Onglet Info</option>
+        <option value="Paiement">Paiement</option>
+        <option value="Autre">Autre</option>
+      </select>
+      <textarea class="msg-inp" id="bug-msg" placeholder="Décris le bug ou le retour testeur..."></textarea>
+      <button class="btn-gold" onclick="ajouterBug()">Enregistrer →</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Supervision système</div>
+      <div id="supervision-zone"><div class="empty">Chargement...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL CLIENT -->
+<div class="modal" id="m-client">
+  <div class="modal-box">
+    <div class="modal-title" id="m-prenom">—</div>
+    <div id="m-content"></div>
+    <textarea class="msg-inp" id="m-msg" placeholder="Message à envoyer..."></textarea>
+    <button class="btn-gold" onclick="envoyerMsg()">Envoyer par email →</button>
+    <button class="btn-outline" onclick="validerPaiement()">✅ Valider paiement</button>
+    <button class="btn-outline" onclick="fermerModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nbtn active" id="nb-overview" onclick="tab('overview')">
+    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+    Vue
+  </button>
+  <button class="nbtn" id="nb-clients" onclick="tab('clients')">
+    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+    Clients
+    <div class="nbadge" id="nb-closing">0</div>
+  </button>
+  <button class="nbtn" id="nb-conv" onclick="tab('conv')">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    Convs
+  </button>
+  <button class="nbtn" id="nb-rev" onclick="tab('rev')">
+    <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+    Revenus
+  </button>
+  <button class="nbtn" id="nb-sav" onclick="tab('sav')">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+    SAV
+  </button>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+const SURL = 'https://script.google.com/macros/s/AKfycbziaAurmZwshy_flbNc2zaVNiOuw01x40D_vNI1cRXtgJ33F_RQVnsOEzidPfu44z9L_w/exec';
+const PWD  = '#Mimschak';
+
+// Nouveau modèle éco — gratuit + offres avancées
+const MRR_MAP = {
+  'GRATUIT':0, 'ESSAI':0,
+  'Starter CI':5000,  'Pro CI':15000,
+  'Starter EU':1500,  'Pro EU':4500
+};
+
+// Quota journalier formule gratuite
+const QUOTA_JOUR = 20;
+
+let clients = [], curTab = 'overview', curSeg = 'tous', curClientId = null;
+
+// ── LOGIN ──
+function login() {
+  const v = document.getElementById('pwd').value;
+  if (v === PWD) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('date-now').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+    charger();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd').value = '';
+  }
+}
+document.getElementById('pwd').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+
+// ── CHARGEMENT ──
+async function charger() {
+  try {
+    const r = await fetch(SURL + '?action=getClients');
+    const d = await r.json();
+    if (d.success) {
+      clients = d.clients || [];
+      document.getElementById('last-sync').textContent = 'Sync ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      majStats();
+      majAlertes();
+      majClients();
+      majConversations();
+      majRevenus();
+      majSupervision();
+    } else { toast('Erreur: ' + d.error, 'err'); }
+  } catch(e) { toast('Erreur réseau', 'err'); }
+}
+
+// ── HELPERS ──
+// nbMessages = messages du JOUR (reset chaque minuit par trigger)
+function msgsAujourdhui(c)   { return c.nbMessages || 0; }
+function upsellReady(c)      { return msgsAujourdhui(c) >= 18; }          // atteint quasi quota
+function estSilencieux(c)    { return msgsAujourdhui(c) === 0; }           // 0 msg aujourd\'hui
+function estActifAujourdHui(c){ return msgsAujourdhui(c) > 0; }
+function estPayant(c)        { return c.statut === 'CLIENT_ACTIF'; }
+function enEssai(c)          { return c.statut !== 'CLIENT_ACTIF' && c.joursRestants >= 0; }
+function enClosing(c)        { return enEssai(c) && c.joursRestants <= 3; }
+function segmentColor(msgs)  {
+  if (msgs >= 18) return 'var(--gold)';
+  if (msgs >= 10) return 'var(--green-light)';
+  if (msgs >= 5)  return 'var(--orange-light)';
+  return 'var(--border)';
+}
+
+// ── STATS ──
+function majStats() {
+  const total   = clients.length;
+  const dau     = clients.filter(estActifAujourdHui).length;
+  const closing = clients.filter(enClosing).length;
+  const payants = clients.filter(estPayant).length;
+  const mrr     = clients.filter(estPayant).reduce((s,c) => s + (MRR_MAP[c.formule]||0), 0);
+  const taux    = total > 0 ? Math.round((payants/total)*100) : 0;
+  const upsells = clients.filter(upsellReady).length;
+
+  document.getElementById('s-total').textContent   = total;
+  document.getElementById('s-dau').textContent     = dau;
+  document.getElementById('s-closing').textContent = closing;
+  document.getElementById('s-mrr').textContent     = mrr > 0 ? mrr.toLocaleString('fr-FR') : '0';
+  document.getElementById('r-mrr').textContent     = mrr > 0 ? mrr.toLocaleString('fr-FR') : '0';
+  document.getElementById('r-pipe').textContent    = closing;
+  document.getElementById('conv-rate').textContent = taux + '%';
+  document.getElementById('conv-bar').style.width  = taux + '%';
+
+  // Badge closing sur nav
+  const badge = document.getElementById('nb-closing');
+  if (closing > 0) { badge.style.display='flex'; badge.textContent=closing; }
+  else { badge.style.display='none'; }
+
+  // Segmentation rapide
+  const segs = [
+    { label:'🔥 Max quota (≥18 msgs)', count: upsells,                                        color:'var(--gold)' },
+    { label:"✅ Actifs aujourd\'hui",   count: dau,                                            color:'var(--green-light)' },
+    { label:'😴 Silencieux (0 msg)',    count: clients.filter(estSilencieux).length,            color:'var(--text-dim)' },
+    { label:'🎯 En closing (J≤3)',      count: closing,                                        color:'var(--orange-light)' },
+    { label:'💰 Payants',              count: payants,                                         color:'var(--green-light)' },
+  ];
+  document.getElementById('seg-zone').innerHTML = segs.map(s =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:12px;">${s.label}</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:22px;color:${s.color};font-weight:700;">${s.count}</span>
+    </div>`
+  ).join('');
+}
+
+// ── ALERTES ──
+function majAlertes() {
+  const alertes = [];
+
+  clients.forEach(c => {
+    const msgs = msgsAujourdhui(c);
+
+    // 🔴 Upsell — atteint quasi quota
+    if (upsellReady(c) && !estPayant(c)) {
+      alertes.push({ prio:0, type:'err', msg:`🔥 ${c.prenom} — ${msgs}/20 msgs aujourd\'hui — moment idéal pour l'upsell` });
+    }
+    // 🔴 Closing urgent
+    if (c.joursRestants !== null && c.joursRestants <= 1 && c.joursRestants >= 0 && !estPayant(c)) {
+      alertes.push({ prio:1, type:'err', msg:`⏰ ${c.prenom} — J${c.joursRestants} — relance urgente` });
+    }
+    // 🟡 Closing proche
+    if (c.joursRestants !== null && c.joursRestants <= 3 && c.joursRestants > 1 && !estPayant(c)) {
+      alertes.push({ prio:2, type:'warn', msg:`📅 ${c.prenom} — J${c.joursRestants} restants — à relancer` });
+    }
+    // 🟡 Silencieux
+    if (estSilencieux(c) && !estPayant(c)) {
+      alertes.push({ prio:3, type:'warn', msg:`😴 ${c.prenom} — 0 message aujourd\'hui — à réactiver` });
+    }
+  });
+
+  // Trier par priorité
+  alertes.sort((a,b) => a.prio - b.prio);
+
+  if (alertes.length === 0) {
+    document.getElementById('alertes-zone').innerHTML = '<div class="alerte ok"><div class="alerte-dot"></div>Aucune alerte urgente</div>';
+    return;
+  }
+  document.getElementById('alertes-zone').innerHTML = alertes.slice(0,8).map(a =>
+    `<div class="alerte ${a.type}"><div class="alerte-dot"></div>${a.msg}</div>`
+  ).join('');
+}
+
+// ── CLIENTS ──
+function majClients() { afficherClients(filtrerParSeg(clients, curSeg)); }
+
+function filtrerParSeg(list, seg) {
+  if (seg === 'actifs')    return list.filter(estActifAujourdHui);
+  if (seg === 'tièdes')    return list.filter(c => { const m=msgsAujourdhui(c); return m>0&&m<10; });
+  if (seg === 'inactifs')  return list.filter(estSilencieux);
+  if (seg === 'closing')   return list.filter(enClosing);
+  if (seg === 'payants')   return list.filter(estPayant);
+  return list;
+}
+
+function afficherClients(list) {
+  if (list.length === 0) {
+    document.getElementById('clients-liste').innerHTML = '<div class="empty">Aucun client dans ce segment</div>';
+    return;
+  }
+  document.getElementById('clients-liste').innerHTML = list.map(c => {
+    const msgs  = msgsAujourdhui(c);
+    const pct   = Math.min(100, Math.round((msgs / QUOTA_JOUR) * 100));
+    const color = segmentColor(msgs);
+    const statut = estPayant(c) ? 'actif' : c.joursRestants < 0 ? 'expire' : enClosing(c) ? 'chaud' : 'essai';
+    const statutLbl = estPayant(c) ? 'Payant' : c.joursRestants < 0 ? 'Expiré' : `J${c.joursRestants}`;
+    const upsellTag = upsellReady(c) && !estPayant(c) ? '<span style="font-size:9px;background:rgba(201,168,76,0.15);color:var(--gold);padding:2px 7px;border-radius:3px;margin-left:6px;">UPSELL</span>' : '';
+    return `<div class="client-row" onclick="ouvrirClient('${c.id}')">
+      <div class="client-avatar">${(c.prenom||'?')[0].toUpperCase()}</div>
+      <div class="client-info">
+        <div class="client-name">${c.prenom}${upsellTag}</div>
+        <div class="client-meta">${c.activite||'—'}</div>
+        <div style="margin-top:5px;display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:${color};border-radius:2px;transition:width .4s;"></div>
+          </div>
+          <span style="font-size:10px;color:var(--text-dim);min-width:36px;text-align:right;">${msgs}/20</span>
+        </div>
+      </div>
+      <div class="client-right">
+        <div class="client-days"><span class="badge ${statut}">${statutLbl}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filtrerSeg(seg, btn) {
+  curSeg = seg;
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  majClients();
+}
+
+function filtrer(q) {
+  const list = filtrerParSeg(clients, curSeg).filter(c =>
+    (c.prenom||'').toLowerCase().includes(q.toLowerCase()) ||
+    (c.activite||'').toLowerCase().includes(q.toLowerCase())
+  );
+  afficherClients(list);
+}
+
+// ── OUVRIR CLIENT ──
+function ouvrirClient(id) {
+  curClientId = id;
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  const msgs = msgsAujourdhui(c);
+  const pct  = Math.min(100, Math.round((msgs/QUOTA_JOUR)*100));
+  document.getElementById('m-prenom').textContent = c.prenom;
+  document.getElementById('m-content').innerHTML = `
+    <div class="modal-line"><div class="modal-lbl">ID</div>${c.id}</div>
+    <div class="modal-line"><div class="modal-lbl">Activité</div>${c.activite||'—'}</div>
+    <div class="modal-line"><div class="modal-lbl">Email</div>${c.email||'—'}</div>
+    <div class="modal-line"><div class="modal-lbl">WhatsApp</div><a href="https://wa.me/${(c.whatsapp||'').replace(/[^0-9]/g,'')}" style="color:var(--green-light);text-decoration:none;">${c.whatsapp||'—'} ↗</a></div>
+    <div class="modal-line"><div class="modal-lbl">Zone</div>${c.zone||'—'}</div>
+    <div class="modal-line"><div class="modal-lbl">Statut</div><span class="badge ${estPayant(c)?'actif':'essai'}">${c.statut}</span></div>
+    <div class="modal-line"><div class="modal-lbl">Formule</div>${c.formule||'Gratuit'}</div>
+    <div class="modal-line"><div class="modal-lbl">Msgs aujourd\'hui</div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <div style="flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${segmentColor(msgs)};border-radius:2px;"></div>
+        </div>
+        <span>${msgs} / ${QUOTA_JOUR}</span>
+      </div>
+    </div>
+    <div class="modal-line"><div class="modal-lbl">Referrals</div>${c.ref_count||0}</div>
+    ${upsellReady(c)&&!estPayant(c) ? '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);padding:10px 12px;margin-top:8px;font-size:11px;color:var(--gold);">🔥 Upsell recommandé — utilise son quota au maximum</div>' : ''}
+    ${enClosing(c) ? '<div style="background:rgba(192,122,32,0.08);border:1px solid rgba(192,122,32,0.25);padding:10px 12px;margin-top:8px;font-size:11px;color:var(--orange-light);">⏰ Closing — J'+c.joursRestants+' restants</div>' : ''}
+  `;
+  document.getElementById('m-client').classList.add('on');
+}
+
+function fermerModal() {
+  document.getElementById('m-client').classList.remove('on');
+  curClientId = null;
+}
+
+// ── ENVOYER MSG ──
+async function envoyerMsg() {
+  const msg = document.getElementById('m-msg').value.trim();
+  if (!msg || !curClientId) return;
+  const btn = event.target; btn.disabled=true; btn.textContent='Envoi...';
+  try {
+    const r = await fetch(`${SURL}?action=envoyerEmail&id=${curClientId}&type=custom&message=${encodeURIComponent(msg)}`);
+    const d = await r.json();
+    if (d.success) { toast('Email envoyé ✓'); document.getElementById('m-msg').value=''; fermerModal(); }
+    else { toast('Erreur: ' + d.error, 'err'); }
+  } catch(e) { toast('Erreur réseau', 'err'); }
+  btn.disabled=false; btn.textContent='Envoyer par email →';
+}
+
+// ── VALIDER PAIEMENT ──
+async function validerPaiement() {
+  if (!curClientId) return;
+  const formule = prompt('Formule ? (Starter CI / Pro CI / Starter EU / Pro EU)','Starter CI');
+  if (!formule) return;
+  const btn = event.target; btn.disabled=true; btn.textContent='Validation...';
+  try {
+    const r = await fetch(`${SURL}?action=validerPaiement&id=${curClientId}&formule=${encodeURIComponent(formule)}`);
+    const d = await r.json();
+    if (d.success) { toast('Paiement validé ✓'); fermerModal(); charger(); }
+    else { toast('Erreur: ' + d.error, 'err'); }
+  } catch(e) { toast('Erreur réseau', 'err'); }
+  btn.disabled=false; btn.textContent='✅ Valider paiement';
+}
+
+// ── CONVERSATIONS ──
+function majConversations() {
+  const actifs = clients.filter(estActifAujourdHui).sort((a,b)=>msgsAujourdhui(b)-msgsAujourdhui(a));
+  const max = actifs.length > 0 ? msgsAujourdhui(actifs[0]) : 1;
+
+  document.getElementById('conv-today').innerHTML = actifs.length === 0
+    ? '<div class="empty">Aucune activité aujourd\'hui</div>'
+    : actifs.map(c => {
+        const msgs = msgsAujourdhui(c);
+        const pct  = Math.round((msgs/max)*100);
+        return `<div class="conv-item">
+          <div class="conv-header">
+            <span class="conv-name">${c.prenom} ${upsellReady(c)&&!estPayant(c)?'<span style="font-size:9px;color:var(--gold);">🔥 UPSELL</span>':''}</span>
+            <span class="conv-count">${msgs}/20 msgs</span>
+          </div>
+          <div class="conv-bar"><div class="conv-fill" style="width:${pct}%;background:${segmentColor(msgs)}"></div></div>
+          <div class="conv-tags">
+            <span class="conv-tag">${c.activite||'—'}</span>
+            ${enEssai(c)?`<span class="conv-tag">J${c.joursRestants}</span>`:''}
+            ${estPayant(c)?'<span class="conv-tag" style="color:var(--green-light);">Payant</span>':''}
+          </div>
+        </div>`;
+      }).join('');
+
+  // Inactifs — silencieux aujourd\'hui
+  const inactifs = clients.filter(estSilencieux);
+  document.getElementById('inactifs-zone').innerHTML = inactifs.length === 0
+    ? '<div class="alerte ok"><div class="alerte-dot"></div>Tous ont envoyé au moins un message aujourd\'hui</div>'
+    : inactifs.map(c =>
+        `<div class="alerte warn">
+          <div class="alerte-dot"></div>
+          <div>
+            <strong>${c.prenom}</strong> — ${c.activite||'—'}
+            <div style="font-size:10px;color:var(--text-dim);margin-top:2px;">${enEssai(c)?'J'+c.joursRestants+' restants · ':''} 0 message aujourd\'hui</div>
+          </div>
+        </div>`
+      ).join('');
+
+  // Tendances — statique pour l'instant
+  const tendances = [
+    { label:'Briefing du jour', count:8 },
+    { label:'Organisation & planning', count:6 },
+    { label:'Relances clients', count:5 },
+    { label:'#1dansmoncouloir', count:4 },
+    { label:'Contenu & posts', count:3 },
+  ];
+  const maxT = tendances[0].count;
+  document.getElementById('tendances-zone').innerHTML = tendances.map((t,i) =>
+    `<div class="tendance-item">
+      <div class="tendance-rank">${i+1}</div>
+      <div class="tendance-info">
+        <div class="tendance-label">${t.label}</div>
+        <div class="tendance-count">${t.count} conversations</div>
+      </div>
+      <div class="tendance-bar"><div class="tendance-fill" style="width:${Math.round((t.count/maxT)*100)}%"></div></div>
+    </div>`
+  ).join('');
+}
+
+// ── REVENUS ──
+function majRevenus() {
+  const payants = clients.filter(estPayant);
+  document.getElementById('payants-liste').innerHTML = payants.length === 0
+    ? '<div class="empty">Aucun client payant — modèle freemium actif</div>'
+    : payants.map(c =>
+        `<div class="rev-item">
+          <div>
+            <div class="rev-name">${c.prenom}</div>
+            <div style="font-size:10px;color:var(--text-dim);">${c.formule||'—'} · ${c.zone||'—'}</div>
+          </div>
+          <div class="rev-amount">${(MRR_MAP[c.formule]||0).toLocaleString('fr-FR')}</div>
+        </div>`
+      ).join('');
+
+  const closing = clients.filter(enClosing);
+  document.getElementById('closing-liste').innerHTML = closing.length === 0
+    ? '<div class="empty">Aucun closing immédiat</div>'
+    : closing.map(c => {
+        const msgs = msgsAujourdhui(c);
+        return `<div class="rev-item">
+          <div>
+            <div class="rev-name">${c.prenom}</div>
+            <div style="font-size:10px;color:var(--orange-light);">⏰ J${c.joursRestants} · ${msgs}/20 msgs aujourd\'hui</div>
+          </div>
+          <button onclick="ouvrirClient('${c.id}')" style="background:var(--gold-glow);border:1px solid var(--gold);color:var(--gold);padding:6px 12px;font-size:10px;cursor:pointer;font-family:'DM Mono',monospace;">Relancer →</button>
+        </div>`;
+      }).join('');
+}
+
+// ── SUPERVISION ──
+async function majSupervision() {
+  document.getElementById('supervision-zone').innerHTML = '<div class="empty">Vérification...</div>';
+  try {
+    const r = await fetch(SURL + '?action=ping');
+    const d = await r.json();
+    document.getElementById('supervision-zone').innerHTML = `
+      <div class="alerte ok"><div class="alerte-dot"></div>Apps Script — opérationnel</div>
+      <div class="alerte ok"><div class="alerte-dot"></div>MasterSheet — accessible · ${clients.length} utilisateurs</div>
+      <div class="alerte ok"><div class="alerte-dot"></div>Claude Haiku — actif</div>
+      <div class="alerte ok"><div class="alerte-dot"></div>Triggers — reset minuit · briefing 8h · jours 7h</div>
+      <div class="alerte ok"><div class="alerte-dot"></div>Quota journalier — 20 msgs/utilisateur</div>
+    `;
+  } catch(e) {
+    document.getElementById('supervision-zone').innerHTML = '<div class="alerte err"><div class="alerte-dot"></div>Apps Script — vérifier le déploiement</div>';
+  }
+}
+
+// ── SAV ──
+function ajouterBug() {
+  const type = document.getElementById('bug-type').value;
+  const msg  = document.getElementById('bug-msg').value.trim();
+  if (!msg) return;
+  const date = new Date().toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit'});
+  document.getElementById('bugs-zone').insertAdjacentHTML('afterbegin',
+    `<div class="sav-item">
+      <div class="sav-header"><span class="sav-type">${type}</span><span class="sav-date">${date}</span></div>
+      <div class="sav-msg">${msg}</div>
+    </div>`
+  );
+  document.getElementById('bug-msg').value = '';
+  toast('Signalement enregistré ✓');
+}
+
+// ── NAV ──
+function tab(name) {
+  curTab = name;
+  document.querySelectorAll('.zone').forEach(z => z.classList.remove('on'));
+  document.getElementById('z-' + name).classList.add('on');
+  document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nb-' + name).classList.add('active');
+}
+
+// ── TOAST ──
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = type === 'err' ? 'var(--bordeaux)' : 'var(--border)';
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2500);
+}
+</script>
+</body>
+</html>
