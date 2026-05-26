@@ -636,10 +636,30 @@ function login() {
 document.getElementById('pwd').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
 
 // ── CHARGEMENT ──
+function chargerViaScript() {
+  return new Promise((resolve, reject) => {
+    const callbackName = '_aaCb_' + Date.now();
+    const script = document.createElement('script');
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      resolve(data);
+    };
+    script.onerror = () => reject(new Error('Script error'));
+    script.src = SURL + '?action=getClients&callback=' + callbackName;
+    document.body.appendChild(script);
+    setTimeout(() => reject(new Error('Timeout')), 15000);
+  });
+}
+
 async function charger() {
   try {
     const r = await fetch(SURL + '?action=getClients', { method: 'GET', redirect: 'follow', credentials: 'omit' });
-    const d = await r.json();
+    const txt = await r.text();
+    // Extraire le JSON même si la réponse contient du texte autour
+    const jsonMatch = txt.match(/\{.*\}/s);
+    if (!jsonMatch) { toast('Réponse invalide', 'err'); return; }
+    const d = JSON.parse(jsonMatch[0]);
     if (d.success) {
       clients = d.clients || [];
       document.getElementById('last-sync').textContent = 'Sync ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
@@ -650,7 +670,7 @@ async function charger() {
       majRevenus();
       majSupervision();
     } else { toast('Erreur: ' + d.error, 'err'); }
-  } catch(e) { toast('Erreur réseau', 'err'); }
+  } catch(e) { toast('Erreur réseau: ' + e.message, 'err'); }
 }
 
 // ── HELPERS ──
